@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Adhyathmika Bhikshun
  * Description: Admin support tools for adhyathmikabhikshun.org spiritual blog.
@@ -44,20 +45,25 @@ add_action('admin_menu', function () {
 });
 
 // Load dashboard page
-function abh_dashboard() {
+function abh_dashboard()
+{
     require_once plugin_dir_path(__FILE__) . 'pages/dashboard.php';
 }
 
 // Load unified export/import manager page
-function abh_export_import_manager_page() {
+function abh_export_import_manager_page()
+{
     require_once plugin_dir_path(__FILE__) . 'pages/export-import-manager.php';
 }
 
+// Include all site contents export/import logic
+require_once plugin_dir_path(__FILE__) . 'includes/site_contents/admin.php';
+
 // Include Content export/import logic
-require_once plugin_dir_path(__FILE__) . 'includes/export-import-content.php';
+//require_once plugin_dir_path(__FILE__) . 'includes/export-import-content.php';
 
 // Include CPT posts export/import logic
-require_once plugin_dir_path(__FILE__) . 'includes/export-import-cpt.php';
+//require_once plugin_dir_path(__FILE__) . 'includes/export-import-cpt.php';
 
 // Include combined export/import logic
-require_once plugin_dir_path(__FILE__) . 'includes/export-import-all.php';
+//require_once plugin_dir_path(__FILE__) . 'includes/export-import-all.php';

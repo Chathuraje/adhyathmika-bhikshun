@@ -2,7 +2,7 @@
     <h1 style="margin-bottom: 30px;">Export / Import Manager</h1>
 
     <!-- SECTION: Export / Import All -->
-    <section style="background: #f9f9f9; padding: 20px 25px; margin-bottom: 40px; border-left: 6px solid #0073aa; border-radius: 4px;">
+    <!-- <section style="background: #f9f9f9; padding: 20px 25px; margin-bottom: 40px; border-left: 6px solid #0073aa; border-radius: 4px;">
         <h2 style="font-size: 1.4em;">🔁 Export / Import All (Website Contents + All Posts)</h2>
         <form method="post" enctype="multipart/form-data">
             <?php wp_nonce_field('abh_export_all_nonce'); ?>
@@ -21,9 +21,9 @@
             <br>
             <input type="submit" name="abh_import_all" class="button button-secondary" value="Import All">
         </form>
-    </section>
+    </section> -->
 
-    <!-- SECTION: Export / Import ACF Content -->
+    <!-- SECTION: Export / Import Site Content -->
     <section style="background: #fefefe; padding: 20px 25px; margin-bottom: 40px; border-left: 6px solid #46b450; border-radius: 4px;">
         <h2 style="font-size: 1.4em;">🧩 Export / Import Website Contents</h2>
         <form method="post">
@@ -31,8 +31,8 @@
             <label>
                 Filename:
                 <input type="text" name="export_filename" placeholder="contents_export.json"
-                       pattern="^[a-zA-Z0-9_\-\.]+$"
-                       style="width: 100%; margin: 10px 0; padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+                    pattern="^[a-zA-Z0-9_\-\.]+$"
+                    style="width: 100%; margin: 10px 0; padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
             </label><br>
             <input type="submit" name="abh_export_acf" class="button button-primary" value="Export ACF Content">
         </form>
@@ -44,9 +44,10 @@
             <input type="submit" name="abh_import_acf" class="button button-secondary" value="Import ACF Content">
         </form>
     </section>
+    <!-- END OF SECTION: Export / Import Site Content -->
 
     <!-- SECTION: Export / Import CPT Posts -->
-    <section style="background: #fff; padding: 20px 25px; border-left: 6px solid #d54e21; border-radius: 4px;">
+    <!-- <section style="background: #fff; padding: 20px 25px; border-left: 6px solid #d54e21; border-radius: 4px;">
         <h2 style="font-size: 1.4em;">🗂️ Export / Import Post Types</h2>
         <form method="post">
             <?php wp_nonce_field('abh_export_cpt_nonce'); ?>
@@ -77,5 +78,5 @@
             <br>
             <input type="submit" name="abh_import_cpt" class="button button-secondary" value="Import CPT Posts">
         </form>
-    </section>
+    </section> -->
 </div>

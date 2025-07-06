@@ -25,7 +25,12 @@ if (!function_exists('export_custom_posts')) {
                 'post_parent'  => $post->post_parent,
                 'menu_order'   => $post->menu_order,
                 'is_sticky'    => is_sticky($post->ID),
-                'meta'         => array_map(fn($v) => count($v) === 1 ? $v[0] : $v, get_post_meta($post->ID)),
+                'meta' => array_filter(
+                    array_map(fn($v) => count($v) === 1 ? $v[0] : $v, get_post_meta($post->ID)),
+                    fn($_, $key) => !str_starts_with($key, '_elementor'),
+                    ARRAY_FILTER_USE_BOTH
+                ),
+
                 'featured_image' => ($id = get_post_thumbnail_id($post->ID)) ? wp_get_attachment_url($id) : null,
                 'taxonomies'   => [],
                 'attached_files' => array_map('wp_get_attachment_url', wp_list_pluck(get_attached_media('', $post->ID), 'ID')),

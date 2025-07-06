@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/includes/site_contents/export.php';
-require_once __DIR__ . '/includes/site_contents/import.php';
+require_once __DIR__ . '/export.php';
+require_once __DIR__ . '/import.php';
 
 add_action('admin_init', function () {
     // Handle export
@@ -9,7 +9,19 @@ add_action('admin_init', function () {
 
         $export_data = export_site_contents();
         $json = json_encode($export_data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        $filename = 'site-contents-export.json';
+
+        // Get the host from site URL
+        $site_url = parse_url(home_url());
+        $host = $site_url['host']; // e.g. adyathmikabhikshun.lk
+        $host_parts = explode('.', $host);
+
+        // Sanitize and join domain parts with underscore, e.g. adyathmikabhikshun_lk
+        $filename_base = implode('_', $host_parts);
+
+        // Add timestamp
+        $timestamp = date('Y-m-d_H-i-s');
+
+        $filename = $filename_base . '_' . $timestamp . '.json';
 
         if (!empty($_POST['export_filename'])) {
             $name = sanitize_file_name(trim($_POST['export_filename']));
@@ -31,10 +43,13 @@ add_action('admin_init', function () {
 
     // Handle import
     if (isset($_POST['import_site_contents']) && check_admin_referer('import_site_contents_nonce')) {
+
+        // Check user permissions
         if (!current_user_can('manage_options')) return;
 
-        if (!empty($_FILES['site_contents_file']['tmp_name'])) {
-            $file = $_FILES['site_contents_file']['tmp_name'];
+        // Check if file is uploaded
+        if (!empty($_FILES['import_site_contents_file']['tmp_name'])) {
+            $file = $_FILES['import_site_contents_file']['tmp_name'];
             $data = json_decode(file_get_contents($file), true);
 
             if (is_array($data)) {

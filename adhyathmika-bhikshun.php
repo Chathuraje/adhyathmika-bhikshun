@@ -47,23 +47,14 @@ add_action('admin_menu', function () {
 // Load dashboard page
 function abh_dashboard()
 {
-    require_once plugin_dir_path(__FILE__) . 'pages/dashboard.php';
+    require_once plugin_dir_path(__FILE__) . '/pages/dashboard.php';
 }
 
 // Load unified export/import manager page
 function abh_export_import_manager_page()
 {
-    require_once plugin_dir_path(__FILE__) . 'pages/export-import-manager.php';
+    require_once plugin_dir_path(__FILE__) . '/pages/export-import-manager.php';
 }
 
-// Include all site contents export/import logic
-require_once plugin_dir_path(__FILE__) . 'includes/site_contents/admin.php';
-
-// Include Content export/import logic
-//require_once plugin_dir_path(__FILE__) . 'includes/export-import-content.php';
-
-// Include CPT posts export/import logic
-//require_once plugin_dir_path(__FILE__) . 'includes/export-import-cpt.php';
-
-// Include combined export/import logic
-//require_once plugin_dir_path(__FILE__) . 'includes/export-import-all.php';
+// This file handles the export/import of site contents
+require_once plugin_dir_path(__FILE__) . '/includes/admin.php';

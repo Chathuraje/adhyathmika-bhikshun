@@ -45,7 +45,40 @@ if (!function_exists('import_custom_posts_from_data')) {
             if (is_wp_error($post_id)) continue;
 
             if (!empty($post['is_sticky'])) stick_post($post_id);
-            foreach ($post['meta'] ?? [] as $key => $value) update_post_meta($post_id, $key, $value);
+            foreach ($post['meta'] ?? [] as $key => $value) {
+                // Handle CDN images for ACF image fields
+                if (
+                    is_string($value) &&
+                    filter_var($value, FILTER_VALIDATE_URL) &&
+                    preg_match('/(_image|_banner|thumbnail|featured)/i', $key)
+                ) {
+                    $image_url = $value;
+                    $filename = basename(parse_url($image_url, PHP_URL_PATH));
+                    $filetype = wp_check_filetype($filename, null);
+
+                    $attachment = [
+                        'post_mime_type' => $filetype['type'] ?? 'image/jpeg',
+                        'post_title'     => sanitize_file_name($filename),
+                        'post_content'   => '',
+                        'post_status'    => 'inherit',
+                        'guid'           => $image_url,
+                    ];
+
+                    $att_id = wp_insert_attachment($attachment, $image_url, $post_id);
+
+                    if (!is_wp_error($att_id)) {
+                        require_once ABSPATH . 'wp-admin/includes/image.php';
+                        wp_update_attachment_metadata($att_id, []);
+                        update_post_meta($post_id, $key, $att_id); // store ID as ACF expects
+                    } else {
+                        update_post_meta($post_id, $key, $value); // fallback: store raw URL
+                    }
+                } else {
+                    update_post_meta($post_id, $key, $value);
+                }
+            }
+
+
 
             if (!empty($post['featured_image'])) {
                 $image_url = $post['featured_image'];

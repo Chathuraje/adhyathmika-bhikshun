@@ -1,13 +1,15 @@
 <?php
 
-require_once __DIR__ . '/get_global_post_position.php';
-require_once __DIR__ . '/language_switch.php';
-require_once __DIR__ . '/reading_time.php';
-require_once __DIR__ . '/auto_generate_image_alt.php';
-require_once __DIR__ . '/add_dynamic_site_link_to_admin_bar.php';
-require_once __DIR__ . '/cdn_url_rewrite.php';
-require_once __DIR__ . '/language_audio_note.php';
-require_once __DIR__ . '/expose_extra_data_to_restapi.php';
+
+require_once __DIR__ . '/shortcodes/get_global_post_position.php';
+require_once __DIR__ . '/shortcodes/language_switch.php';
+require_once __DIR__ . '/shortcodes/reading_time.php';
+require_once __DIR__ . '/shortcodes/language_audio_note.php';
+
+require_once __DIR__ . '/features/auto_generate_image_alt.php';
+require_once __DIR__ . '/features/add_dynamic_site_link_to_admin_bar.php';
+require_once __DIR__ . '/features/cdn_url_rewrite.php';
+require_once __DIR__ . '/features/expose_extra_data_to_restapi.php';
 
 /**
  * Save settings on admin POST

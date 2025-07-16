@@ -32,7 +32,6 @@ function ab_enqueue_admin_assets($hook) {
     );
 }
 
-
 // Register main admin menu and submenus
 add_action('admin_menu', function () {
     // Main menu - Dashboard
@@ -97,3 +96,8 @@ function abh_features_page()
 
 // This file handles the export/import of site contents
 require_once plugin_dir_path(__FILE__) . '/includes/admin.php';
+
+
+// Load Widgets
+require_once plugin_dir_path(__FILE__) . '/includes/widgets.php';
+

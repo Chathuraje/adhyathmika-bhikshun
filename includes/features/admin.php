@@ -5,6 +5,7 @@ require_once __DIR__ . '/language_switch.php';
 require_once __DIR__ . '/reading_time.php';
 require_once __DIR__ . '/auto_generate_image_alt.php';
 require_once __DIR__ . '/add_dynamic_site_link_to_admin_bar.php';
+require_once __DIR__ . '/cdn_url_rewrite.php';
 
 /**
  * Save settings on admin POST
@@ -46,6 +47,7 @@ add_action('init', function () {
     if (get_option('ab_reading_time_enabled', true)) {
         add_shortcode('reading_time', 'custom_reading_time_shortcode');
     }
+    
 });
 
 /**
@@ -63,21 +65,8 @@ if (get_option('ab_cross_site_link_enabled', true)) {
 }
 
 /**
- * Apply CDN URL rewrite filters conditionally
+ * Apply CDN URL rewrite filters conditionally by hooking on init
  */
-add_action('init', function () {
-    if (get_option('ab_use_cdn_urls_enabled', false)) {
-        $cdn_url = get_option('ab_cdn_url', '');
-        $site_url = get_site_url();
-
-        if ($cdn_url) {
-            add_filter('as3cf_get_attachment_url', function ($url) use ($cdn_url, $site_url) {
-                return str_replace($site_url, $cdn_url, $url);
-            });
-
-            add_filter('wp_get_attachment_url', function ($url) use ($cdn_url, $site_url) {
-                return str_replace($site_url, $cdn_url, $url);
-            });
-        }
-    }
-});
+if (get_option('ab_use_cdn_urls_enabled', false)) {
+    add_action('init', 'ab_enable_cdn_url_rewrite');
+}

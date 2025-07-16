@@ -13,5 +13,16 @@ function ab_enable_cdn_url_rewrite() {
             return str_replace($site_url, $cdn_url, $url);
         });
     }
+
+    // Redirect attachment pages to their media files (disable attachment pages)
+    add_action('template_redirect', function() {
+        if (is_attachment()) {
+            global $post;
+            if ($post && $post->guid) {
+                wp_redirect($post->guid, 301);
+                exit;
+            }
+        }
+    });
 }
 ?>

@@ -45,100 +45,13 @@ if (!function_exists('import_custom_posts_from_data')) {
             if (is_wp_error($post_id)) continue;
 
             if (!empty($post['is_sticky'])) stick_post($post_id);
-            foreach ($post['meta'] ?? [] as $key => $value) {
-                // Handle CDN images for ACF image fields
-                if (
-                    is_string($value) &&
-                    filter_var($value, FILTER_VALIDATE_URL) &&
-                    preg_match('/(_image|_banner|thumbnail|featured)/i', $key)
-                ) {
-                    $image_url = $value;
-                    $filename = basename(parse_url($image_url, PHP_URL_PATH));
-                    $filetype = wp_check_filetype($filename, null);
-
-                    $attachment = [
-                        'post_mime_type' => $filetype['type'] ?? 'image/jpeg',
-                        'post_title'     => sanitize_file_name($filename),
-                        'post_content'   => '',
-                        'post_status'    => 'inherit',
-                        'guid'           => $image_url,
-                    ];
-
-                    $att_id = wp_insert_attachment($attachment, $image_url, $post_id);
-
-                    if (!is_wp_error($att_id)) {
-                        require_once ABSPATH . 'wp-admin/includes/image.php';
-                        wp_update_attachment_metadata($att_id, []);
-                        update_post_meta($post_id, $key, $att_id); // store ID as ACF expects
-                    } else {
-                        update_post_meta($post_id, $key, $value); // fallback: store raw URL
-                    }
-                } else {
-                    update_post_meta($post_id, $key, $value);
-                }
-            }
-
-
+            foreach ($post['meta'] ?? [] as $key => $value) update_post_meta($post_id, $key, $value);
 
             if (!empty($post['featured_image'])) {
-                $image_url = $post['featured_image'];
-
-                // Try to get attachment ID from URL
-                $att_id = attachment_url_to_postid($image_url);
-
-                // If not found and it's a CDN URL, create a dummy attachment
-                if (!$att_id && filter_var($image_url, FILTER_VALIDATE_URL)) {
-                    $filename = basename(parse_url($image_url, PHP_URL_PATH));
-                    $filetype = wp_check_filetype($filename, null);
-
-                    $attachment = [
-                        'post_mime_type' => $filetype['type'] ?? 'image/jpeg',
-                        'post_title'     => sanitize_file_name($filename),
-                        'post_content'   => '',
-                        'post_status'    => 'inherit',
-                        'guid'           => $image_url,
-                    ];
-
-                    // Insert the attachment without downloading it
-                    $att_id = wp_insert_attachment($attachment, $image_url, $post_id);
-
-                    // Generate attachment metadata (fake metadata just to be complete)
-                    if (!is_wp_error($att_id)) {
-                        require_once ABSPATH . 'wp-admin/includes/image.php';
-                        wp_update_attachment_metadata($att_id, []);
-                    }
-                }
-
-                if (!is_wp_error($att_id)) {
-                    set_post_thumbnail($post_id, $att_id);
-                }
-
-                // Attach media files from CDN
-                if (!empty($post['attached_files']) && is_array($post['attached_files'])) {
-                    foreach ($post['attached_files'] as $media_url) {
-                        if (filter_var($media_url, FILTER_VALIDATE_URL)) {
-                            $filename = basename(parse_url($media_url, PHP_URL_PATH));
-                            $filetype = wp_check_filetype($filename, null);
-
-                            $attachment = [
-                                'post_mime_type' => $filetype['type'] ?? 'application/octet-stream',
-                                'post_title'     => sanitize_file_name($filename),
-                                'post_content'   => '',
-                                'post_status'    => 'inherit',
-                                'guid'           => $media_url,
-                            ];
-
-                            $att_id = wp_insert_attachment($attachment, $media_url, $post_id);
-
-                            if (!is_wp_error($att_id)) {
-                                require_once ABSPATH . 'wp-admin/includes/image.php';
-                                wp_update_attachment_metadata($att_id, []);
-                            }
-                        }
-                    }
-                }
+                $att_id = attachment_url_to_postid($post['featured_image']);
+                if (!$att_id) $att_id = media_sideload_image($post['featured_image'], $post_id, null, 'id');
+                if (!is_wp_error($att_id)) set_post_thumbnail($post_id, $att_id);
             }
-
 
             foreach ($post['taxonomies'] ?? [] as $taxonomy => $terms) {
                 $term_ids = [];

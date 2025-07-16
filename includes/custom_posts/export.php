@@ -3,26 +3,6 @@
 
 $allowed_post_types = ['post', 'daily-spiritual-offe', 'testimonial', 'small-quote'];
 
-function get_attachment_url($id)
-{
-    return wp_get_attachment_url($id) ?: null;
-}
-
-function convert_acf_image_ids_to_urls(array $meta): array
-{
-    foreach ($meta as $key => $value) {
-        if (is_numeric($value)) {
-            $url = get_attachment_url((int)$value);
-            if ($url) {
-                $meta[$key] = $url;
-            }
-        } elseif (is_array($value)) {
-            $meta[$key] = convert_acf_image_ids_to_urls($value);
-        }
-    }
-    return $meta;
-}
-
 if (!function_exists('export_custom_posts')) {
     function export_custom_posts(string $post_type)
     {
@@ -33,9 +13,6 @@ if (!function_exists('export_custom_posts')) {
         $export_data = [];
 
         foreach ($posts as $post) {
-            $raw_meta = array_map(fn($v) => count($v) === 1 ? $v[0] : $v, get_post_meta($post->ID));
-            $converted_meta = convert_acf_image_ids_to_urls($raw_meta);
-
             $post_data = [
                 'post_title'   => $post->post_title,
                 'post_content' => $post->post_content,
@@ -48,15 +25,15 @@ if (!function_exists('export_custom_posts')) {
                 'post_parent'  => $post->post_parent,
                 'menu_order'   => $post->menu_order,
                 'is_sticky'    => is_sticky($post->ID),
-                'meta'         => array_filter(
-                    $converted_meta,
+                'meta' => array_filter(
+                    array_map(fn($v) => count($v) === 1 ? $v[0] : $v, get_post_meta($post->ID)),
                     fn($_, $key) => !str_starts_with($key, '_elementor'),
                     ARRAY_FILTER_USE_BOTH
                 ),
 
-                'featured_image' => ($id = get_post_thumbnail_id($post->ID)) ? get_attachment_url($id) : null,
+                'featured_image' => ($id = get_post_thumbnail_id($post->ID)) ? wp_get_attachment_url($id) : null,
                 'taxonomies'   => [],
-                'attached_files' => array_map('get_attachment_url', wp_list_pluck(get_attached_media('', $post->ID), 'ID')),
+                'attached_files' => array_map('wp_get_attachment_url', wp_list_pluck(get_attached_media('', $post->ID), 'ID')),
                 'comments'     => array_map('get_object_vars', get_comments(['post_id' => $post->ID])),
             ];
 
@@ -73,8 +50,6 @@ if (!function_exists('export_custom_posts')) {
                         // You might want to simplify meta_value if it is an array with 1 value
                         $meta[$meta_key] = maybe_unserialize($meta_value[0]);
                     }
-
-                    $meta = convert_acf_image_ids_to_urls($meta);
 
                     $term_data[] = [
                         'term_id'     => $term->term_id,
@@ -126,8 +101,6 @@ if (!function_exists('export_all_taxonomies_for_post_type')) {
                 foreach ($meta_raw as $key => $values) {
                     $meta[$key] = count($values) === 1 ? maybe_unserialize($values[0]) : array_map('maybe_unserialize', $values);
                 }
-
-                $meta = convert_acf_image_ids_to_urls($meta);
 
                 $exported_terms[$taxonomy][] = [
                     'term_id'     => $term->term_id,

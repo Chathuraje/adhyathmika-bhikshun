@@ -57,11 +57,13 @@
   }
   
   .ab-toggle {
+    position: relative;
     display: flex;
     align-items: center;
     margin-bottom: 6px;
     cursor: pointer;
     user-select: none;
+    outline-offset: 4px;
   }
   
   .ab-toggle input {
@@ -147,4 +149,35 @@
     visibility: visible;
     opacity: 1;
   }
+
+  .ab-tooltip-feature {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    left: 110%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #333;
+    color: #fff;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    max-width: 250px;
+    z-index: 15;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  
+  /* Show tooltip on hover or focus of label */
+  .ab-toggle:hover .ab-tooltip-feature,
+  .ab-toggle:focus-within .ab-tooltip-feature,
+  .ab-toggle:focus .ab-tooltip-feature {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+
   

@@ -56,9 +56,6 @@
           <input type="checkbox" name="ab_post_order_enabled" value="1" <?php checked($is_post_order_enabled); ?> />
           <span class="ab-slider"></span>
           <span class="ab-label">Enable Post Order shortcode</span>
-          <span role="tooltip" id="tip-post-order" class="ab-tooltip-feature">
-            This shortcode displays the post's position in chronological order.
-          </span>
         </label>
       </div>
 
@@ -67,9 +64,6 @@
           <input type="checkbox" name="ab_language_switch_enabled" value="1" <?php checked($is_language_switch_enabled); ?> />
           <span class="ab-slider"></span>
           <span class="ab-label">Enable Language Switcher shortcode</span>
-            <span role="tooltip" id="tip-language-switch" class="ab-tooltip-feature">
-                This shortcode shows a language toggle with English and Sinhala options.
-            </span>
         </label>
       </div>
 
@@ -78,9 +72,6 @@
           <input type="checkbox" name="ab_reading_time_enabled" value="1" <?php checked($is_reading_time_enabled); ?> />
           <span class="ab-slider"></span>
           <span class="ab-label">Enable Reading Time shortcode</span>
-            <span role="tooltip" id="tip-reading-time" class="ab-tooltip-feature">
-                This shortcode displays the estimated reading time for the current post.
-            </span>
         </label>
       </div>
 
@@ -89,9 +80,6 @@
           <input type="checkbox" name="ab_image_alt_enabled" value="1" <?php checked($is_image_alt_enabled); ?> />
           <span class="ab-slider"></span>
           <span class="ab-label">Enable Auto-Generate Image ALT Text</span>
-            <span role="tooltip" id="tip-image-alt" class="ab-tooltip-feature">
-                Automatically generates clean ALT text for images based on their filenames.
-            </span>
         </label>
       </div>
 
@@ -100,9 +88,6 @@
           <input type="checkbox" name="ab_cross_site_link_enabled" value="1" <?php checked($is_cross_site_link_enabled); ?> />
           <span class="ab-slider"></span>
           <span class="ab-label">Enable Dynamic .org/.lk Site Link in Admin Bar</span>
-            <span role="tooltip" id="tip-cross-site-link" class="ab-tooltip-feature">
-                Adds a link to the admin bar that dynamically points to the .org or .lk version of the site.
-            </span>
         </label>
       </div>
     </section>

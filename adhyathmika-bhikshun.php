@@ -90,7 +90,7 @@ add_action('admin_menu', function () {
 
 
 // Include all pages
-require_once plugin_dir_path(__FILE__) . '/includes/pages/main.php';
+require_once plugin_dir_path(__FILE__) . '/pages/main.php';
 
 // Include all functions
 require_once plugin_dir_path(__FILE__) . '/includes/admin.php';

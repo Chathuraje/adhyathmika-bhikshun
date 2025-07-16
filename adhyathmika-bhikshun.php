@@ -79,7 +79,7 @@ add_action('admin_menu', function () {
     add_submenu_page(
         'adhyathmika-bhikshun',
         'Post Management',
-        'Posts',
+        'Posts Management',
         'manage_options',
         'abh-post-management',
         'abh_post_management_page'
@@ -87,7 +87,6 @@ add_action('admin_menu', function () {
 
 
 });
-
 
 // Include all pages
 require_once plugin_dir_path(__FILE__) . '/pages/main.php';
@@ -97,4 +96,5 @@ require_once plugin_dir_path(__FILE__) . '/includes/admin.php';
 
 // Load Widgets
 require_once plugin_dir_path(__FILE__) . '/includes/widgets.php';
+
 

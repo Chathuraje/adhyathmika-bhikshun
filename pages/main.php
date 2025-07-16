@@ -20,6 +20,6 @@ function abh_features_page()
 // Load post management page
 function abh_post_management_page()
 {
-    require_once plugin_dir_path(__FILE__) . '/post-management-page.php';
+    require_once plugin_dir_path(__FILE__) . '/post-managments-page.php';
 }
 ?>

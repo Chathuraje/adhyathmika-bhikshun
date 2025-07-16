@@ -7,6 +7,7 @@ require_once __DIR__ . '/auto_generate_image_alt.php';
 require_once __DIR__ . '/add_dynamic_site_link_to_admin_bar.php';
 require_once __DIR__ . '/cdn_url_rewrite.php';
 require_once __DIR__ . '/language_audio_note.php';
+require_once __DIR__ . '/expose_extra_data_to_restapi.php';
 
 /**
  * Save settings on admin POST
@@ -23,6 +24,7 @@ add_action('admin_init', function () {
         update_option('ab_image_alt_enabled', isset($_POST['ab_image_alt_enabled']) ? 1 : 0);
         update_option('ab_cross_site_link_enabled', isset($_POST['ab_cross_site_link_enabled']) ? 1 : 0);
         update_option('ab_language_audio_note_enabled', isset($_POST['ab_language_audio_note_enabled']) ? 1 : 0);
+        update_option('ab_rest_api_extras_enabled', isset($_POST['ab_rest_api_extras_enabled']) ? 1 : 0);
 
         // Save CDN URL rewrite toggle and CDN URL manually
         update_option('ab_use_cdn_urls_enabled', isset($_POST['ab_use_cdn_urls_enabled']) ? 1 : 0);
@@ -74,4 +76,14 @@ if (get_option('ab_cross_site_link_enabled', true)) {
  */
 if (get_option('ab_use_cdn_urls_enabled', false)) {
     add_action('init', 'ab_enable_cdn_url_rewrite');
+}
+
+/**
+ * Expose extra data to REST API conditionally
+ */
+if (get_option('ab_rest_api_extras_enabled', false)) {
+    add_action('rest_api_init', function () {
+        ab_expose_raw_post_content();
+        ab_expose_focus_keyword();
+    });
 }

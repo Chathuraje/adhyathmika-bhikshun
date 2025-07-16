@@ -1,8 +1,4 @@
 <?php
-// Save setting on form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ab_settings_nonce']) && wp_verify_nonce($_POST['ab_settings_nonce'], 'ab_save_settings')) {
-    update_option('ab_post_order_enabled', isset($_POST['ab_post_order_enabled']));
-}
 $is_enabled = get_option('ab_post_order_enabled', true);
 ?>
 

@@ -1,0 +1,14 @@
+name: Trigger WordPress Plugin Update
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call WordPress plugin update URL
+        run: |
+          curl -X GET "https://adhyathmikabhikshun.org/wp-json/dfg/v1/package_update?secret=${{ secrets.WP_PLUGIN_SECRET }}&type=plugin&package=adhyathmika-bhikshun"

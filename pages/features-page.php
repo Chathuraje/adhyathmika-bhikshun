@@ -7,7 +7,6 @@
     $is_use_cdn_urls_enabled = get_option('ab_use_cdn_urls_enabled', false);
     $is_language_note_enabled = get_option('ab_language_audio_note_enabled', true);
     $is_rest_api_extras_enabled = get_option('ab_rest_api_extras_enabled', false);
-
 ?>
 
 <div class="ab-wrap">

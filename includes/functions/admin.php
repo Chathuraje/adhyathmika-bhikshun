@@ -1,6 +1,4 @@
 <?php
-
-
 require_once __DIR__ . '/shortcodes/get_global_post_position.php';
 require_once __DIR__ . '/shortcodes/language_switch.php';
 require_once __DIR__ . '/shortcodes/reading_time.php';

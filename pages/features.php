@@ -5,6 +5,8 @@
     $is_image_alt_enabled = get_option('ab_image_alt_enabled', true);
     $is_cross_site_link_enabled = get_option('ab_cross_site_link_enabled', true);   
     $is_use_cdn_urls_enabled = get_option('ab_use_cdn_urls_enabled', false);
+    $is_language_note_enabled = get_option('ab_language_audio_note_enabled', true);
+
 ?>
 
 <div class="ab-wrap">
@@ -41,7 +43,7 @@
       </tr>
       <tr>
       <td>
-        <span class="ab-shortcode" data-shortcode="[language_audio_player]" tabindex="0" role="button" aria-label="Copy [language_audio_player]">[language_audio_player]
+        <span class="ab-shortcode" data-shortcode="[language_audio_note]" tabindex="0" role="button" aria-label="Copy [language_audio_note]">[language_audio_note]
             <span class="ab-tooltip">Copied!</span>
         </span>
       </td>
@@ -78,9 +80,9 @@
 
       <div class="ab-feature">
         <label class="ab-toggle">
-          <input type="checkbox" name="ab_language_audio_player_enabled" value="1" <?php checked(get_option('ab_language_audio_player_enabled', true)); ?> />
+          <input type="checkbox" name="ab_language_audio_note_enabled" value="1" <?php checked($is_language_note_enabled); ?> />
           <span class="ab-slider"></span>
-          <span class="ab-label">Enable Language Audio Player shortcode</span>
+          <span class="ab-label">Enable Language Audio Note shortcode</span>
         </label>
       </div>
 

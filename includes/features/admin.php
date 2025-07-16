@@ -1,16 +1,16 @@
 <?php
 
 require_once __DIR__ . '/get_global_post_position.php';
+require_once __DIR__ . '/language_switch.php';
 
-// Get Global Post Position
+// Save settings on form submission (runs only in admin area)
 add_action('admin_init', function () {
     if (
         $_SERVER['REQUEST_METHOD'] === 'POST' &&
         isset($_POST['ab_settings_nonce']) &&
         wp_verify_nonce($_POST['ab_settings_nonce'], 'ab_save_settings')
     ) {
-
-        $enabled = isset($_POST['ab_post_order_enabled']) ? 1 : 0;
-        update_option('ab_post_order_enabled', $enabled);
+        update_option('ab_post_order_enabled', isset($_POST['ab_post_order_enabled']) ? 1 : 0);
+        update_option('ab_language_switch_enabled', isset($_POST['ab_language_switch_enabled']) ? 1 : 0);
     }
 });

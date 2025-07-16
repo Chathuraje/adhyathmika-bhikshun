@@ -1,5 +1,6 @@
 <?php
-$is_enabled = get_option('ab_post_order_enabled', true);
+$is_post_order_enabled = get_option('ab_post_order_enabled', true);
+$is_language_switch_enabled = get_option('ab_language_switch_enabled', true);
 ?>
 
 <div class="wrap" style="max-width: 800px; margin: auto;">
@@ -19,20 +20,25 @@ $is_enabled = get_option('ab_post_order_enabled', true);
     <!-- 🔘 Toggle Shortcode Feature -->
     <hr style="margin: 40px 0;">
 
-    <form method="POST" style="background: #fff; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
+    <form method="POST" style="margin-top: 30px;">
         <?php wp_nonce_field('ab_save_settings', 'ab_settings_nonce'); ?>
+
         <h2>Feature Settings</h2>
 
-        <label style="display: flex; align-items: center; margin-top: 15px;">
-            <input type="checkbox" name="ab_post_order_enabled" value="1" <?php checked($is_enabled); ?> />
-            <span style="margin-left: 10px;">
-                Display the position of the current post in chronological order.
-            </span>
+        <label>
+            <input type="checkbox" name="ab_post_order_enabled" value="1" <?php checked($is_post_order_enabled); ?> />
+            Enable [post_order] shortcode
         </label>
-        <p style="margin-left: 25px; font-size: 0.9em; color: #555;">
-            Enable this feature to allow the <code>[post_order]</code> shortcode in posts or pages.
-        </p>
+        <p>This displays the post's position in chronological order using the shortcode <code>[post_order]</code>.</p>
 
-        <input type="submit" class="button button-primary" value="Save Settings" style="margin-top: 20px;" />
+        <br />
+
+        <label>
+            <input type="checkbox" name="ab_language_switch_enabled" value="1" <?php checked($is_language_switch_enabled); ?> />
+            Enable [language_switch] shortcode
+        </label>
+        <p>Display the language toggle switcher with English and Sinhala options.using the shortcode <code>[language_switch] </code>.</p>
+
+        <input type="submit" class="button button-primary" value="Save Settings" />
     </form>
 </div>

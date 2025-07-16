@@ -1,13 +1,4 @@
 <?php
-
-// Add the [language_switch] shortcode only if enabled
-add_action('init', function () {
-    if (get_option('ab_language_switch_enabled', true)) {
-        add_shortcode('language_switch', 'render_language_switch_shortcode');
-    }
-});
-
-
 function render_language_switch_shortcode()
 {
     ob_start();
@@ -86,4 +77,3 @@ function render_language_switch_shortcode()
 <?php
     return ob_get_clean();
 }
-add_shortcode('language_switch', 'render_language_switch_shortcode');

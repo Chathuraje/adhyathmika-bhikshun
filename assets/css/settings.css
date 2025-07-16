@@ -1,0 +1,150 @@
+.ab-wrap {
+    max-width: 640px;
+    margin: 40px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  }
+  
+  .ab-wrap h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 10px;
+  }
+  
+  .ab-wrap p {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 25px;
+  }
+  
+  .ab-shortcode-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+  }
+  
+  .ab-shortcode-table td {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #444;
+  }
+  
+  .ab-shortcode-table td:first-child {
+    font-family: monospace;
+    color: #0073aa;
+    white-space: nowrap;
+    width: 160px;
+  }
+  
+  hr {
+    border: none;
+    border-top: 1px solid #eaeaea;
+    margin: 30px 0;
+  }
+  
+  .ab-feature {
+    margin-bottom: 30px;
+  }
+  
+  .ab-desc {
+    font-size: 14px;
+    color: #555;
+    margin-top: 6px;
+  }
+  
+  .ab-toggle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .ab-toggle input {
+    display: none;
+  }
+  
+  .ab-slider {
+    width: 50px;
+    height: 26px;
+    background: #ccc;
+    border-radius: 13px;
+    position: relative;
+    margin-right: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .ab-slider::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+  }
+  
+  .ab-toggle input:checked + .ab-slider {
+    background-color: #0073aa;
+  }
+  
+  .ab-toggle input:checked + .ab-slider::before {
+    transform: translateX(24px);
+  }
+  
+  .ab-label {
+    font-weight: 600;
+    font-size: 16px;
+    color: #222;
+  }
+  
+  .ab-shortcode {
+    background: #f4f7fa;
+    border: 1.5px solid #0073aa;
+    color: #0073aa;
+    font-family: monospace;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 8px;
+    position: relative;
+    transition: all 0.3s ease;
+    user-select: all;
+  }
+  
+  .ab-shortcode:hover {
+    background: #0073aa;
+    color: #fff;
+  }
+  
+  .ab-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 140%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  
+  .ab-shortcode.active .ab-tooltip {
+    visibility: visible;
+    opacity: 1;
+  }
+  

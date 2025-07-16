@@ -2,13 +2,36 @@
 
 /**
  * Plugin Name: Adhyathmika Bhikshun
- * Description: Admin support tools for adhyathmikabhikshun.org spiritual blog.
- *              Includes ACF export/import and CPT posts export/import.
+ * Description: A WordPress plugin for managing Adhyathmika Bhikshun Website Activities, including post ordering and language switching.
  * Version: 1.5
  * Author: Adhyathmika Bhikshun
  */
 
 if (!defined('ABSPATH')) exit;
+
+add_action('admin_enqueue_scripts', 'ab_enqueue_admin_assets');
+function ab_enqueue_admin_assets($hook) {
+    // Optional: Limit loading to specific admin page if needed
+    // if ($hook !== 'toplevel_page_ab-settings') return;
+
+    $plugin_url = plugin_dir_url(__FILE__);
+
+    wp_enqueue_style(
+        'ab-settings-css',
+        $plugin_url . 'assets/css/settings.css',
+        [],
+        '1.0.0'
+    );
+
+    wp_enqueue_script(
+        'ab-settings-js',
+        $plugin_url . 'assets/js/settings.js',
+        [],
+        '1.0.0',
+        true
+    );
+}
+
 
 // Register main admin menu and submenus
 add_action('admin_menu', function () {
@@ -42,6 +65,16 @@ add_action('admin_menu', function () {
         'abh-export-import-manager',            // Menu slug
         'abh_export_import_manager_page'        // Callback function
     );
+
+    // Export/Import Manager submenu
+    add_submenu_page(
+        'adhyathmika-bhikshun',                  // Parent slug
+        'Feature Settings',                     // Page title
+        'Features',                             // Menu title
+        'manage_options',                       // Capability
+        'abh-features',                         // Menu slug
+        'abh_features_page'                     // Callback function
+    );
 });
 
 // Load dashboard page
@@ -54,6 +87,12 @@ function abh_dashboard()
 function abh_export_import_manager_page()
 {
     require_once plugin_dir_path(__FILE__) . '/pages/export-import-manager.php';
+}
+
+// Load feature page
+function abh_features_page()
+{
+    require_once plugin_dir_path(__FILE__) . '/pages/features.php';
 }
 
 // This file handles the export/import of site contents

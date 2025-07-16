@@ -2,8 +2,13 @@
 
 require_once __DIR__ . '/get_global_post_position.php';
 require_once __DIR__ . '/language_switch.php';
+require_once __DIR__ . '/reading_time.php';
+require_once __DIR__ . '/auto_generate_image_alt.php';
+require_once __DIR__ . '/add_dynamic_site_link_to_admin_bar.php';
 
-// Save settings on form submission (runs only in admin area)
+/**
+ * Save settings on admin POST
+ */
 add_action('admin_init', function () {
     if (
         $_SERVER['REQUEST_METHOD'] === 'POST' &&
@@ -12,5 +17,39 @@ add_action('admin_init', function () {
     ) {
         update_option('ab_post_order_enabled', isset($_POST['ab_post_order_enabled']) ? 1 : 0);
         update_option('ab_language_switch_enabled', isset($_POST['ab_language_switch_enabled']) ? 1 : 0);
+        update_option('ab_reading_time_enabled', isset($_POST['ab_reading_time_enabled']) ? 1 : 0);
+        update_option('ab_image_alt_enabled', isset($_POST['ab_image_alt_enabled']) ? 1 : 0);
+        update_option('ab_cross_site_link_enabled', isset($_POST['ab_cross_site_link_enabled']) ? 1 : 0);
     }
 });
+
+/**
+ * Register shortcodes conditionally
+ */
+add_action('init', function () {
+    if (get_option('ab_post_order_enabled', true)) {
+        add_shortcode('post_order', 'get_global_post_position');
+    }
+
+    if (get_option('ab_language_switch_enabled', true)) {
+        add_shortcode('language_switch', 'render_language_switch_shortcode');
+    }
+
+    if (get_option('ab_reading_time_enabled', true)) {
+        add_shortcode('reading_time', 'custom_reading_time_shortcode');
+    }
+});
+
+/**
+ * Auto-ALT filter conditionally enabled
+ */
+if (get_option('ab_image_alt_enabled', true)) {
+    add_filter('wp_generate_attachment_metadata', 'auto_generate_clean_image_alt', 10, 2);
+}
+
+/**
+ * Add dynamic .org/.lk site link to admin bar
+ */
+if (get_option('ab_cross_site_link_enabled', true)) {
+    add_action('admin_bar_menu', 'add_dynamic_site_link_to_admin_bar', 100);
+}

@@ -1,0 +1,8 @@
+{
+    "intelephense.environment.includePaths": [
+      "C:/xampp/htdocs/adhyathmika-bhikshun/wp-includes",
+      "C:/xampp/htdocs/adhyathmika-bhikshun/wp-admin",
+      "C:/xampp/htdocs/adhyathmika-bhikshun/wp-content/plugins/secure-custom-fields"
+    ]
+  }
+  

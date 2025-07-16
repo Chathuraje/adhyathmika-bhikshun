@@ -118,9 +118,6 @@
           <input type="checkbox" name="ab_use_cdn_urls_enabled" value="1" <?php checked($is_use_cdn_urls_enabled); ?> />
           <span class="ab-slider"></span>
           <span class="ab-label">Enable this to rewrite media attachment URLs to the CDN URL specified below.</span>
-            <span role="tooltip" id="tip-cdn-urls" class="ab-tooltip-feature">
-                This feature rewrites media attachment URLs from your site URL to the CDN URL you specify below for faster content delivery.
-            </span>
         </label>
         <div class="ab-desc" style="margin-top:8px;">
           Rewrite media attachment URLs from your site URL to the CDN URL you specify below for faster content delivery.

@@ -6,6 +6,7 @@ require_once __DIR__ . '/reading_time.php';
 require_once __DIR__ . '/auto_generate_image_alt.php';
 require_once __DIR__ . '/add_dynamic_site_link_to_admin_bar.php';
 require_once __DIR__ . '/cdn_url_rewrite.php';
+require_once __DIR__ . '/language_audio_note.php';
 
 /**
  * Save settings on admin POST
@@ -21,6 +22,7 @@ add_action('admin_init', function () {
         update_option('ab_reading_time_enabled', isset($_POST['ab_reading_time_enabled']) ? 1 : 0);
         update_option('ab_image_alt_enabled', isset($_POST['ab_image_alt_enabled']) ? 1 : 0);
         update_option('ab_cross_site_link_enabled', isset($_POST['ab_cross_site_link_enabled']) ? 1 : 0);
+        update_option('ab_language_audio_player_enabled', isset($_POST['ab_language_audio_player_enabled']) ? 1 : 0);
 
         // Save CDN URL rewrite toggle and CDN URL manually
         update_option('ab_use_cdn_urls_enabled', isset($_POST['ab_use_cdn_urls_enabled']) ? 1 : 0);
@@ -47,7 +49,10 @@ add_action('init', function () {
     if (get_option('ab_reading_time_enabled', true)) {
         add_shortcode('reading_time', 'custom_reading_time_shortcode');
     }
-    
+
+    if (get_option('ab_language_audio_player_enabled', true)) {
+        add_shortcode('language_audio_note', 'ab_language_audio_note_shortcode');
+    } 
 });
 
 /**

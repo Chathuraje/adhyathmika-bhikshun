@@ -39,6 +39,15 @@
         </td>
         <td>Displays the estimated reading time for the current post.</td>
       </tr>
+      <tr>
+      <td>
+        <span class="ab-shortcode" data-shortcode="[language_audio_player]" tabindex="0" role="button" aria-label="Copy [language_audio_player]">[language_audio_player]
+            <span class="ab-tooltip">Copied!</span>
+        </span>
+      </td>
+      <td>Plays background audio in Sinhala (.lk) or English (.org).</td>
+    </tr>
+
     </table>
   </section>
 
@@ -64,6 +73,14 @@
           <input type="checkbox" name="ab_language_switch_enabled" value="1" <?php checked($is_language_switch_enabled); ?> />
           <span class="ab-slider"></span>
           <span class="ab-label">Enable Language Switcher shortcode</span>
+        </label>
+      </div>
+
+      <div class="ab-feature">
+        <label class="ab-toggle">
+          <input type="checkbox" name="ab_language_audio_player_enabled" value="1" <?php checked(get_option('ab_language_audio_player_enabled', true)); ?> />
+          <span class="ab-slider"></span>
+          <span class="ab-label">Enable Language Audio Player shortcode</span>
         </label>
       </div>
 

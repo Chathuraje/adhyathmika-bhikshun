@@ -4,12 +4,18 @@
  * Adds a button to posts and auto-sync on save, conditionally enabled by plugin settings.
  */
 
-require_once __DIR__ . '/../tools/encode.php';
+require_once __DIR__ . '../../../tools/encode.php';
 
 // Define JWT_SECRET_KEY if not already defined
 if (!defined('JWT_SECRET_KEY')) {
     return; // Ensure the secret key is defined before proceeding
 }
+
+// check if testing is enabled
+$is_testing_enabled = get_option('ab_testing_enabled', true);
+
+$WEBHOOK_URL = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_with_airtable';
+$SECRET_KEY = defined('JWT_SECRET_KEY');
 
 // 1. Add "Sync with Airtable" link next to Edit/Trash
 add_filter('post_row_actions', function($actions, $post) {
@@ -22,6 +28,8 @@ add_filter('post_row_actions', function($actions, $post) {
 
 // 2. Admin POST handler for manual sync
 add_action('admin_post_sync_with_airtable', function () {
+    global $WEBHOOK_URL, $SECRET_KEY, $is_testing_enabled;
+
     $post_id = intval($_GET['post_id'] ?? 0);
     if (!$post_id || !current_user_can('edit_post', $post_id)) {
         wp_die('Unauthorized', 403);
@@ -39,19 +47,17 @@ add_action('admin_post_sync_with_airtable', function () {
         wp_die('Could not extract YouTube ID.', 400);
     }
 
-    $webhook_url = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_with_airtable';
-    $secret_key = defined('JWT_SECRET_KEY');
-
     $payload = [
         'iat' => time(),
         'exp' => time() + 180,
         'post_id' => $post_id,
         'youtube_id' => $youtube_id,
+        'testing' => $is_testing_enabled ? 'true' : 'false',
     ];
 
-    $jwt_token = jwt_encode($payload, $secret_key);
+    $jwt_token = jwt_encode($payload, $SECRET_KEY);
 
-    $response = wp_remote_post($webhook_url, [
+    $response = wp_remote_post($WEBHOOK_URL, [
         'method'  => 'POST',
         'headers' => [
             'Authorization' => 'Bearer ' . $jwt_token,
@@ -60,6 +66,7 @@ add_action('admin_post_sync_with_airtable', function () {
         'body' => json_encode([
             'post_id'    => $post_id,
             'youtube_id' => $youtube_id,
+            'testing' => $is_testing_enabled ? 'true' : 'false',
         ]),
     ]);
 
@@ -94,6 +101,8 @@ add_action('admin_notices', function () {
 
 // 4. Automatic sync on post save
 add_action('save_post_post', function($post_id, $post, $update) {
+    global $WEBHOOK_URL, $SECRET_KEY, $is_testing_enabled;
+
     if (
         defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ||
         wp_is_post_revision($post_id) ||
@@ -113,19 +122,16 @@ add_action('save_post_post', function($post_id, $post, $update) {
     preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([a-zA-Z0-9_-]{11})/', $youtube_url, $matches);
     $youtube_id = $matches[1] ?? $youtube_url;
 
-    $webhook_url = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_with_airtable';
-    $secret_key = defined('JWT_SECRET_KEY');
-    if (!$secret_key) return;
-
     $payload = [
         'iat' => time(),
         'exp' => time() + 180,
         'post_id' => $post_id,
         'youtube_id' => $youtube_id,
+        'testing' => $is_testing_enabled ? 'true' : 'false',
     ];
-    $jwt_token = jwt_encode($payload, $secret_key);
+    $jwt_token = jwt_encode($payload, $SECRET_KEY);
 
-    wp_remote_post($webhook_url, [
+    wp_remote_post($WEBHOOK_URL, [
         'method'  => 'POST',
         'blocking' => false,
         'headers' => [
@@ -135,6 +141,7 @@ add_action('save_post_post', function($post_id, $post, $update) {
         'body' => json_encode([
             'post_id'    => $post_id,
             'youtube_id' => $youtube_id,
+            'testing' => $is_testing_enabled ? 'true' : 'false',
         ]),
     ]);
 }, 10, 3);

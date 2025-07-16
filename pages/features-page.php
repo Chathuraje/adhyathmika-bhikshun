@@ -1,188 +1,141 @@
 <?php
-    $is_post_order_enabled = get_option('ab_post_order_enabled', true);
-    $is_language_switch_enabled = get_option('ab_language_switch_enabled', true);
-    $is_reading_time_enabled = get_option('ab_reading_time_enabled', true);
-    $is_image_alt_enabled = get_option('ab_image_alt_enabled', true);
-    $is_cross_site_link_enabled = get_option('ab_cross_site_link_enabled', true);   
-    $is_use_cdn_urls_enabled = get_option('ab_use_cdn_urls_enabled', false);
-    $is_language_note_enabled = get_option('ab_language_audio_note_enabled', true);
-    $is_rest_api_extras_enabled = get_option('ab_rest_api_extras_enabled', false);
+if (!current_user_can('manage_options')) {
+    wp_die(__('You do not have permission to access this page.', 'adhyathmika-bhikshun'));
+}
+
+$settings = [
+    'ab_post_order_enabled'          => get_option('ab_post_order_enabled', true),
+    'ab_language_switch_enabled'     => get_option('ab_language_switch_enabled', true),
+    'ab_reading_time_enabled'        => get_option('ab_reading_time_enabled', true),
+    'ab_image_alt_enabled'           => get_option('ab_image_alt_enabled', true),
+    'ab_cross_site_link_enabled'     => get_option('ab_cross_site_link_enabled', true),
+    'ab_use_cdn_urls_enabled'        => get_option('ab_use_cdn_urls_enabled', false),
+    'ab_language_audio_note_enabled' => get_option('ab_language_audio_note_enabled', true),
+    'ab_rest_api_extras_enabled'     => get_option('ab_rest_api_extras_enabled', false),
+    'ab_cdn_url'                     => get_option('ab_cdn_url', ''),
+];
 ?>
 
 <div class="ab-wrap">
-<!-- SHORTCODES REFERENCE -->
-<h2>Available Shortcodes</h2>
-  <p>Use the following shortcodes in your posts or pages:</p>
-
+  <h2><?php _e('Available Shortcodes', 'adhyathmika-bhikshun'); ?></h2>
+  <p><?php _e('Use the following shortcodes in your posts or pages:', 'adhyathmika-bhikshun'); ?></p>
   <hr/>
 
-<section class="ab-section">
-  <table class="ab-shortcode-table">
+  <section class="ab-section">
+    <table class="ab-shortcode-table">
+      <?php
+      $shortcodes = [
+          'ab_post_order_enabled'          => ['[post_order]', 'Displays the post\'s position in chronological order.'],
+          'ab_language_switch_enabled'     => ['[language_switch]', 'Shows a language toggle with English and Sinhala options.'],
+          'ab_reading_time_enabled'        => ['[reading_time]', 'Displays the estimated reading time for the current post.'],
+          'ab_language_audio_note_enabled' => ['[language_audio_note]', 'Plays background audio in Sinhala (.lk) or English (.org).'],
+      ];
 
-    <tr id="shortcode-post-order" <?php if (!$is_post_order_enabled) echo 'style="display:none;"'; ?>>
-      <td>
-        <span class="ab-shortcode" data-shortcode="[post_order]" tabindex="0" role="button" aria-label="Copy [post_order]">[post_order]
-            <span class="ab-tooltip">Copied!</span>
-        </span>
-      </td>
-      <td>Displays the post's position in chronological order.</td>
-    </tr>
-
-    <tr id="shortcode-language-switch" <?php if (!$is_language_switch_enabled) echo 'style="display:none;"'; ?>>
-      <td>
-        <span class="ab-shortcode" data-shortcode="[language_switch]" tabindex="0" role="button" aria-label="Copy [language_switch]">[language_switch]
-            <span class="ab-tooltip">Copied!</span>
-        </span>
-      </td>
-      <td>Shows a language toggle with English and Sinhala options.</td>
-    </tr>
-
-    <tr id="shortcode-reading-time" <?php if (!$is_reading_time_enabled) echo 'style="display:none;"'; ?>>
-      <td>
-        <span class="ab-shortcode" data-shortcode="[reading_time]" tabindex="0" role="button" aria-label="Copy [reading_time]">[reading_time]
-            <span class="ab-tooltip">Copied!</span>
-        </span>
-      </td>
-      <td>Displays the estimated reading time for the current post.</td>
-    </tr>
-
-    <tr id="shortcode-language-note" <?php if (!$is_language_note_enabled) echo 'style="display:none;"'; ?>>
-      <td>
-        <span class="ab-shortcode" data-shortcode="[language_audio_note]" tabindex="0" role="button" aria-label="Copy [language_audio_note]">[language_audio_note]
-            <span class="ab-tooltip">Copied!</span>
-        </span>
-      </td>
-      <td>Plays background audio in Sinhala (.lk) or English (.org).</td>
-    </tr>
-
-  </table>
-</section>
-
+      foreach ($shortcodes as $setting_key => [$tag, $desc]) {
+          if (empty($settings[$setting_key])) continue;
+          ?>
+          <tr>
+            <td>
+              <span class="ab-shortcode" data-shortcode="<?php echo esc_attr($tag); ?>" tabindex="0" role="button">
+                <?php echo esc_html($tag); ?>
+                <span class="ab-tooltip"><?php _e('Copied!', 'adhyathmika-bhikshun'); ?></span>
+              </span>
+            </td>
+            <td><?php echo esc_html($desc); ?></td>
+          </tr>
+          <?php
+      }
+      ?>
+    </table>
+  </section>
 </div>
 
-
 <div class="ab-wrap">
-  <h2>Feature Settings</h2>
-  <p>Configure the settings for the shortcodes and features below:</p>
-
+  <h2><?php _e('Feature Settings', 'adhyathmika-bhikshun'); ?></h2>
+  <p><?php _e('Configure the settings for shortcodes and features below:', 'adhyathmika-bhikshun'); ?></p>
   <hr/>
 
-  <form method="POST">
+  <form method="POST" action="">
     <?php wp_nonce_field('ab_save_settings', 'ab_settings_nonce'); ?>
 
-    <!--  SHORTCODES TOGGLE SETTINGS -->
+    <?php if (!empty($_POST) && check_admin_referer('ab_save_settings', 'ab_settings_nonce')): ?>
+      <div class="notice notice-success is-dismissible">
+        <p><?php _e('Settings saved successfully.', 'adhyathmika-bhikshun'); ?></p>
+      </div>
+    <?php endif; ?>
+
+    <!-- Shortcode Toggles -->
     <section class="ab-section">
-      <h3>Enable / Disable Shortcodes</h3>
-
-      <div class="ab-feature">
-        <label class="ab-toggle">
-          <input type="checkbox" name="ab_post_order_enabled" value="1" <?php checked($is_post_order_enabled); ?> />
-          <span class="ab-slider"></span>
-          <span class="ab-label">Enable Post Order shortcode</span>
-        </label>
-      </div>
-
-      <div class="ab-feature">
-        <label class="ab-toggle">
-          <input type="checkbox" name="ab_language_switch_enabled" value="1" <?php checked($is_language_switch_enabled); ?> />
-          <span class="ab-slider"></span>
-          <span class="ab-label">Enable Language Switcher shortcode</span>
-        </label>
-      </div>
-
-      <div class="ab-feature">
-        <label class="ab-toggle">
-          <input type="checkbox" name="ab_language_audio_note_enabled" value="1" <?php checked($is_language_note_enabled); ?> />
-          <span class="ab-slider"></span>
-          <span class="ab-label">Enable Language Audio Note shortcode</span>
-        </label>
-      </div>
-
-      <div class="ab-feature">
-        <label class="ab-toggle">
-          <input type="checkbox" name="ab_reading_time_enabled" value="1" <?php checked($is_reading_time_enabled); ?> />
-          <span class="ab-slider"></span>
-          <span class="ab-label">Enable Reading Time shortcode</span>
-        </label>
-      </div>
+      <h3><?php _e('Enable / Disable Shortcodes', 'adhyathmika-bhikshun'); ?></h3>
+      <?php
+      foreach (['ab_post_order_enabled', 'ab_language_switch_enabled', 'ab_language_audio_note_enabled', 'ab_reading_time_enabled'] as $key) {
+          ?>
+          <div class="ab-feature">
+            <label class="ab-toggle">
+              <input type="checkbox" name="<?php echo esc_attr($key); ?>" value="1" <?php checked($settings[$key]); ?> />
+              <span class="ab-slider"></span>
+              <span class="ab-label"><?php echo esc_html(ucwords(str_replace(['ab_', '_enabled'], ['',''], $key))); ?> Shortcode</span>
+            </label>
+          </div>
+          <?php
+      }
+      ?>
     </section>
 
     <hr/>
 
-    <!-- FEATURE TOGGLES -->
+    <!-- Feature Toggles -->
     <section class="ab-section">
-      <h3>Enable / Disable Features</h3>
-      <div class="ab-feature">
-        <label class="ab-toggle">
-          <input type="checkbox" name="ab_image_alt_enabled" value="1" <?php checked($is_image_alt_enabled); ?> />
-          <span class="ab-slider"></span>
-          <span class="ab-label">Enable Auto-Generate Image ALT Text</span>
-        </label>
-        <div class="ab-desc" style="margin-top:8px;">
-            Automatically generate ALT text for images based on their file names.
-          </div>
-      </div>
+      <h3><?php _e('Enable / Disable Features', 'adhyathmika-bhikshun'); ?></h3>
+      <?php
+      $features = [
+          'ab_image_alt_enabled' => 'Auto-Generate Image ALT Text',
+          'ab_cross_site_link_enabled' => 'Dynamic .org/.lk Site Link in Admin Bar',
+          'ab_rest_api_extras_enabled' => 'Expose Extra Data to REST API',
+      ];
 
-      <div class="ab-feature">
-        <label class="ab-toggle">
-          <input type="checkbox" name="ab_cross_site_link_enabled" value="1" <?php checked($is_cross_site_link_enabled); ?> />
-          <span class="ab-slider"></span>
-          <span class="ab-label">Enable Dynamic .org/.lk Site Link in Admin Bar</span>
-        </label>
-        <div class="ab-desc" style="margin-top:8px;">
-            Adds a dynamic link to the admin bar that points to the .org or .lk version of your site based on the current language.
+      foreach ($features as $key => $label) {
+          ?>
+          <div class="ab-feature">
+            <label class="ab-toggle">
+              <input type="checkbox" name="<?php echo esc_attr($key); ?>" value="1" <?php checked($settings[$key]); ?> />
+              <span class="ab-slider"></span>
+              <span class="ab-label"><?php echo esc_html($label); ?></span>
+            </label>
           </div>
-      </div>
-
-      <div class="ab-feature">
-        <label class="ab-toggle">
-          <input type="checkbox" name="ab_rest_api_extras_enabled" value="1" <?php checked($is_rest_api_extras_enabled); ?> />
-          <span class="ab-slider"></span>
-          <span class="ab-label">Expose Extra Data to REST API</span>
-        </label>
-        <div class="ab-desc" style="margin-top:8px;">
-          Enable this to expose raw post content and Rank Math focus keyword in the REST API.
-        </div>
+          <?php
+      }
+      ?>
     </section>
-
-
 
     <hr/>
 
-    <!-- CDN SETTINGS -->
+    <!-- CDN Settings -->
     <section class="ab-section">
-      <h3>CDN URL Settings</h3>
-
+      <h3><?php _e('CDN URL Settings', 'adhyathmika-bhikshun'); ?></h3>
       <div class="ab-feature">
         <label class="ab-toggle">
-          <input type="checkbox" name="ab_use_cdn_urls_enabled" value="1" <?php checked($is_use_cdn_urls_enabled); ?> />
+          <input type="checkbox" name="ab_use_cdn_urls_enabled" value="1" <?php checked($settings['ab_use_cdn_urls_enabled']); ?> />
           <span class="ab-slider"></span>
-          <span class="ab-label">Enable this to rewrite media attachment URLs to the CDN URL specified below.</span>
+          <span class="ab-label"><?php _e('Enable CDN URL rewriting', 'adhyathmika-bhikshun'); ?></span>
         </label>
-        <div class="ab-desc" style="margin-top:8px;">
-          Rewrite media attachment URLs from your site URL to the CDN URL you specify below for faster content delivery.
-        </div>
+        <div class="ab-desc"><?php _e('Rewrite media URLs using the CDN base URL below.', 'adhyathmika-bhikshun'); ?></div>
       </div>
 
       <label for="ab_cdn_url" style="display:block; margin-top:12px; font-weight:600;">
-        CDN Base URL (include https://)
+        <?php _e('CDN Base URL (include https://)', 'adhyathmika-bhikshun'); ?>
       </label>
       <input
         type="url"
         name="ab_cdn_url"
         id="ab_cdn_url"
-        value="<?php echo esc_attr(get_option('ab_cdn_url', '')); ?>"
+        value="<?php echo esc_attr($settings['ab_cdn_url']); ?>"
         placeholder="https://cdn.example.com"
-        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px;"
+        style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px;"
       />
     </section>
 
-    <br/>
-    <br/>
-    <hr/>
-
-    <input type="submit" class="button button-primary" value="Save Settings" />
+    <br/><br/>
+    <input type="submit" class="button button-primary" value="<?php esc_attr_e('Save Settings', 'adhyathmika-bhikshun'); ?>" />
   </form>
-
-  <hr/>
 </div>

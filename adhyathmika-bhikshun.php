@@ -65,38 +65,35 @@ add_action('admin_menu', function () {
         'abh_export_import_manager_page'        // Callback function
     );
 
-    // Export/Import Manager submenu
+    // Feature Settings submenu
     add_submenu_page(
-        'adhyathmika-bhikshun',                  // Parent slug
-        'Feature Settings',                     // Page title
-        'Features',                             // Menu title
-        'manage_options',                       // Capability
-        'abh-features',                         // Menu slug
-        'abh_features_page'                     // Callback function
+        'adhyathmika-bhikshun',                  
+        'Feature Settings',                     
+        'Features',                             
+        'manage_options',                       
+        'abh-features',                         
+        'abh_features_page'                     
     );
+
+    // Post Management submenu
+    add_submenu_page(
+        'adhyathmika-bhikshun',
+        'Post Management',
+        'Posts',
+        'manage_options',
+        'abh-post-management',
+        'abh_post_management_page'
+    );
+
+
 });
 
-// Load dashboard page
-function abh_dashboard()
-{
-    require_once plugin_dir_path(__FILE__) . '/pages/dashboard.php';
-}
 
-// Load unified export/import manager page
-function abh_export_import_manager_page()
-{
-    require_once plugin_dir_path(__FILE__) . '/pages/export-import-manager.php';
-}
+// Include all pages
+require_once plugin_dir_path(__FILE__) . '/includes/pages/main.php';
 
-// Load feature page
-function abh_features_page()
-{
-    require_once plugin_dir_path(__FILE__) . '/pages/features.php';
-}
-
-// This file handles the export/import of site contents
+// Include all functions
 require_once plugin_dir_path(__FILE__) . '/includes/admin.php';
-
 
 // Load Widgets
 require_once plugin_dir_path(__FILE__) . '/includes/widgets.php';

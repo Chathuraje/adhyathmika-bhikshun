@@ -42,7 +42,10 @@ function handle_import_custom_posts_endpoint(WP_REST_Request $request)
         }
 
 
-        return new WP_REST_Response(['message' => 'Import completed'], 200);
+        return new WP_REST_Response([
+            'message' => 'Posts imported successfully',
+            'count'   => count($data)
+        ], 200);
     } catch (Exception $e) {
         return new WP_REST_Response(['error' => $e->getMessage()], 500);
     }

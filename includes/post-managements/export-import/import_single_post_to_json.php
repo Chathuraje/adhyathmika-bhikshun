@@ -125,6 +125,6 @@ if (!function_exists('import_custom_posts_from_data')) {
             wp_insert_comment(wp_slash($comment));
         }
 
-        airtable_sync_send($post_id, $post['post_uid']); 
+        airtable_sync_send($post_id, $post['meta']['post_uid']); 
     }
 }

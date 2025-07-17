@@ -37,15 +37,6 @@ if (!function_exists('import_custom_posts_from_data')) {
 
         // if (!in_array($post['post_type'], $allowed_post_types)) return;
 
-        // Check if post already exists by unique identifier (e.g., post_name + post_type)
-        $existing_post = get_page_by_path($post['slug'], OBJECT, $post['post_type']);
-
-        // If it exists, only do the sync and return
-        if ($existing_post) {
-            airtable_sync_send($existing_post->ID, $post['meta']['post_uid']);
-            return;
-        }
-
         $post_id = wp_insert_post([
             'post_title'   => wp_slash($post['post_title']),
             'post_content' => wp_slash($post['post_content']),

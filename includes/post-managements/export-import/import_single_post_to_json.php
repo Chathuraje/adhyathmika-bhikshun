@@ -49,9 +49,19 @@ if (!function_exists('import_custom_posts_from_data')) {
 
             if (!empty($post['is_sticky'])) stick_post($post_id);
 
-            foreach ($post['meta'] ?? [] as $key => $value) {
-                update_post_meta($post_id, $key, $value);
+            if (!empty($post['meta']) && is_array($post['meta'])) {
+                foreach ($post['meta'] as $key => $value) {
+                    // If it's a flat key-value pair:
+                    if (is_string($key)) {
+                        update_post_meta($post_id, $key, $value);
+                    }
+                    // If it's a structured array like ['key' => '...', 'value' => '...']
+                    elseif (is_array($value) && isset($value['key'], $value['value'])) {
+                        update_post_meta($post_id, $value['key'], $value['value']);
+                    }
+                }
             }
+            
 
             // --- FEATURED IMAGE ---
             if (!empty($post['featured_image'])) {

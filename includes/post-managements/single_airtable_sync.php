@@ -127,7 +127,7 @@ add_action('admin_post_sync_with_airtable', function () {
     $body = wp_remote_retrieve_body($response);
 
     if ($code >= 200 && $code < 300) {
-        $success = sprintf('✅ Post ID %d synced successfully%s');
+        $success = "Post synced successfully with Airtable!";
         wp_redirect(add_query_arg([
             'post_type'       => 'post',
             'sync_status'     => 'success',

@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '../../../tools/encode.php';
+require_once __DIR__ . '/export-import/export_single_post_to_json.php';
 
 if (!defined('JWT_SECRET_KEY')) {
     define('JWT_SECRET_KEY', '');
@@ -81,6 +82,8 @@ add_action('admin_post_sync_with_airtable', function () use ($WEBHOOK_URL, $SECR
         exit;
     }
 
+    $export_result = export_single_post_to_json($post_id, get_post_type($post_id));
+
     $response = wp_remote_post($WEBHOOK_URL, [
         'headers' => [
             'Authorization' => 'Bearer ' . $jwt_token,
@@ -90,6 +93,7 @@ add_action('admin_post_sync_with_airtable', function () use ($WEBHOOK_URL, $SECR
             'post_id'    => $post_id,
             'post_uid'   => $post_uid,
             'testing'    => $is_testing_enabled ? 'true' : 'false',
+            'post_data'  => $export_result['json_data']
         ]),
     ]);
 
@@ -179,6 +183,8 @@ add_action('save_post_post', function ($post_id, $post, $update) use ($WEBHOOK_U
     $jwt_token = jwt_encode($payload, $SECRET_KEY);
     if (!$jwt_token) return;
 
+    $export_result = export_single_post_to_json($post_id, get_post_type($post_id));
+
     wp_remote_post($WEBHOOK_URL, [
         'method'  => 'POST',
         'blocking' => false,
@@ -190,6 +196,7 @@ add_action('save_post_post', function ($post_id, $post, $update) use ($WEBHOOK_U
             'post_id'    => $post_id,
             'post_uid'   => $post_uid,
             'testing'    => $is_testing_enabled ? 'true' : 'false',
+            'post_data'  => $export_result['json_data']
         ]),
     ]);
 }, 10, 3);

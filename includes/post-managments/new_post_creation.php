@@ -71,7 +71,8 @@ add_action('wp_ajax_create_a_new_post', function () use ($N8N_WEBHOOK_URL, $SECR
         wp_redirect(add_query_arg([
             'post_type' => 'post',
             'create_status' => 'error',
-            'error_code' => 0
+            'error_code' => 0,
+            'error_message' => urlencode($response->get_error_message())
         ], admin_url('edit.php')));
         exit;
     }
@@ -103,7 +104,8 @@ add_action('wp_ajax_create_a_new_post', function () use ($N8N_WEBHOOK_URL, $SECR
         wp_redirect(add_query_arg([
             'post_type' => 'post',
             'create_status' => 'http_error',
-            'error_code' => $code
+            'error_code' => $code,
+            'error_message' => urlencode($body)
         ], admin_url('edit.php')));
     }
 
@@ -136,7 +138,7 @@ add_action('admin_notices', function () {
             if ($error_code === 404 && $error_message === 'No data in database') {
                 echo '<div class="notice notice-error is-dismissible"><p>❌ No data in database.</p></div>';
             } else {
-                echo '<div class="notice notice-error is-dismissible"><p>❌ Request failed with code: ' . esc_html($error_code) . '</p></div>';
+                echo '<div class="notice notice-error is-dismissible"><p>❌ Request failed with code: ' . esc_html($error_code) . '</p> <p>' . esc_html($error_message) . '</p></div>';
             }
             break;
     }

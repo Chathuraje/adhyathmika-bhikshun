@@ -5,11 +5,12 @@
  * @package Adhyathmika_Bhikshun
  */
 
+require_once __DIR__ . '/../includes/post-managements/export-import/import_single_post_to_json.php';
+
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 } 
-
-require_once __DIR__ . '../includes/post-managements/export-import/import_single_post_to_json.php';
 
 add_action('rest_api_init', function () {
     register_rest_route('ab-custom-apis/v2', '/import-post', [

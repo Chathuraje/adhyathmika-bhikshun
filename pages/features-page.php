@@ -89,19 +89,31 @@ $settings = [
       <h3><?php _e('Enable / Disable Features', 'adhyathmika-bhikshun'); ?></h3>
       <?php
       $features = [
-          'ab_image_alt_enabled' => 'Auto-Generate Image ALT Text',
-          'ab_cross_site_link_enabled' => 'Dynamic .org/.lk Site Link in Admin Bar',
-          'ab_rest_api_extras_enabled' => 'Expose Extra Data to REST API',
+          'ab_image_alt_enabled' => [
+              'label' => __('Enable Image Alt Text', 'adhyathmika-bhikshun'),
+              'desc'  => __('Automatically adds alt text to images based on their filename.', 'adhyathmika-bhikshun')
+          ],
+          'ab_cross_site_link_enabled' => [
+              'label' => __('Enable Cross-Site Links', 'adhyathmika-bhikshun'),
+              'desc'  => __('Allows linking to external sites with proper tracking.', 'adhyathmika-bhikshun')
+          ],
+          'ab_rest_api_extras_enabled' => [
+              'label' => __('Enable REST API Extras', 'adhyathmika-bhikshun'),
+              'desc'  => __('Adds additional fields to the REST API responses. (raw_contents and rank_math_meta)', 'adhyathmika-bhikshun')
+          ],
       ];
 
       foreach ($features as $key => $label) {
           ?>
           <div class="ab-feature">
             <label class="ab-toggle">
-              <input type="checkbox" name="<?php echo esc_attr($key); ?>" value="1" <?php checked($settings[$key]); ?> />
-              <span class="ab-slider"></span>
-              <span class="ab-label"><?php echo esc_html($label); ?></span>
+                <input type="checkbox" name="<?php echo esc_attr($key); ?>" value="1" <?php checked(get_option($key, true), 1); ?> />
+                <span class="ab-slider"></span>
+                <span class="ab-label"><?php echo esc_html($label['label']); ?></span>
             </label>
+            <div class="ab-desc" style="margin-top:8px;">
+                <?php echo esc_html($label['desc']); ?>
+            </div>
           </div>
           <?php
       }

@@ -34,7 +34,14 @@ function handle_import_custom_posts_endpoint(WP_REST_Request $request)
     }
 
     try {
-        import_custom_posts_from_data($data);
+        
+        if (isset($data[0]) && is_array($data[0])) {
+            import_all_posts_from_data($data);
+        } else {
+            import_custom_posts_from_data($data);
+        }
+
+
         return new WP_REST_Response(['message' => 'Import completed'], 200);
     } catch (Exception $e) {
         return new WP_REST_Response(['error' => $e->getMessage()], 500);

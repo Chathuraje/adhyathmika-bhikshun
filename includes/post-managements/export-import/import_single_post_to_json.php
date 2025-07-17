@@ -128,3 +128,10 @@ if (!function_exists('import_custom_posts_from_data')) {
         airtable_sync_send($post_id, $post['meta']['post_uid']); 
     }
 }
+
+
+function import_all_posts_from_data(array $posts) {
+    foreach ($posts as $post) {
+        import_custom_posts_from_data($post);
+    }
+}

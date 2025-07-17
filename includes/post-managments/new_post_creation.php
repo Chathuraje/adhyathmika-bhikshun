@@ -7,12 +7,13 @@
 require_once __DIR__ . '../../../tools/encode.php';
 
 if (!defined('JWT_SECRET_KEY')) {
-    return;
+    define('JWT_SECRET_KEY', '');
 }
 
 $is_testing_enabled = get_option('ab_testing_enabled', true);
 $N8N_WEBHOOK_URL = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/create_a_new_post';
-$SECRET_KEY = defined('JWT_SECRET_KEY');
+
+$SECRET_KEY = JWT_SECRET_KEY;
 
 // 1. Add "Create a New Post" button to post list
 add_action('admin_head-edit.php', function () {

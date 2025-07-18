@@ -97,7 +97,7 @@ if (!function_exists('import_single_post_from_data')) {
             'post_title'   => wp_slash($post['post_title']),
             'post_content' => wp_slash($post['post_content']),
             'post_excerpt' => wp_slash($post['post_excerpt']),
-            'post_status'  => 'publish',
+            'post_status'  => $post['post_status'],
             'post_type'    => $post['post_type'],
             'post_date'    => $post['post_date'],
             'post_name'    => $post['post_name'],

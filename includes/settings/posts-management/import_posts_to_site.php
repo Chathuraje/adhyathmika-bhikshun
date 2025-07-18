@@ -5,6 +5,14 @@ if (!defined('ABSPATH')) {
 }
 
 // require_once __DIR__ . '/single_airtable_sync.php';
+require_once __DIR__ . '/../../../tools/encode.php';
+
+if (!defined('JWT_SECRET_KEY')) {
+    define('JWT_SECRET_KEY', '');
+}
+
+$IMPORT_ALL_WEBHOOK = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/import_all_posts';
+$SECRET_KEY = JWT_SECRET_KEY;
 
 function get_attachment_id_by_url_slug($url)
 {
@@ -206,3 +214,123 @@ if (!function_exists('import_all_posts_from_data')) {
         return $results;
     }
 }
+
+
+
+// Logic to handle "Import All" button in admin screens
+
+// 🔧 Filter to specify which post types should show "Import All" button
+function allowed_post_types_for_import_button() {
+    return apply_filters('custom_allowed_post_types_for_import_all', ['post']);
+}
+
+// 1. Inject "Import All" button into post list screens
+add_action('admin_head', function () {
+    $screen = get_current_screen();
+    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
+
+    $url = wp_nonce_url(admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $screen->post_type), 'import_all_custom_posts');
+
+    echo '<script type="text/javascript">
+        jQuery(document).ready(function($) {
+            var button = \'<a href="' . esc_url($url) . '" class="page-title-action">Import All ' . ucfirst($screen->post_type) . '</a>\';
+            $(".wrap .page-title-action").first().after(button);
+        });
+    </script>';
+});
+
+
+// 2. Handle AJAX to trigger import
+add_action('wp_ajax_import_all_custom_posts', function () use ($IMPORT_ALL_WEBHOOK, $SECRET_KEY) {
+    check_admin_referer('import_all_custom_posts');
+
+    if (!current_user_can('manage_options')) {
+        wp_redirect(add_query_arg(['post_type' => $_GET['type'] ?? 'post', 'import_status' => 'unauthorized'], admin_url('edit.php')));
+        exit;
+    }
+
+    $current_user = wp_get_current_user();
+    $requested_by = sanitize_user($current_user->user_login);
+    $post_type = sanitize_key($_GET['type'] ?? 'post');
+
+    $payload = [
+        'iat'       => time(),
+        'exp'       => time() + 300,
+        'user'      => $requested_by,
+        'post_type' => $post_type,
+    ];
+
+    $jwt_token = jwt_encode($payload, $SECRET_KEY);
+
+    if (!$jwt_token) {
+        wp_redirect(add_query_arg(['post_type' => $post_type, 'import_status' => 'token_error'], admin_url('edit.php')));
+        exit;
+    }
+
+    $url_with_query = add_query_arg([
+        'requested_by' => $requested_by,
+        'post_type'    => $post_type,
+    ], $IMPORT_ALL_WEBHOOK);
+
+    $response = wp_remote_get($url_with_query, [
+        'headers' => [
+            'Authorization' => 'Bearer ' . $jwt_token,
+        ],
+        'timeout' => 20,
+    ]);
+
+    if (is_wp_error($response)) {
+        wp_redirect(add_query_arg([
+            'post_type' => $post_type,
+            'import_status' => 'error',
+            'error_message' => urlencode($response->get_error_message())
+        ], admin_url('edit.php')));
+        exit;
+    }
+
+    $code = wp_remote_retrieve_response_code($response);
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    if ($code >= 200 && $code < 300) {
+        wp_redirect(add_query_arg([
+            'post_type' => $post_type,
+            'import_status' => 'success',
+            'success_message' => urlencode($data['message'] ?? 'Imported successfully.'),
+        ], admin_url('edit.php')));
+    } else {
+        wp_redirect(add_query_arg([
+            'post_type' => $post_type,
+            'import_status' => 'http_error',
+            'error_code' => $code,
+            'error_message' => urlencode($body)
+        ], admin_url('edit.php')));
+    }
+
+    exit;
+});
+
+// 3. Show admin notice
+add_action('admin_notices', function () {
+    if (!isset($_GET['import_status'])) return;
+
+    $status = $_GET['import_status'];
+    $message = esc_html(urldecode($_GET['success_message'] ?? ''));
+    $error = esc_html(urldecode($_GET['error_message'] ?? ''));
+
+    switch ($status) {
+        case 'success':
+            echo '<div class="notice notice-success is-dismissible"><p>✅ ' . $message . '</p></div>';
+            break;
+        case 'unauthorized':
+            echo '<div class="notice notice-error is-dismissible"><p>❌ You are not authorized to import posts.</p></div>';
+            break;
+        case 'token_error':
+            echo '<div class="notice notice-error is-dismissible"><p>❌ JWT token creation failed.</p></div>';
+            break;
+        case 'error':
+        case 'http_error':
+            echo '<div class="notice notice-error is-dismissible"><p>❌ Import failed: ' . $error . '</p></div>';
+            break;
+    }
+}); 

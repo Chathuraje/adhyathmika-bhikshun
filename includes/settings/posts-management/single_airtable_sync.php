@@ -369,3 +369,106 @@ add_action('save_post_post', function ($post_id, $post, $update) {
 //         airtable_sync_send($post_id, $post_uid);
 //     }
 // }, 10, 3);
+
+
+/**
+ * Sync all posts with Airtable
+ */
+
+ add_action('wp_ajax_sync_all_with_airtable', function () use ($SECRET_KEY) {
+    check_admin_referer('sync_all_with_airtable');
+
+    if (!current_user_can('manage_options')) {
+        wp_redirect(add_query_arg(['sync_status' => 'unauthorized'], admin_url('edit.php')));
+        exit;
+    }
+
+    $current_user = wp_get_current_user();
+    $requested_by = sanitize_user($current_user->user_login);
+
+    $payload = [
+        'iat'  => time(),
+        'exp'  => time() + 300,
+        'user' => $requested_by,
+    ];
+
+    $jwt_token = jwt_encode($payload, $SECRET_KEY);
+
+    if (!$jwt_token) {
+        wp_redirect(add_query_arg(['sync_status' => 'token_error'], admin_url('edit.php')));
+        exit;
+    }
+
+    $url = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook-test/sync_all_with_airtable';
+
+    $response = wp_remote_get($url, [
+        'headers' => [
+            'Authorization' => 'Bearer ' . $jwt_token,
+        ],
+        'timeout' => 20,
+    ]);
+
+    if (is_wp_error($response)) {
+        wp_redirect(add_query_arg([
+            'sync_status' => 'error',
+            'error_message' => urlencode($response->get_error_message())
+        ], admin_url('edit.php')));
+        exit;
+    }
+
+    $code = wp_remote_retrieve_response_code($response);
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    if ($code >= 200 && $code < 300) {
+        wp_redirect(add_query_arg([
+            'sync_status' => 'success',
+            'success_message' => urlencode($data['message'] ?? 'Sync successful.')
+        ], admin_url('edit.php')));
+    } else {
+        wp_redirect(add_query_arg([
+            'sync_status' => 'http_error',
+            'error_code' => $code,
+            'error_message' => urlencode($body)
+        ], admin_url('edit.php')));
+    }
+
+    exit;
+});
+
+
+add_action('admin_head', function () {
+    $screen = get_current_screen();
+    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
+
+    $sync_url = wp_nonce_url(admin_url('admin-ajax.php?action=sync_all_with_airtable'), 'sync_all_with_airtable');
+
+    echo '<script type="text/javascript">
+        jQuery(document).ready(function($) {
+            var syncButton = \'<a href="' . esc_url($sync_url) . '" class="page-title-action">Sync All in Airtable</a>\';
+            $(".wrap .page-title-action").first().after(syncButton).after(importButton);
+        });
+    </script>';
+});
+
+
+add_action('admin_notices', function () {
+    if (!isset($_GET['sync_status'])) return;
+
+    $status = $_GET['sync_status'];
+    $message = esc_html(urldecode($_GET['success_message'] ?? ''));
+    $error = esc_html(urldecode($_GET['error_message'] ?? ''));
+
+    switch ($status) {
+        case 'success':
+            echo '<div class="notice notice-success is-dismissible"><p>✅ ' . $message . '</p></div>';
+            break;
+        case 'unauthorized':
+            echo '<div class="notice notice-error is-dismissible"><p>❌ You are not authorized to sync with Airtable.</p></div>';
+            break;
+        case 'error':
+        case 'http_error':
+            echo '<div class="notice notice-error is-dismissible"><p>❌ Sync failed: ' . $error . '</p></div>';
+            break;
+    }
+});

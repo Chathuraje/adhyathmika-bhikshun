@@ -14,6 +14,7 @@ if (!defined('JWT_SECRET_KEY')) {
 
 $is_testing_enabled = get_option('ab_testing_enabled', true);
 
+
 $SECRET_KEY = JWT_SECRET_KEY;
 
 /**

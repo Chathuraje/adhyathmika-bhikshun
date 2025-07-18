@@ -70,6 +70,7 @@ if (!function_exists('import_single_post_from_data')) {
                 
             if (!empty($existing)) {
                 return [
+                    'post_title' => $post['post_title'],
                     'status' => 'skipped',
                     'post_id' => $existing[0],
                     'reason' => 'Duplicate post_uid'
@@ -82,6 +83,7 @@ if (!function_exists('import_single_post_from_data')) {
             $existing = get_page_by_path($post['post_name'], OBJECT, $post['post_type']);
             if ($existing) {
                 return [
+                    'post_title' => $post['post_title'],
                     'status' => 'skipped',
                     'post_id' => $existing->ID,
                     'reason' => 'Duplicate post slug'

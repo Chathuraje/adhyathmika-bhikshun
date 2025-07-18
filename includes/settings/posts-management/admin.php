@@ -11,7 +11,8 @@ add_action('admin_init', function () {
     $options = [
         'ab_testing_enabled',
         'ab_new_post_creation_enabled',
-        'ab_single_airtable_sync_enabled'
+        'ab_single_airtable_sync_enabled',
+        'ab_import_posts_to_site_enabled',
     ];
 
     foreach ($options as $option) {
@@ -35,7 +36,8 @@ add_action('admin_init', function () {
         $checkboxes = [
             'ab_testing_enabled',
             'ab_new_post_creation_enabled',
-            'ab_single_airtable_sync_enabled'
+            'ab_single_airtable_sync_enabled',
+            'ab_import_posts_to_site_enabled',
         ];
 
         foreach ($checkboxes as $key) {
@@ -48,6 +50,11 @@ add_action('admin_init', function () {
  * Conditionally load features
  */
 add_action('init', function () {
+    if (get_option('ab_testing_enabled', false)) {
+        // Optional: Add a testing-specific include or hook here
+        // require_once __DIR__ . '/testing_feature.php';
+    }
+
     if (get_option('ab_new_post_creation_enabled', true)) {
         require_once __DIR__ . '/new_post_creation.php';
     }
@@ -55,9 +62,10 @@ add_action('init', function () {
     if (get_option('ab_single_airtable_sync_enabled', true)) {
         require_once __DIR__ . '/single_airtable_sync.php';
     }
-
-    if (get_option('ab_testing_enabled', false)) {
-        // Optional: Add a testing-specific include or hook here
-        // require_once __DIR__ . '/testing_feature.php';
+    
+    if (get_option('ab_import_posts_to_site_enabled', true)) {
+        require_once __DIR__ . '/import_posts_to_site.php';
     }
+
+    
 });

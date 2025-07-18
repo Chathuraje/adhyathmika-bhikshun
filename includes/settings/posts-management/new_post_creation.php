@@ -4,7 +4,7 @@
  * Adds a "Create a New Post" button and triggers a JWT-authenticated GET request with testing status.
  */
 
-require_once __DIR__ . '../../../tools/encode.php';
+require_once __DIR__ . '/../../../tools/encode.php';
 
 if (!defined('JWT_SECRET_KEY')) {
     define('JWT_SECRET_KEY', '');

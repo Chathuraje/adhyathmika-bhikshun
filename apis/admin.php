@@ -5,6 +5,12 @@
  * @package Adhyathmika_Bhikshun
  */
 
-include_once __DIR__ . '/import-posts.php';
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+
+if (get_option('ab_import_posts_to_site_enabled', true)) {
+    include_once __DIR__ . '/import-posts.php';
+}
 
 ?>

@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-require_once __DIR__ . '/../single_airtable_sync.php';
+// require_once __DIR__ . '/single_airtable_sync.php';
 
 function get_attachment_id_by_url_slug($url)
 {
@@ -27,7 +27,7 @@ function get_attachment_id_by_url_slug($url)
 
 
 if (!function_exists('import_custom_posts_from_data')) {
-    function import_custom_posts_from_data(array $post)
+    function import_custom_post_from_data(array $post)
     {
         // global $allowed_post_types;
 
@@ -125,13 +125,13 @@ if (!function_exists('import_custom_posts_from_data')) {
             wp_insert_comment(wp_slash($comment));
         }
 
-        airtable_sync_send($post_id, $post['meta']['post_uid']); 
+        // airtable_sync_send($post_id, $post['meta']['post_uid']); 
     }
 }
 
 
 function import_all_posts_from_data(array $posts) {
     foreach ($posts as $post) {
-        import_custom_posts_from_data($post);
+        import_custom_post_from_data($post);
     }
 }

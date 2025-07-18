@@ -55,34 +55,34 @@ add_action('admin_menu', function () {
         'abh_dashboard'
     );
 
-    // Export/Import Manager submenu
-    add_submenu_page(
-        'adhyathmika-bhikshun',                  // Parent slug
-        'Export/Import Manager',                // Page title
-        'Export/Import',                        // Menu title
-        'manage_options',                       // Capability
-        'abh-export-import-manager',            // Menu slug
-        'abh_export_import_manager_page'        // Callback function
-    );
+    // // Export/Import Manager submenu
+    // add_submenu_page(
+    //     'adhyathmika-bhikshun',                  // Parent slug
+    //     'Export/Import Manager',                // Page title
+    //     'Export/Import',                        // Menu title
+    //     'manage_options',                       // Capability
+    //     'abh-export-import-manager',            // Menu slug
+    //     'abh_export_import_manager_page'        // Callback function
+    // );
 
-    // Feature Settings submenu
+    // Feature Management submenu
     add_submenu_page(
         'adhyathmika-bhikshun',                  
-        'Feature Settings',                     
-        'Features',                             
+        'Features Management',                     
+        'Features Management',                             
         'manage_options',                       
-        'abh-features',                         
-        'abh_features_page'                     
+        'abh-features-management',                         
+        'abh_featurers_management_page'                     
     );
 
     // Post Management submenu
     add_submenu_page(
         'adhyathmika-bhikshun',
-        'Post Management',
+        'Posts Management',
         'Posts Management',
         'manage_options',
         'abh-post-management',
-        'abh_post_management_page'
+        'abh_posts_management_page'
     );
 
 
@@ -95,7 +95,7 @@ require_once plugin_dir_path(__FILE__) . '/pages/main.php';
 require_once plugin_dir_path(__FILE__) . '/includes/admin.php';
 
 // Load Widgets
-require_once plugin_dir_path(__FILE__) . '/includes/widgets.php';
+// require_once plugin_dir_path(__FILE__) . '/includes/widgets.php';
 
 // Load Custom API Endpoints
 require_once plugin_dir_path(__FILE__) . '/apis/admin.php';

@@ -6,7 +6,7 @@
  * @package Adhyathmika_Bhikshun
  */
 
-// Register plugin settings (optional but recommended)
+// Register plugin settings
 add_action('admin_init', function () {
     $options = [
         'ab_post_order_enabled',
@@ -93,6 +93,11 @@ add_action('init', function () {
         add_shortcode('language_audio_note', 'ab_language_audio_note_shortcode');
     }
 });
+
+
+/**
+ * Register features conditionally
+ */
 
 /**
  * Auto-generate image ALT text

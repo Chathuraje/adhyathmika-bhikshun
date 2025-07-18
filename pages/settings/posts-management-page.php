@@ -7,6 +7,7 @@ $settings = [
     'ab_testing_enabled'               => get_option('ab_testing_enabled', true),
     'ab_new_post_creation_enabled'     => get_option('ab_new_post_creation_enabled', true),
     'ab_single_airtable_sync_enabled'  => get_option('ab_single_airtable_sync_enabled', true),
+    'ab_import_posts_to_site_enabled' => get_option('ab_import_posts_to_site_enabled', true),
 ];
 ?>
 
@@ -45,7 +46,15 @@ $settings = [
           'ab_single_airtable_sync_enabled' => [
               'label' => __('Enable Single Airtable Sync', 'adhyathmika-bhikshun'),
               'desc'  => __('Enables synchronization of individual posts with Airtable.', 'adhyathmika-bhikshun')
-          ]
+          ],
+          'ab_import_posts_to_site_enabled' => [
+              'label' => __('Enable Import Posts to Site API', 'adhyathmika-bhikshun'),
+              'desc'  => __('
+                            Enables the API endpoint for importing posts to the site. This is useful for bulk importing posts from external sources. Ensure you have the necessary permissions to access this endpoint.<br/> <br/> 
+                            API Endpoint: <code>/wp-json/ab-custom-apis/v2/import-post</code><br/> 
+                            Method: <code>POST</code> <br/>
+                            Payload: <code>[{"post_title": "Title", "post_content": "Content", ...}]</code><br/> ', 'adhyathmika-bhikshun')
+          ],
       ];
 
       foreach ($features as $key => $label) {
@@ -57,7 +66,7 @@ $settings = [
                 <span class="ab-label"><?php echo esc_html($label['label']); ?></span>
             </label>
             <div class="ab-desc" style="margin-top:8px;">
-                <?php echo esc_html($label['desc']); ?>
+                <?php echo wp_kses_post($label['desc']); ?>
             </div>
           </div>
           <?php

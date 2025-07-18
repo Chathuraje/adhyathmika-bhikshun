@@ -5,9 +5,6 @@
  * @package Adhyathmika_Bhikshun
  */
 
-require_once __DIR__ . '/../includes/post-managements/export-import/import_single_post_to_json.php';
-
-
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 } 
@@ -27,21 +24,18 @@ function check_basic_auth_for_import() {
 
 function handle_import_custom_posts_endpoint(WP_REST_Request $request)
 {
-    $data = $request->get_json_params();
-    $data = $data['data'] ?? [];
-
-    if (!is_array($data)) {
-        return new WP_REST_Response(['error' => 'Invalid JSON array'], 400);
+    $data = json_decode($request->get_body(), true);
+	
+	if (!is_array($data)) {
+        return new WP_REST_Response([
+            'error' => 'Payload must be a JSON array',
+            'received' => $data
+        ], 400);
     }
 
     try {
         
-        if (isset($data[0]) && is_array($data[0])) {
-            import_all_posts_from_data($data);
-        } else {
-            import_custom_posts_from_data($data);
-        }
-
+        import_all_posts_from_data($data);
 
         return new WP_REST_Response([
             'message' => 'Posts imported successfully',

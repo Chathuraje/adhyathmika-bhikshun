@@ -29,35 +29,27 @@ function ab_enqueue_admin_assets($hook) {
         true
     );
 
-    // Load progress bar script conditionally on post list screens
+    // Load progress bar script conditionally
     $screen = get_current_screen();
+    if (in_array($screen->post_type, allowed_post_types_for_import_button(), true)) {
+        wp_enqueue_script(
+            'ab-import-progress-bar',
+            $plugin_url . 'assets/js/import-progress.js',
+            ['jquery'],
+            '1.0.0',
+            true
+        );
 
-    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) {
-        return;
+        wp_localize_script('ab-import-progress-bar', 'abImport', [
+            'postType' => $screen->post_type,
+            'postTypeCapitalized' => ucfirst($screen->post_type),
+            'importUrl' => esc_url(wp_nonce_url(
+                admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $screen->post_type),
+                'import_all_custom_posts'
+            )),
+        ]);
     }
 
-    // Register and enqueue your JS file
-    // wp_enqueue_script(
-    //     'ab-import-progress-js',
-    //     $plugin_url . 'assets/js/import-progress.js',
-    //     ['jquery'],
-    //     '1.0',
-    //     true
-    // );
-
-    // $screen = get_current_screen();
-    // if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) {
-    //     return;
-    // }
-
-    // $post_type = $screen->post_type;
-    // $url = wp_nonce_url(admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $post_type), 'import_all_custom_posts');
-
-
-    // wp_localize_script('ab-import-posts', 'abImportVars', [
-    //     'postType'  => $post_type,
-    //     'importUrl' => esc_url($url),
-    // ]);
 }
 
 

@@ -1,7 +1,10 @@
 jQuery(document).ready(function($) {
     // Variables passed from PHP will be set later via wp_localize_script or similar
-    var postType = window.abImportPostType || 'post';
-    var importUrl = window.abImportUrl || '';
+    var postType = window.abImport?.postType || 'post';
+    var importUrl = window.abImport?.importUrl || '';
+
+    // alert("Post Type: " + postType + "\nImport URL: " + importUrl);
+
 
     // Add the "Import All" button
     var button = '<a href="' + importUrl + '" id="trigger-import" class="page-title-action">Import All ' + postType.charAt(0).toUpperCase() + postType.slice(1) + '</a>';

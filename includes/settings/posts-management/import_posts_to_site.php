@@ -50,6 +50,26 @@ if (!function_exists('import_single_post_from_data')) {
             }
         }
 
+        // Check for existing post by some unique identifier
+        if (!empty($post['meta']['post_uid'])) {
+            $existing = get_posts([
+                'meta_key' => 'post_uid',
+                'meta_value' => $post['meta']['post_uid'],
+                'post_type' => $post['post_type'],
+                'fields' => 'ids',
+                'posts_per_page' => 1
+            ]);
+                
+            if (!empty($existing)) {
+                return [
+                    'status' => 'skipped',
+                    'post_id' => $existing[0],
+                    'reason' => 'Duplicate post_uid'
+                ];
+            }
+        }
+            
+
         $post_id = wp_insert_post([
             'post_title'   => wp_slash($post['post_title']),
             'post_content' => wp_slash($post['post_content']),
@@ -152,15 +172,24 @@ if (!function_exists('import_single_post_from_data')) {
 
 
 if (!function_exists('import_all_posts_from_data')) {
-    function import_all_posts_from_data(array $posts)
-    {
+    function import_all_posts_from_data(array $posts) {
+        wp_suspend_cache_invalidation(true);
         $results = [];
 
         foreach ($posts as $index => $post) {
-            $result = import_single_post_from_data($post);
+            try {
+                $result = import_single_post_from_data($post);
+            } catch (Exception $e) {
+                $result = [
+                    'status' => 'failed',
+                    'error'  => $e->getMessage(),
+                    'index'  => $index,
+                ];
+            }
             $result['index'] = $index;
             $results[] = $result;
         }
+        wp_suspend_cache_invalidation(false);
 
         return $results;
     }

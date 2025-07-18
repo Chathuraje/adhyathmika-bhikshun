@@ -38,12 +38,7 @@ function handle_import_custom_posts_endpoint(WP_REST_Request $request)
 
     try {
         
-        if (isset($data[0]) && is_array($data[0])) {
-            $results = import_all_posts_from_data($data);
-        } else {
-            $single_result = import_single_post_from_data($data);
-            $results = [$single_result];
-        }
+        $results = import_all_posts_from_data($data);
         
         return new WP_REST_Response([
             'message' => 'Import complete',

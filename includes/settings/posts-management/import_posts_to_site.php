@@ -38,8 +38,7 @@ if (!function_exists('import_single_post_from_data')) {
         // if (!in_array($post['post_type'], $allowed_post_types)) return;
 
         $result = [
-            'post_title' => $post['post_title'] ?? '',
-            'airtable_id' => $post['airtable_id'] ?? ''
+            'post_title' => $post['post_title'] ?? ''
         ];
 
         $required_fields = ['post_title', 'post_status', 'post_type'];
@@ -64,6 +63,7 @@ if (!function_exists('import_single_post_from_data')) {
             if (!empty($existing)) {
                 return [
                     'post_title' => $post['post_title'],
+                    'airtable_id' => $post['airtable_id'],
                     'status' => 'skipped',
                     'post_id' => $existing[0],
                     'reason' => 'Duplicate post_uid'
@@ -84,6 +84,7 @@ if (!function_exists('import_single_post_from_data')) {
                 $existing_post = $existing[0];
                 return [
                     'post_title' => $post['post_title'],
+                    'airtable_id' => $post['airtable_id'],
                     'status' => 'skipped',
                     'post_id' => $existing_post->ID,
                     'reason' => 'Duplicate post slug'
@@ -113,6 +114,7 @@ if (!function_exists('import_single_post_from_data')) {
     
         $result['status'] = 'success';
         $result['post_id'] = $post_id;
+        $result['airtable_id'] = $post['airtable_id'] ?? null;
 
         if (!empty($post['is_sticky'])) stick_post($post_id);
 

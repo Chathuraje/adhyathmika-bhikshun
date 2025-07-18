@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 } 
 
 // Include necessary files
-require_once __DIR__ . '../includes/settings/posts-management/import_posts_to_site.php';
+require_once __DIR__ . '/../includes/settings/posts-management/import_posts_to_site.php';
 
 add_action('rest_api_init', function () {
     register_rest_route('ab-custom-apis/v2', '/import-post', [

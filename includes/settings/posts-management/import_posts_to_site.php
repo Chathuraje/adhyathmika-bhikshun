@@ -151,15 +151,17 @@ if (!function_exists('import_single_post_from_data')) {
 }
 
 
-function import_all_posts_from_data(array $posts)
-{
-    $results = [];
+if (!function_exists('import_all_posts_from_data')) {
+    function import_all_posts_from_data(array $posts)
+    {
+        $results = [];
 
-    foreach ($posts as $index => $post) {
-        $result = import_single_post_from_data($post);
-        $result['index'] = $index;
-        $results[] = $result;
+        foreach ($posts as $index => $post) {
+            $result = import_single_post_from_data($post);
+            $result['index'] = $index;
+            $results[] = $result;
+        }
+
+        return $results;
     }
-
-    return $results;
 }

@@ -139,8 +139,20 @@ function airtable_sync_send($post_id, $post_uid) {
 
     $AIRTABLE_SYNC_WEBHOOK = "https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_with_airtable";
 
+    $result = [
+        'post_id'   => $post_id,
+        'post_uid'  => $post_uid,
+        'status'    => 'failed', // default
+    ];
+
+    if (empty($post_id) || empty($post_uid)) {
+        $result['error'] = 'Missing post ID or post UID.';
+        return $result;
+    }
+
     $jwt_token = airtable_sync_generate_jwt($post_id, $post_uid);
     if (!$jwt_token) return new WP_Error('jwt_error', 'JWT token generation failed.');
+
 
     $export = export_single_post_to_json($post_id, get_post_type($post_id));
     $response = wp_remote_post($AIRTABLE_SYNC_WEBHOOK, [
@@ -158,7 +170,26 @@ function airtable_sync_send($post_id, $post_uid) {
         ]),
     ]);
 
-    return $response;
+    if (is_wp_error($response)) {
+        $result['error'] = 'Request failed: ' . $response->get_error_message();
+        return $result;
+    }
+
+    $code = wp_remote_retrieve_response_code($response);
+    $body = wp_remote_retrieve_body($response);
+    $json = json_decode($body, true);
+
+    if ($code < 200 || $code >= 300) {
+        $result['error'] = "Airtable API responded with HTTP $code";
+        $result['response_body'] = $body;
+        return $result;
+    }
+
+    $result['status'] = 'success';
+    $result['status_code'] = $code;
+    $result['response'] = $json ?? $body;
+
+    return $result;
 }
 
 /**
@@ -399,7 +430,7 @@ add_action('save_post_post', function ($post_id, $post, $update) {
         exit;
     }
 
-    $url = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_all_with_airtable';
+    $url = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook-/sync_all_with_airtable';
 
     $response = wp_remote_get($url, [
         'headers' => [
@@ -472,3 +503,49 @@ add_action('admin_notices', function () {
             break;
     }
 });
+
+
+/**
+ * Utility: Sync all posts with Airtable
+ */
+/**
+ * Utility: Sync an array of posts with Airtable.
+ *
+ * @param array $posts Array of ['post_id' => int, 'post_uid' => string]
+ * @return array List of sync results per post
+ */
+function airtable_sync_all_posts(array $posts) {
+    $results = [];
+
+    foreach ($posts as $entry) {
+        $post_id  = $entry['post_id'] ?? 0;
+        $post_uid = $entry['post_uid'] ?? '';
+
+        if (empty($post_id) || empty($post_uid)) {
+            $results[] = [
+                'post_id' => $post_id,
+                'status'  => 'skipped',
+                'reason'  => 'Missing post_id or post_uid',
+            ];
+            continue;
+        }
+
+        $response = airtable_sync_send($post_id, $post_uid);
+
+        if (is_wp_error($response)) {
+            $results[] = [
+                'post_id' => $post_id,
+                'post_uid' => $post_uid,
+                'status' => 'failed',
+                'error' => $response->get_error_message(),
+            ];
+        } else {
+            $results[] = array_merge(
+                ['post_id' => $post_id, 'post_uid' => $post_uid],
+                $response
+            );
+        }
+    }
+
+    return $results;
+}

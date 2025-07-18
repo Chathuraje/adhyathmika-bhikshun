@@ -37,6 +37,19 @@ if (!function_exists('import_single_post_from_data')) {
 
         // if (!in_array($post['post_type'], $allowed_post_types)) return;
 
+        $result = [
+            'post_title' => $post['post_title'] ?? '',
+        ];
+
+        $required_fields = ['post_title', 'post_status', 'post_type'];
+        foreach ($required_fields as $field) {
+            if (empty($post[$field])) {
+                $result['status'] = 'failed';
+                $result['error'] = "Missing required field: $field";
+                return $result;
+            }
+        }
+
         $post_id = wp_insert_post([
             'post_title'   => wp_slash($post['post_title']),
             'post_content' => wp_slash($post['post_content']),
@@ -50,7 +63,14 @@ if (!function_exists('import_single_post_from_data')) {
             'menu_order'   => $post['menu_order'],
         ], true);
 
-        if (is_wp_error($post_id)) return;
+        if (is_wp_error($post_id)) {
+            $result['status'] = 'failed';
+            $result['error'] = $post_id->get_error_message();
+            return $result;
+        }
+    
+        $result['status'] = 'success';
+        $result['post_id'] = $post_id;
 
         if (!empty($post['is_sticky'])) stick_post($post_id);
 
@@ -125,13 +145,21 @@ if (!function_exists('import_single_post_from_data')) {
             wp_insert_comment(wp_slash($comment));
         }
 
+        return $result;
         // airtable_sync_send($post_id, $post['meta']['post_uid']); 
     }
 }
 
 
-function import_all_posts_from_data(array $posts) {
-    foreach ($posts as $post) {
-        import_single_post_from_data($post);
+function import_all_posts_from_data(array $posts)
+{
+    $results = [];
+
+    foreach ($posts as $index => $post) {
+        $result = import_single_post_from_data($post);
+        $result['index'] = $index;
+        $results[] = $result;
     }
+
+    return $results;
 }

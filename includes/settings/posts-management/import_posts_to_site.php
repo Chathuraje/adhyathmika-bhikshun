@@ -11,7 +11,7 @@ if (!defined('JWT_SECRET_KEY')) {
     define('JWT_SECRET_KEY', '');
 }
 
-$IMPORT_ALL_WEBHOOK = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/import_all_posts';
+$IMPORT_ALL_WEBHOOK = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/import_posts_to_wp';
 $SECRET_KEY = JWT_SECRET_KEY;
 
 function get_attachment_id_by_url_slug($url)

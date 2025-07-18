@@ -27,6 +27,10 @@ function check_basic_auth_for_import() {
 
 function handle_import_custom_posts_endpoint(WP_REST_Request $request)
 {
+    $headers = getallheaders();
+    $batch_id = $headers['X-Batch-Id'] ?? null;
+    $batch_total = $headers['X-Batch-Total'] ?? null;
+
     $data = json_decode($request->get_body(), true);
 	
 	if (!is_array($data)) {
@@ -43,6 +47,8 @@ function handle_import_custom_posts_endpoint(WP_REST_Request $request)
         return new WP_REST_Response([
             'message' => 'Import complete',
             'results' => $results,
+            'batch_id' => $batch_id,
+            'batch_total' => $batch_total,
         ], 200);
 
         

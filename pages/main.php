@@ -2,7 +2,7 @@
 // Load dashboard page
 function abh_dashboard() //callback function for the dashboard page
 {
-    require_once plugin_dir_path(__FILE__) . '\dashboard-page.php';
+    require_once plugin_dir_path(__FILE__) . '/dashboard-page.php';
 }
 
 // Load features management page

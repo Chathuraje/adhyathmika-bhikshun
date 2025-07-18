@@ -80,12 +80,19 @@ if (!function_exists('import_single_post_from_data')) {
 
         // Check for existing post by slug
         if (!empty($post['post_name'])) {
-            $existing = get_page_by_path($post['post_name'], OBJECT, $post['post_type']);
+            $existing = get_posts([
+                'name' => $post['post_name'],
+                'post_type' => $post['post_type'],
+                'post_status' => 'any',
+                'numberposts' => 1
+
+            ]);
             if (!empty($existing)) {
+                $existing_post = $existing[0];
                 return [
                     'post_title' => $post['post_title'],
                     'status' => 'skipped',
-                    'post_id' => $existing->ID,
+                    'post_id' => $existing_post->ID,
                     'reason' => 'Duplicate post slug'
                 ];
             }

@@ -11,11 +11,9 @@ if (!defined('ABSPATH')) exit;
 
 add_action('admin_enqueue_scripts', 'ab_enqueue_admin_assets');
 function ab_enqueue_admin_assets($hook) {
-    // Optional: Limit loading to specific admin page if needed
-    // if ($hook !== 'toplevel_page_ab-settings') return;
-
     $plugin_url = plugin_dir_url(__FILE__);
 
+    // Enqueue settings CSS/JS globally or for specific pages as needed
     wp_enqueue_style(
         'ab-settings-css',
         $plugin_url . 'assets/css/settings.css',
@@ -30,7 +28,38 @@ function ab_enqueue_admin_assets($hook) {
         '1.0.0',
         true
     );
+
+    // Load progress bar script conditionally on post list screens
+    $screen = get_current_screen();
+
+    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) {
+        return;
+    }
+
+    // Register and enqueue your JS file
+    wp_enqueue_script(
+        'ab-import-progress-js',
+        $plugin_url . 'assets/js/import-progress.js',
+        ['jquery'],
+        '1.0',
+        true
+    );
+
+    $screen = get_current_screen();
+    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) {
+        return;
+    }
+
+    $post_type = $screen->post_type;
+    $url = wp_nonce_url(admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $post_type), 'import_all_custom_posts');
+
+
+    wp_localize_script('ab-import-posts', 'abImportVars', [
+        'postType'  => $post_type,
+        'importUrl' => esc_url($url),
+    ]);
 }
+
 
 // Register main admin menu and submenus
 add_action('admin_menu', function () {

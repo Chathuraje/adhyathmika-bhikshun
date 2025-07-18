@@ -488,7 +488,7 @@ function airtable_sync_multiple_posts(array $posts) {
             $results[] = [
                 'airtable_id' => $post_data['airtable_id'] ?? null,
                 'post_uid' => $post_uid,
-                'post_title' => $post_data['post_title'] ?? '',
+                'post_title' => $post_data['title'] ?? '',
                 'post_id' => $post_id,
                 'status' => 'error',
                 'message' => 'Missing or invalid post ID or UID at index ' . $index,

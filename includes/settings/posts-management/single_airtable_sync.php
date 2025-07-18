@@ -486,6 +486,9 @@ function airtable_sync_multiple_posts(array $posts) {
 
         if (!$post_id || empty($post_uid)) {
             $results[] = [
+                'airtable_id' => $post_data['airtable_id'] ?? null,
+                'post_uid' => $post_uid,
+                'post_title' => $post_data['post_title'] ?? '',
                 'post_id' => $post_id,
                 'status' => 'error',
                 'message' => 'Missing or invalid post ID or UID at index ' . $index,
@@ -498,6 +501,9 @@ function airtable_sync_multiple_posts(array $posts) {
 
         if (is_wp_error($response)) {
             $results[] = [
+                'airtable_id' => $post_data['airtable_id'] ?? null,
+                'post_uid' => $post_uid,
+                'post_title' => $post_data['post_title'] ?? '',
                 'post_id' => $post_id,
                 'status' => 'error',
                 'message' => $response->get_error_message(),
@@ -510,12 +516,18 @@ function airtable_sync_multiple_posts(array $posts) {
 
         if ($code >= 200 && $code < 300) {
             $results[] = [
+                'airtable_id' => $post_data['airtable_id'] ?? null,
+                'post_uid' => $post_uid,
+                'post_title' => $post_data['post_title'] ?? '',
                 'post_id' => $post_id,
                 'status' => 'success',
                 'message' => 'Post synced successfully',
             ];
         } else {
             $results[] = [
+                'airtable_id' => $post_data['airtable_id'] ?? null,
+                'post_uid' => $post_uid,
+                'post_title' => $post_data['post_title'] ?? '',
                 'post_id' => $post_id,
                 'status' => 'http_error',
                 'message' => "HTTP $code: $body",

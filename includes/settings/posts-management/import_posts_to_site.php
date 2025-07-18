@@ -231,11 +231,6 @@ if (!defined('JWT_SECRET_KEY')) {
 $IMPORT_ALL_WEBHOOK = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/import_posts_to_wp';
 $SECRET_KEY = JWT_SECRET_KEY;
 
-// 🔧 Filter to specify which post types should show "Import All" button
-function allowed_post_types_for_import_button() {
-    return apply_filters('custom_allowed_post_types_for_import_all', ['post']);
-}
-
 // 1. Inject "Import All" button into post list screens
 // add_action('admin_head', function () {
 //     $screen = get_current_screen();

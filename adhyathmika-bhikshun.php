@@ -52,6 +52,11 @@ function ab_enqueue_admin_assets($hook) {
 
 }
 
+// 🔧 Filter to specify which post types should show "Import All" button
+function allowed_post_types_for_import_button() {
+    return apply_filters('custom_allowed_post_types_for_import_all', ['post']);
+}
+
 
 // Register main admin menu and submenus
 add_action('admin_menu', function () {

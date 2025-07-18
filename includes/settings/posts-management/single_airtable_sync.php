@@ -375,7 +375,7 @@ add_action('save_post_post', function ($post_id, $post, $update) {
  * Sync all posts with Airtable
  */
 
- add_action('wp_ajax_sync_all_with_airtable', function () use ($SECRET_KEY) {
+ add_action('wp_ajax_sync_all_with_airtable', function () use ($JWT_SECRET_KEY) {
     check_admin_referer('sync_all_with_airtable');
 
     if (!current_user_can('manage_options')) {
@@ -395,7 +395,7 @@ add_action('save_post_post', function ($post_id, $post, $update) {
         'testing' => $is_testing_enabled ? 'true' : 'false',
     ];
 
-    $jwt_token = jwt_encode($payload, $SECRET_KEY);
+    $jwt_token = jwt_encode($payload, $JWT_SECRET_KEY);
 
     if (!$jwt_token) {
         wp_redirect(add_query_arg(['post_type' => 'post', 'create_status' => 'token_error'], admin_url('edit.php')));

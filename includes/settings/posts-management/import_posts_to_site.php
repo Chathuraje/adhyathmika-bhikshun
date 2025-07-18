@@ -179,6 +179,8 @@ if (!function_exists('import_all_posts_from_data')) {
         foreach ($posts as $index => $post) {
             try {
                 $result = import_single_post_from_data($post);
+                $result['index'] = $index;
+                $results[] = $result;
             } catch (Exception $e) {
                 $result = [
                     'status' => 'failed',
@@ -186,8 +188,6 @@ if (!function_exists('import_all_posts_from_data')) {
                     'index'  => $index,
                 ];
             }
-            $result['index'] = $index;
-            $results[] = $result;
         }
         wp_suspend_cache_invalidation(false);
 

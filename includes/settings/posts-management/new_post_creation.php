@@ -16,19 +16,21 @@ $N8N_WEBHOOK_URL = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/create_
 $SECRET_KEY = JWT_SECRET_KEY;
 
 // 1. Add "Create a New Post" button to post list
-add_action('admin_head-edit.php', function () {
-    $screen = get_current_screen();
-    if ($screen->post_type !== 'post') return;
+if (get_option('ab_single_airtable_sync_enabled', true)) {
+    add_action('admin_head-edit.php', function () {
+        $screen = get_current_screen();
+        if ($screen->post_type !== 'post') return;
 
-    $url = wp_nonce_url(admin_url('admin-ajax.php?action=create_a_new_post'), 'create_a_new_post_action');
+        $url = wp_nonce_url(admin_url('admin-ajax.php?action=create_a_new_post'), 'create_a_new_post_action');
 
-    echo '<script type="text/javascript">
-        jQuery(document).ready(function($) {
-            var button = \'<a href="' . esc_url($url) . '" class="page-title-action">Create a New Post</a>\';
-            $(".wrap .page-title-action").after(button);
-        });
-    </script>';
-});
+        echo '<script type="text/javascript">
+            jQuery(document).ready(function($) {
+                var button = \'<a href="' . esc_url($url) . '" class="page-title-action">Create a New Post</a>\';
+                $(".wrap .page-title-action").after(button);
+            });
+        </script>';
+    });
+}
 
 // 2. AJAX handler for new post trigger
 add_action('wp_ajax_create_a_new_post', function () use ($N8N_WEBHOOK_URL, $SECRET_KEY, $is_testing_enabled) {

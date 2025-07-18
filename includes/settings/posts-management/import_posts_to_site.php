@@ -39,6 +39,7 @@ if (!function_exists('import_single_post_from_data')) {
 
         $result = [
             'post_title' => $post['post_title'] ?? '',
+            'airtable_id' => $post['airtable_id'] ?? ''
         ];
 
         $required_fields = ['post_title', 'post_status', 'post_type'];

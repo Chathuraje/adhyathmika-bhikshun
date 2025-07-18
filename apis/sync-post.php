@@ -23,8 +23,7 @@ function sync_all_posts(array $posts_data) {
         if (!isset($post['post_id'], $post['post_uid'])) {
             $results['failures'][] = [
                 'index' => $index,
-                'error' => 'Missing post_id or post_uid',
-                'data'  => $post,
+                'error' => 'Missing post_id or post_uid'
             ];
             continue;
         }

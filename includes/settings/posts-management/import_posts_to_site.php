@@ -81,7 +81,7 @@ if (!function_exists('import_single_post_from_data')) {
         // Check for existing post by slug
         if (!empty($post['post_name'])) {
             $existing = get_page_by_path($post['post_name'], OBJECT, $post['post_type']);
-            if ($existing) {
+            if (!empty($existing)) {
                 return [
                     'post_title' => $post['post_title'],
                     'status' => 'skipped',
@@ -227,19 +227,19 @@ function allowed_post_types_for_import_button() {
 }
 
 // 1. Inject "Import All" button into post list screens
-add_action('admin_head', function () {
-    $screen = get_current_screen();
-    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
+// add_action('admin_head', function () {
+//     $screen = get_current_screen();
+//     if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
 
-    $url = wp_nonce_url(admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $screen->post_type), 'import_all_custom_posts');
+//     $url = wp_nonce_url(admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $screen->post_type), 'import_all_custom_posts');
 
-    echo '<script type="text/javascript">
-        jQuery(document).ready(function($) {
-            var button = \'<a href="' . esc_url($url) . '" class="page-title-action">Import All ' . ucfirst($screen->post_type) . '</a>\';
-            $(".wrap .page-title-action").first().after(button);
-        });
-    </script>';
-});
+//     echo '<script type="text/javascript">
+//         jQuery(document).ready(function($) {
+//             var button = \'<a href="' . esc_url($url) . '" class="page-title-action">Import All ' . ucfirst($screen->post_type) . '</a>\';
+//             $(".wrap .page-title-action").first().after(button);
+//         });
+//     </script>';
+// });
 
 
 // 2. Handle AJAX to trigger import
@@ -339,70 +339,70 @@ add_action('admin_notices', function () {
 
 
 
-// // 4. Add a progress bar popup
-// // This will show the import progress in a modal popup
-// add_action('admin_head', function () {
-//     $screen = get_current_screen();
-//     if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
+// 4. Add a progress bar popup
+// This will show the import progress in a modal popup
+add_action('admin_head', function () {
+    $screen = get_current_screen();
+    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
 
-//     $post_type = esc_js($screen->post_type);
-//     $url = wp_nonce_url(admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $screen->post_type), 'import_all_custom_posts');
+    $post_type = esc_js($screen->post_type);
+    $url = wp_nonce_url(admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $screen->post_type), 'import_all_custom_posts');
 
-//     echo '<script type="text/javascript">
-//         jQuery(document).ready(function($) {
-//             // Add the "Import All" button
-//             var button = \'<a href="' . esc_url($url) . '" id="trigger-import" class="page-title-action">Import All ' . ucfirst($screen->post_type) . '</a>\';
-//             $(".wrap .page-title-action").first().after(button);
+    echo '<script type="text/javascript">
+        jQuery(document).ready(function($) {
+            // Add the "Import All" button
+            var button = \'<a href="' . esc_url($url) . '" id="trigger-import" class="page-title-action">Import All ' . ucfirst($screen->post_type) . '</a>\';
+            $(".wrap .page-title-action").first().after(button);
 
-//             // Inject the popup HTML
-//             $("body").append(`
-//                 <div id="import-progress-modal" style="position:fixed; top:20%; left:50%; transform:translateX(-50%); width:400px; background:#fff; border:1px solid #ccc; z-index:9999; padding:20px; display:none; box-shadow:0 0 10px rgba(0,0,0,0.3); border-radius:8px;">
-//                     <h2 style="margin-top:0;">Importing Posts...</h2>
-//                     <div style="background:#e5e5e5; border-radius:4px; overflow:hidden; margin:15px 0;">
-//                         <div id="progress-bar" style="height:20px; width:0%; background:#0073aa; color:#fff; text-align:center; line-height:20px;">0%</div>
-//                     </div>
-//                     <p id="progress-status">Starting import...</p>
-//                     <button onclick="jQuery(\'#import-progress-modal\').hide();" style="float:right;" class="button">Close</button>
-//                     <div style="clear:both;"></div>
-//                 </div>
-//             `);
+            // Inject the popup HTML
+            $("body").append(`
+                <div id="import-progress-modal" style="position:fixed; top:20%; left:50%; transform:translateX(-50%); width:400px; background:#fff; border:1px solid #ccc; z-index:9999; padding:20px; display:none; box-shadow:0 0 10px rgba(0,0,0,0.3); border-radius:8px;">
+                    <h2 style="margin-top:0;">Importing Posts...</h2>
+                    <div style="background:#e5e5e5; border-radius:4px; overflow:hidden; margin:15px 0;">
+                        <div id="progress-bar" style="height:20px; width:0%; background:#0073aa; color:#fff; text-align:center; line-height:20px;">0%</div>
+                    </div>
+                    <p id="progress-status">Starting import...</p>
+                    <button onclick="jQuery(\'#import-progress-modal\').hide();" style="float:right;" class="button">Close</button>
+                    <div style="clear:both;"></div>
+                </div>
+            `);
 
-//             // When "Import All" button clicked, show the popup
-//             $("#trigger-import").on("click", function() {
-//                 $("#import-progress-modal").show();
-//                 setTimeout(function() {
-//                     pollProgress("' . $post_type . '");
-//                 }, 2000); // Start polling after slight delay
-//             });
+            // When "Import All" button clicked, show the popup
+            $("#trigger-import").on("click", function() {
+                $("#import-progress-modal").show();
+                setTimeout(function() {
+                    pollProgress("' . $post_type . '");
+                }, 2000); // Start polling after slight delay
+            });
 
-//             // Polling function to update the progress bar
-//             window.pollProgress = function(postType) {
-//                 const endpoint = `/wp-json/ab-custom-apis/v2/import-progress/` + postType;
-//                 const bar = document.getElementById("progress-bar");
-//                 const status = document.getElementById("progress-status");
+            // Polling function to update the progress bar
+            window.pollProgress = function(postType) {
+                const endpoint = `/wp-json/ab-custom-apis/v2/import-progress/` + postType;
+                const bar = document.getElementById("progress-bar");
+                const status = document.getElementById("progress-status");
 
-//                 if (!bar || !status) return;
+                if (!bar || !status) return;
 
-//                 const interval = setInterval(() => {
-//                     fetch(endpoint)
-//                         .then(r => r.json())
-//                         .then(data => {
-//                             let percent = Math.round(data.percent || 0);
-//                             bar.style.width = percent + "%";
-//                             bar.textContent = percent + "%";
-//                             status.textContent = "Imported " + (data.completed || 0) + " of " + (data.total || "?") + " posts.";
+                const interval = setInterval(() => {
+                    fetch(endpoint)
+                        .then(r => r.json())
+                        .then(data => {
+                            let percent = Math.round(data.percent || 0);
+                            bar.style.width = percent + "%";
+                            bar.textContent = percent + "%";
+                            status.textContent = "Imported " + (data.completed || 0) + " of " + (data.total || "?") + " posts.";
 
-//                             if (percent >= 100) {
-//                                 clearInterval(interval);
-//                                 status.textContent = "✅ Import Complete!";
-//                             }
-//                         })
-//                         .catch(e => {
-//                             status.textContent = "⚠️ Error polling progress.";
-//                             clearInterval(interval);
-//                         });
-//                 }, 3000);
-//             };
-//         });
-//     </script>';
-// });
+                            if (percent >= 100) {
+                                clearInterval(interval);
+                                status.textContent = "✅ Import Complete!";
+                            }
+                        })
+                        .catch(e => {
+                            status.textContent = "⚠️ Error polling progress.";
+                            clearInterval(interval);
+                        });
+                }, 3000);
+            };
+        });
+    </script>';
+});

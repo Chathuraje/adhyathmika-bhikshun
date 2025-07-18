@@ -477,5 +477,51 @@ add_action('admin_notices', function () {
 /**
  * Utility: Sync all posts with Airtable
  */
+function airtable_sync_multiple_posts(array $posts) {
+    $results = [];
 
- 
+    foreach ($posts as $index => $post_data) {
+        $post_id = isset($post_data['post_id']) ? intval($post_data['post_id']) : 0;
+        $post_uid = isset($post_data['post_uid']) ? sanitize_text_field($post_data['post_uid']) : '';
+
+        if (!$post_id || empty($post_uid)) {
+            $results[] = [
+                'post_id' => $post_id,
+                'status' => 'error',
+                'message' => 'Missing or invalid post ID or UID at index ' . $index,
+            ];
+            continue;
+        }
+
+        // Attempt sync
+        $response = airtable_sync_send($post_id, $post_uid);
+
+        if (is_wp_error($response)) {
+            $results[] = [
+                'post_id' => $post_id,
+                'status' => 'error',
+                'message' => $response->get_error_message(),
+            ];
+            continue;
+        }
+
+        $code = wp_remote_retrieve_response_code($response);
+        $body = wp_remote_retrieve_body($response);
+
+        if ($code >= 200 && $code < 300) {
+            $results[] = [
+                'post_id' => $post_id,
+                'status' => 'success',
+                'message' => 'Post synced successfully',
+            ];
+        } else {
+            $results[] = [
+                'post_id' => $post_id,
+                'status' => 'http_error',
+                'message' => "HTTP $code: $body",
+            ];
+        }
+    }
+
+    return $results;
+}

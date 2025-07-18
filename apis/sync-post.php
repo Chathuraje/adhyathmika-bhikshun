@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 // Include necessary files
 require_once __DIR__ . '/../includes/settings/posts-management/single_airtable_sync.php';
-// Example: Add a REST API endpoint for n8n to call with batch posts JSON payload
+
 add_action('rest_api_init', function () {
     register_rest_route('ab-custom-apis/v2', '/sync_all_posts', [
         'methods'  => 'POST',
@@ -25,7 +25,7 @@ add_action('rest_api_init', function () {
                 ], 400);
             }
 
-            // Optional: Validate structure of each post entry
+            // Validate that each entry has post_id and post_uid
             $valid_posts = array_filter($payload, function ($post) {
                 return isset($post['post_id'], $post['post_uid']);
             });
@@ -37,16 +37,17 @@ add_action('rest_api_init', function () {
                 ], 422);
             }
 
-            // $results = airtable_sync_all_posts(array_values($valid_posts));
+            // Call batch sync
+            $results = airtable_sync_multiple_posts(array_values($valid_posts));
 
-            // return new WP_REST_Response([
-            //     'message' => 'Batch sync completed',
-            //     'count'   => count($results),
-            //     'results' => $results,
-            // ], 200);
+            return new WP_REST_Response([
+                'message' => 'Batch sync completed',
+                'count'   => count($results),
+                'results' => $results,
+            ], 200);
         },
         'permission_callback' => function () {
-            // Adjust permission as needed (e.g., API key, nonce, JWT)
+            // Adjust this as needed (you could check for an API token here instead)
             return current_user_can('manage_options');
         },
     ]);

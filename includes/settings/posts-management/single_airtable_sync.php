@@ -383,6 +383,8 @@ add_action('save_post_post', function ($post_id, $post, $update) {
         exit;
     }
 
+    global $is_testing_enabled;
+
     $current_user = wp_get_current_user();
     $requested_by = sanitize_user($current_user->user_login);
 
@@ -390,27 +392,35 @@ add_action('save_post_post', function ($post_id, $post, $update) {
         'iat'  => time(),
         'exp'  => time() + 300,
         'user' => $requested_by,
+        'testing' => $is_testing_enabled ? 'true' : 'false',
     ];
 
     $jwt_token = jwt_encode($payload, $SECRET_KEY);
 
     if (!$jwt_token) {
-        wp_redirect(add_query_arg(['sync_status' => 'token_error'], admin_url('edit.php')));
+        wp_redirect(add_query_arg(['post_type' => 'post', 'create_status' => 'token_error'], admin_url('edit.php')));
         exit;
     }
 
     $url = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_all_with_airtable';
 
-    $response = wp_remote_get($url, [
+    $url_with_query = add_query_arg([
+        'requested_by' => $requested_by,
+        'testing'      => $is_testing_enabled ? 'true' : 'false',
+    ], $url);
+
+    $response = wp_remote_get($url_with_query, [
         'headers' => [
             'Authorization' => 'Bearer ' . $jwt_token,
         ],
-        'timeout' => 20,
+        'timeout' => 15,
     ]);
 
     if (is_wp_error($response)) {
         wp_redirect(add_query_arg([
-            'sync_status' => 'error',
+            'post_type' => 'post',
+            'create_status' => 'error',
+            'error_code' => 0,
             'error_message' => urlencode($response->get_error_message())
         ], admin_url('edit.php')));
         exit;
@@ -421,13 +431,28 @@ add_action('save_post_post', function ($post_id, $post, $update) {
     $data = json_decode($body, true);
 
     if ($code >= 200 && $code < 300) {
+        if (isset($data['code']) && $data['code'] === '404') {
+            wp_redirect(add_query_arg([
+                'post_type' => 'post',
+                'create_status' => 'http_error',
+                'error_code' => 404,
+                'error_message' => urlencode('No data in database')
+            ], admin_url('edit.php')));
+            exit;
+        }
+
+        $message = $data['message'] ?? '';
+        $testing_msg = $is_testing_enabled ? ' (Testing Mode)' : '';
+
         wp_redirect(add_query_arg([
-            'sync_status' => 'success',
-            'success_message' => urlencode($data['message'] ?? 'Sync successful.')
+            'post_type' => 'post',
+            'create_status' => 'success',
+            'success_message' => urlencode($message . $testing_msg)
         ], admin_url('edit.php')));
     } else {
         wp_redirect(add_query_arg([
-            'sync_status' => 'http_error',
+            'post_type' => 'post',
+            'create_status' => 'http_error',
             'error_code' => $code,
             'error_message' => urlencode($body)
         ], admin_url('edit.php')));

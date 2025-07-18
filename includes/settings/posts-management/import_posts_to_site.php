@@ -384,7 +384,7 @@ add_action('admin_head', function () {
 
             // Polling function to update the progress bar
             window.pollProgress = function(postType) {
-                const endpoint = `/wp-json/ab-custom-apis/v2/import-progress/` + postType;
+                const endpoint = `/wp-json/ab-custom-apis/v2/import-progress?post_type=` + postType;
                 const bar = document.getElementById("progress-bar");
                 const status = document.getElementById("progress-status");
 

@@ -48,7 +48,7 @@ function handle_import_custom_posts_endpoint(WP_REST_Request $request)
         // Save progress transient: key by a job ID or user session, here simple example
         $progress_key = sanitize_key($post_type . '_import_progress');
         set_transient($progress_key, [
-            'batch_id' => (int)$batch_id,
+            'batch_id' => (int)$batch_id + 1,
             'batch_total' => (int)$batch_total,
             'completed' => true,
             'timestamp' => time(),

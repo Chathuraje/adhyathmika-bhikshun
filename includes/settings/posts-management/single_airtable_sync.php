@@ -463,20 +463,21 @@ add_action('save_post_post', function ($post_id, $post, $update) {
     exit;
 });
 
+if (get_option('ab_single_airtable_sync_enabled', true)) {
+    add_action('admin_head', function () {
+        $screen = get_current_screen();
+        if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
 
-add_action('admin_head', function () {
-    $screen = get_current_screen();
-    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
+        $sync_url = wp_nonce_url(admin_url('admin-ajax.php?action=sync_all_with_airtable'), 'sync_all_with_airtable');
 
-    $sync_url = wp_nonce_url(admin_url('admin-ajax.php?action=sync_all_with_airtable'), 'sync_all_with_airtable');
-
-    echo '<script type="text/javascript">
-        jQuery(document).ready(function($) {
-            var syncButton = \'<a href="' . esc_url($sync_url) . '" class="page-title-action">Sync All in Airtable</a>\';
-            $(".wrap .page-title-action").first().after(syncButton).after(importButton);
-        });
-    </script>';
-});
+        echo '<script type="text/javascript">
+            jQuery(document).ready(function($) {
+                var syncButton = \'<a href="' . esc_url($sync_url) . '" class="page-title-action">Sync All in Airtable</a>\';
+                $(".wrap .page-title-action").first().after(syncButton).after(importButton);
+            });
+        </script>';
+    });
+}
 
 
 add_action('admin_notices', function () {

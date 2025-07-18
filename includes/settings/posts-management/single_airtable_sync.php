@@ -118,6 +118,22 @@ function export_single_post_to_json($post_id, $post_type)
 /**
  * Utility: Send post data to Airtable
  */
+/**
+ * The function `airtable_sync_send` sends a POST request to a webhook URL with specific data and
+ * headers for syncing with Airtable.
+ * 
+ * @param post_id The `post_id` parameter in the `airtable_sync_send` function is used to specify the
+ * ID of the post that you want to synchronize with Airtable. This ID is typically a unique identifier
+ * assigned to each post in WordPress.
+ * @param post_uid The `post_uid` parameter in the `airtable_sync_send` function is used to uniquely
+ * identify the post being synced with Airtable. It is passed as an argument to the function along with
+ * the `post_id`. This unique identifier helps in ensuring that the correct post is synced and updated
+ * in Air
+ * 
+ * @return The function `airtable_sync_send` is returning the response from the `wp_remote_post`
+ * function, which is the result of sending a POST request to the specified ``
+ * URL with the provided parameters and headers.
+ */
 function airtable_sync_send($post_id, $post_uid) {
     global $is_testing_enabled;
 

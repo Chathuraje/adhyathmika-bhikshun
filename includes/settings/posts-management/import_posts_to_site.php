@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-require_once __DIR__ . '/single_airtable_sync.php';
+// require_once __DIR__ . '/single_airtable_sync.php';
 
 function get_attachment_id_by_url_slug($url)
 {
@@ -187,7 +187,7 @@ if (!function_exists('import_single_post_from_data')) {
         }
 
         return $result;
-        airtable_sync_send($post_id, $post['meta']['post_uid']); 
+        // airtable_sync_send($post_id, $post['meta']['post_uid']); 
     }
 }
 
@@ -234,19 +234,19 @@ function allowed_post_types_for_import_button() {
 }
 
 // 1. Inject "Import All" button into post list screens
-// add_action('admin_head', function () {
-//     $screen = get_current_screen();
-//     if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
+add_action('admin_head', function () {
+    $screen = get_current_screen();
+    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
 
-//     $url = wp_nonce_url(admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $screen->post_type), 'import_all_custom_posts');
+    $url = wp_nonce_url(admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $screen->post_type), 'import_all_custom_posts');
 
-//     echo '<script type="text/javascript">
-//         jQuery(document).ready(function($) {
-//             var button = \'<a href="' . esc_url($url) . '" class="page-title-action">Import All ' . ucfirst($screen->post_type) . '</a>\';
-//             $(".wrap .page-title-action").first().after(button);
-//         });
-//     </script>';
-// });
+    echo '<script type="text/javascript">
+        jQuery(document).ready(function($) {
+            var button = \'<a href="' . esc_url($url) . '" class="page-title-action">Import All ' . ucfirst($screen->post_type) . '</a>\';
+            $(".wrap .page-title-action").first().after(button);
+        });
+    </script>';
+});
 
 
 // 2. Handle AJAX to trigger import

@@ -399,7 +399,7 @@ add_action('save_post_post', function ($post_id, $post, $update) {
         exit;
     }
 
-    $url = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook-test/sync_all_with_airtable';
+    $url = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_all_with_airtable';
 
     $response = wp_remote_get($url, [
         'headers' => [

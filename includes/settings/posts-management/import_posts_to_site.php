@@ -26,8 +26,8 @@ function get_attachment_id_by_url_slug($url)
 }
 
 
-if (!function_exists('import_custom_posts_from_data')) {
-    function import_custom_post_from_data(array $post)
+if (!function_exists('import_single_post_from_data')) {
+    function import_single_post_from_data(array $post)
     {
         // global $allowed_post_types;
 
@@ -132,6 +132,6 @@ if (!function_exists('import_custom_posts_from_data')) {
 
 function import_all_posts_from_data(array $posts) {
     foreach ($posts as $post) {
-        import_custom_post_from_data($post);
+        import_single_post_from_data($post);
     }
 }

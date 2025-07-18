@@ -9,6 +9,9 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 } 
 
+// Include necessary files
+require_once __DIR__ . '../includes/settings/posts-management/import_posts_to_site.php';
+
 add_action('rest_api_init', function () {
     register_rest_route('ab-custom-apis/v2', '/import-post', [
         'methods'             => 'POST',
@@ -35,7 +38,11 @@ function handle_import_custom_posts_endpoint(WP_REST_Request $request)
 
     try {
         
-        import_all_posts_from_data($data);
+        if (isset($data[0]) && is_array($data[0])) {
+            import_all_posts_from_data($data);
+        } else {
+            import_single_post_from_data($data);
+        }
 
         return new WP_REST_Response([
             'message' => 'Posts imported successfully',

@@ -70,6 +70,9 @@ add_action('rest_api_init', function () {
                 ], 400);
             }
 
+            $headers = getallheaders();
+            $post_type = $headers['X-Post-Type'] ?? null;
+
             $results = sync_all_posts($data);
 
             return new WP_REST_Response([

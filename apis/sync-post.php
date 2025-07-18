@@ -37,13 +37,13 @@ add_action('rest_api_init', function () {
                 ], 422);
             }
 
-            $results = airtable_sync_all_posts(array_values($valid_posts));
+            // $results = airtable_sync_all_posts(array_values($valid_posts));
 
-            return new WP_REST_Response([
-                'message' => 'Batch sync completed',
-                'count'   => count($results),
-                'results' => $results,
-            ], 200);
+            // return new WP_REST_Response([
+            //     'message' => 'Batch sync completed',
+            //     'count'   => count($results),
+            //     'results' => $results,
+            // ], 200);
         },
         'permission_callback' => function () {
             // Adjust permission as needed (e.g., API key, nonce, JWT)

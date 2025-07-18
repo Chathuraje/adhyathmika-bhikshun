@@ -76,7 +76,7 @@ if (!function_exists('import_single_post_from_data')) {
                 return [
                     'status' => 'skipped',
                     'post_id' => $existing->ID,
-                    'reason' => 'Duplicate post_name'
+                    'reason' => 'Duplicate post slug'
                 ];
             }
         }

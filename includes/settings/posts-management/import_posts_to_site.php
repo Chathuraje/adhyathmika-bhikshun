@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-// require_once __DIR__ . '/single_airtable_sync.php';
+require_once __DIR__ . '/single_airtable_sync.php';
 
 function get_attachment_id_by_url_slug($url)
 {
@@ -187,7 +187,7 @@ if (!function_exists('import_single_post_from_data')) {
         }
 
         return $result;
-        // airtable_sync_send($post_id, $post['meta']['post_uid']); 
+        airtable_sync_send($post_id, $post['meta']['post_uid']); 
     }
 }
 

@@ -276,80 +276,80 @@ add_action('save_post_post', function ($post_id, $post, $update) {
     airtable_sync_send($post_id, $post_uid);
 }, 10, 3);
 
-/**
- * 5. Sync comments on various actions
- */
+// /**
+//  * 5. Sync comments on various actions
+//  */
 
-add_action('wp_insert_comment', function($comment_id, $comment_object) {
-    if ($comment_object->comment_approved != 1) return;
+// add_action('wp_insert_comment', function($comment_id, $comment_object) {
+//     if ($comment_object->comment_approved != 1) return;
 
-    $post_id = $comment_object->comment_post_ID;
-    $post_uid = get_field('post_uid', $post_id);
-    if ($post_uid) {
-        airtable_sync_send($post_id, $post_uid);
-    }
-}, 10, 2);
-
-
-add_action('comment_unapproved_to_approved', function($comment) {
-    $post_id = $comment->comment_post_ID;
-    $post_uid = get_field('post_uid', $post_id);
-    if ($post_uid) {
-        airtable_sync_send($post_id, $post_uid);
-    }
-});
+//     $post_id = $comment_object->comment_post_ID;
+//     $post_uid = get_field('post_uid', $post_id);
+//     if ($post_uid) {
+//         airtable_sync_send($post_id, $post_uid);
+//     }
+// }, 10, 2);
 
 
-add_action('edit_comment', function($comment_id) {
-    $comment = get_comment($comment_id);
-    if ($comment && $comment->comment_approved == 1) {
-        $post_id = $comment->comment_post_ID;
-        $post_uid = get_field('post_uid', $post_id);
-        if ($post_uid) {
-            airtable_sync_send($post_id, $post_uid);
-        }
-    }
-});
+// add_action('comment_unapproved_to_approved', function($comment) {
+//     $post_id = $comment->comment_post_ID;
+//     $post_uid = get_field('post_uid', $post_id);
+//     if ($post_uid) {
+//         airtable_sync_send($post_id, $post_uid);
+//     }
+// });
 
 
-add_action('delete_comment', function($comment_id) {
-    $comment = get_comment($comment_id);
-    if ($comment) {
-        $post_id = $comment->comment_post_ID;
-        $post_uid = get_field('post_uid', $post_id);
-        if ($post_uid) {
-            airtable_sync_send($post_id, $post_uid);
-        }
-    }
-});
+// add_action('edit_comment', function($comment_id) {
+//     $comment = get_comment($comment_id);
+//     if ($comment && $comment->comment_approved == 1) {
+//         $post_id = $comment->comment_post_ID;
+//         $post_uid = get_field('post_uid', $post_id);
+//         if ($post_uid) {
+//             airtable_sync_send($post_id, $post_uid);
+//         }
+//     }
+// });
 
-add_action('wp_set_comment_status', function($comment_id, $status) {
-    $comment = get_comment($comment_id);
-    if (!$comment) return;
 
-    if (in_array($status, ['approve', 'spam', 'trash'])) {
-        $post_id = $comment->comment_post_ID;
-        $post_uid = get_field('post_uid', $post_id);
-        if ($post_uid) {
-            airtable_sync_send($post_id, $post_uid);
-        }
-    }
-}, 10, 2);
+// add_action('delete_comment', function($comment_id) {
+//     $comment = get_comment($comment_id);
+//     if ($comment) {
+//         $post_id = $comment->comment_post_ID;
+//         $post_uid = get_field('post_uid', $post_id);
+//         if ($post_uid) {
+//             airtable_sync_send($post_id, $post_uid);
+//         }
+//     }
+// });
 
-add_action('wpdiscuz_post_rating_added', function($post_id, $rating) {
-    $post_uid = get_field('post_uid', $post_id);
-    if ($post_uid) {
-        airtable_sync_send($post_id, $post_uid);
-    }
-}, 10, 2);
+// add_action('wp_set_comment_status', function($comment_id, $status) {
+//     $comment = get_comment($comment_id);
+//     if (!$comment) return;
 
-add_action('wpdiscuz_comment_liked', function($comment_id, $user_id, $is_like) {
-    $comment = get_comment($comment_id);
-    if (!$comment) return;
+//     if (in_array($status, ['approve', 'spam', 'trash'])) {
+//         $post_id = $comment->comment_post_ID;
+//         $post_uid = get_field('post_uid', $post_id);
+//         if ($post_uid) {
+//             airtable_sync_send($post_id, $post_uid);
+//         }
+//     }
+// }, 10, 2);
 
-    $post_id = $comment->comment_post_ID;
-    $post_uid = get_field('post_uid', $post_id);
-    if ($post_uid) {
-        airtable_sync_send($post_id, $post_uid);
-    }
-}, 10, 3);
+// add_action('wpdiscuz_post_rating_added', function($post_id, $rating) {
+//     $post_uid = get_field('post_uid', $post_id);
+//     if ($post_uid) {
+//         airtable_sync_send($post_id, $post_uid);
+//     }
+// }, 10, 2);
+
+// add_action('wpdiscuz_comment_liked', function($comment_id, $user_id, $is_like) {
+//     $comment = get_comment($comment_id);
+//     if (!$comment) return;
+
+//     $post_id = $comment->comment_post_ID;
+//     $post_uid = get_field('post_uid', $post_id);
+//     if ($post_uid) {
+//         airtable_sync_send($post_id, $post_uid);
+//     }
+// }, 10, 3);

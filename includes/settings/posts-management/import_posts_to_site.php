@@ -68,6 +68,18 @@ if (!function_exists('import_single_post_from_data')) {
                 ];
             }
         }
+
+        // Check for existing post by slug
+        if (!empty($post['post_name'])) {
+            $existing = get_page_by_path($post['post_name'], OBJECT, $post['post_type']);
+            if ($existing) {
+                return [
+                    'status' => 'skipped',
+                    'post_id' => $existing->ID,
+                    'reason' => 'Duplicate post_name'
+                ];
+            }
+        }
             
 
         $post_id = wp_insert_post([

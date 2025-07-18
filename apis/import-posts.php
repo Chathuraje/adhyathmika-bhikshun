@@ -28,6 +28,7 @@ function check_basic_auth_for_import() {
 function handle_import_custom_posts_endpoint(WP_REST_Request $request)
 {
     $data = $request->get_json_params();
+    $data = $data['data'] ?? [];
 
     if (!is_array($data)) {
         return new WP_REST_Response(['error' => 'Invalid JSON array'], 400);

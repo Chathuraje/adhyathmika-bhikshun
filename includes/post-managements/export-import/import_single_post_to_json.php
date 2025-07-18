@@ -132,7 +132,6 @@ if (!function_exists('import_custom_posts_from_data')) {
 
 function import_all_posts_from_data(array $posts) {
     foreach ($posts as $post) {
-        error_log('Importing post: ' . $post['post_title']);
         import_custom_posts_from_data($post);
     }
 }

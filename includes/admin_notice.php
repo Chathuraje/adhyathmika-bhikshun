@@ -93,6 +93,28 @@ class Admin_Notices {
     public static function get_notice_nonce(): string {
         return wp_create_nonce('ab_display_notice');
     }
+
+     /**
+     * Add a notice and redirect to a given URL with notice parameters.
+     *
+     * @param string $message
+     * @param string $type
+     * @param string $redirect_url
+     */
+    public static function redirect_with_notice(string $message, string $type = 'info', string $redirect_url = ''): void {
+        if (empty($redirect_url)) {
+            $redirect_url = admin_url(); // Fallback to admin dashboard
+        }
+
+        $redirect_url = add_query_arg([
+            'notice_status'  => $type,
+            'notice_message' => urlencode($message),
+            '_ab_notice'     => self::get_notice_nonce(),
+        ], $redirect_url);
+
+        wp_safe_redirect($redirect_url);
+        exit;
+    }
 }
 
 // Hook notices display in both admin and network admin

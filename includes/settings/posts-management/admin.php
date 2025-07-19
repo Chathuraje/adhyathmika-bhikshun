@@ -6,6 +6,12 @@
  * @package Adhyathmika_Bhikshun
  */
 
+
+// 🔧 Filter to specify which post types should allwo to use this features
+function allowed_post_types_for_import_button() {
+    return apply_filters('custom_allowed_post_types_for_import_all', ['post']);
+}
+
 // Register additional plugin settings
 add_action('admin_init', function () {
     $options = [

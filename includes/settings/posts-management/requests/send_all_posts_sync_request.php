@@ -62,7 +62,7 @@ function send_all_posts_sync_request($post_type = 'post') {
             return new WP_Error('no_data', 'No data found.');
         }
 
-        $message = $data['message'] ?? '✅ New post successfully triggered via N8N!';
+        $message = $data['message'] ?? '✅ All posts synchronized successfully.';
         if ($is_testing_enabled) {
             $message .= ' (Testing Mode)';
         }

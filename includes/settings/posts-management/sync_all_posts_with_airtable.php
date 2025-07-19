@@ -33,7 +33,7 @@ $is_testing_enabled = get_option('ab_testing_enabled', true);
     // Check if the current user has permission to edit posts.
     if (!current_user_can('edit_posts')) {
         // Add an admin notice if unauthorized.
-        Admin_Notices::add_persistent_notice('❌ You are not authorized to create posts.', 'error');
+        Admin_Notices::add_persistent_notice('❌ You do not have permission to sync posts.', 'error');
         // Redirect back to the posts list with an error status.
         wp_safe_redirect(add_query_arg(['post_type' => 'post', 'create_status' => 'unauthorized'], admin_url('edit.php')));
         exit;

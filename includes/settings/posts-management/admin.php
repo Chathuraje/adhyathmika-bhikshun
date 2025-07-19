@@ -1,35 +1,33 @@
 <?php
 /**
  * Adhyathmika Bhikshun Plugin
- * Admin Functions (Extended)
+ * Admin Functions
  *
  * @package Adhyathmika_Bhikshun
  */
 
-
-// 🔧 Filter to specify which post types should allwo to use this features
-function allowed_post_types_for_import_button() {
-    return apply_filters('custom_allowed_post_types_for_import_all', ['post']);
-}
-
-// Register additional plugin settings
-add_action('admin_init', function () {
-    $options = [
-        'ab_testing_enabled',
-        'ab_new_post_creation_enabled',
-        'ab_single_airtable_sync_enabled',
-        'ab_import_posts_to_site_enabled',
-    ];
-
-    foreach ($options as $option) {
-        register_setting('ab_settings_group', $option);
-    }
-});
+// 🔧 Filter for allowed post types (currently not in use)
+// function allowed_post_types_for_import_button() {
+//     return apply_filters('custom_allowed_post_types_for_import_all', ['post']);
+// }
 
 /**
- * Handle POST settings saving securely
+ * Register settings and handle form submissions
  */
 add_action('admin_init', function () {
+    // Register plugin options
+    $settings = [
+        'ab_testing_enabled',
+        'ab_create_a_new_post_enabled',
+        // 'ab_single_airtable_sync_enabled',
+        // 'ab_import_posts_to_site_enabled',
+    ];
+
+    foreach ($settings as $setting) {
+        register_setting('ab_settings_group', $setting);
+    }
+
+    // Handle form submission
     if (
         $_SERVER['REQUEST_METHOD'] === 'POST' &&
         isset($_POST['ab_post_settings_nonce']) &&
@@ -41,9 +39,9 @@ add_action('admin_init', function () {
 
         $checkboxes = [
             'ab_testing_enabled',
-            'ab_new_post_creation_enabled',
-            'ab_single_airtable_sync_enabled',
-            'ab_import_posts_to_site_enabled',
+            'ab_create_a_new_post_enabled',
+            // 'ab_single_airtable_sync_enabled',
+            // 'ab_import_posts_to_site_enabled',
         ];
 
         foreach ($checkboxes as $key) {
@@ -56,22 +54,16 @@ add_action('admin_init', function () {
  * Conditionally load features
  */
 add_action('init', function () {
-    if (get_option('ab_testing_enabled', false)) {
-        // Optional: Add a testing-specific include or hook here
-        // require_once __DIR__ . '/testing_feature.php';
-    }
+    if (get_option('ab_create_a_new_post_enabled', true)) {
+       require_once __DIR__ . '/create_a_new_post.php';
+   }
 
-    if (get_option('ab_new_post_creation_enabled', true)) {
-        require_once __DIR__ . '/new_post_creation.php';
-    }
+//    if (get_option('ab_single_airtable_sync_enabled', true)) {
+//        require_once __DIR__ . '/single_airtable_sync.php';
+//    }
+   
+//    if (get_option('ab_import_posts_to_site_enabled', true)) {
+//        require_once __DIR__ . '/import_posts_to_site.php';
+//    }
 
-    if (get_option('ab_single_airtable_sync_enabled', true)) {
-        require_once __DIR__ . '/single_airtable_sync.php';
-    }
-    
-    if (get_option('ab_import_posts_to_site_enabled', true)) {
-        require_once __DIR__ . '/import_posts_to_site.php';
-    }
-
-    
 });

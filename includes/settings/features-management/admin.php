@@ -141,7 +141,7 @@ add_action('init', function () {
     // Auto-generate image ALT text on image upload
     if ($settings['auto_generate_alt']) {
         require_once __DIR__ . '/features/auto_generate_image_alt.php';
-        add_filter('wp_generate_attachment_metadata', 'ab_auto_generate_clean_image_alt', 10, 2);
+        add_filter('wp_generate_attachment_metadata', 'ab_auto_generate_image_alt', 10, 2);
     }
 
     // Add dynamic cross-site link in the WordPress admin bar
@@ -153,7 +153,7 @@ add_action('init', function () {
     // Enable CDN URL rewriting for assets
     if ($settings['cdn_rewrite']) {
         require_once __DIR__ . '/features/cdn_url_rewrite.php';
-        add_action('init', 'ab_enable_cdn_url_rewrite');
+        add_action('init', 'ab_cdn_url_rewrite');
     }
 
     // Register additional custom fields in REST API responses

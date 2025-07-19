@@ -153,8 +153,8 @@ add_action('init', function () {
     // Enable CDN URL rewriting for assets
     if ($settings['cdn_rewrite']) {
         require_once __DIR__ . '/features/cdn_url_rewrite.php';
-        add_action('init', 'ab_cdn_url_rewrite');
-    }
+        ab_cdn_url_rewrite();
+    }    
 
     // Register additional custom fields in REST API responses
     if ($settings['custom_rest_fields']) {

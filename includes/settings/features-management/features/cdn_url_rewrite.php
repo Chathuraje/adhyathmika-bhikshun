@@ -40,6 +40,7 @@ if (!defined('ABSPATH')) {
 /**
  * Initializes all filters and redirects for CDN URL rewriting.
  */
+
 if (!function_exists('ab_cdn_url_rewrite')) {
     function ab_cdn_url_rewrite() {
         // Get CDN and Site URLs

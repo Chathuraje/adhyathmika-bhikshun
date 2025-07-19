@@ -73,7 +73,9 @@ add_action('admin_head-edit.php', function () {
 /**
  * AJAX handler for creating a new post via an external N8N webhook.
  */
-add_action('wp_ajax_ab_create_a_new_post_action', function () use ($is_testing_enabled) {
+add_action('wp_ajax_ab_create_a_new_post', function () {
+    $is_testing_enabled = get_option('ab_testing_enabled', false);
+
     // Verify the nonce for security to prevent CSRF attacks.
     check_admin_referer('ab_create_a_new_post_action');
 

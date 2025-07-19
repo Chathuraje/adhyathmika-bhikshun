@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
     exit; // Prevent direct access.
 }
 
-require_once __DIR__ . '/../../../tools/encode.php';
+require_once __DIR__ . '../../../../../tools/encode.php';
 
 // Define JWT secret and webhook URL constants if not already defined.
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');

@@ -41,7 +41,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-require_once __DIR__ . '/requests/send_create_post_request.php';
+require_once __DIR__ . '/requests/send_create_a_new_post_request.php';
 
 /**
  * Add "Create a New Post" button to the WordPress admin posts list page.

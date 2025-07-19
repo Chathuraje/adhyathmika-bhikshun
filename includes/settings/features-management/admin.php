@@ -123,7 +123,7 @@ add_action('init', function () {
 
     if ($settings['language_switch']) {
         require_once __DIR__ . '/shortcodes/language_switcher.php';
-        add_shortcode('ab_language_switcher', 'ab_language_switch_sc');
+        add_shortcode('ab_language_switcher', 'ab_language_switcher_sc');
     }
 
     if ($settings['reading_time']) {

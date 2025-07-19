@@ -71,7 +71,7 @@ add_action('init', function () {
    
    if (get_option('ab_import_all_posts_from_airtable_enabled', true)) {
        require_once __DIR__ . '/import_all_posts_from_airtable.php';
-    //    require_once __DIR__ . '/apis/import_all_posts_from_api.php';
+       require_once __DIR__ . '/apis/import_all_posts_with_api.php';
    }
 
 });

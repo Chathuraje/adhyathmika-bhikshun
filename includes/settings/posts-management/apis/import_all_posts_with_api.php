@@ -9,8 +9,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 } 
 
-// Include necessary files
-require_once __DIR__ . '/../includes/settings/posts-management/import_posts_to_site.php';
+require_once __DIR__ . '/../lib/import_single_post_from_json.php';
 
 add_action('rest_api_init', function () {
     register_rest_route('ab-custom-apis/v2', '/import_all_posts_with_api', [
@@ -66,10 +65,6 @@ function handle_import_all_posts_with_api_endpoint(WP_REST_Request $request)
         return new WP_REST_Response(['error' => $e->getMessage()], 500);
     }
 }
-
-
-require_once __DIR__ . '/lib/import_single_post_from_json.php';
-
 
 if (!function_exists('import_all_posts_with_api')) {
     function import_all_posts_with_api(array $posts) {

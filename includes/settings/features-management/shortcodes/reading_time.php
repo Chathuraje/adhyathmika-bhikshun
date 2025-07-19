@@ -1,5 +1,5 @@
 <?php
-function custom_reading_time_shortcode() {
+function ab_reading_time_sc() {
     global $post;
 
     if ( ! isset($post) || ! ($post instanceof WP_Post) ) {

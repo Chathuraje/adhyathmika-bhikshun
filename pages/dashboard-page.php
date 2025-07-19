@@ -1,7 +1,7 @@
 <div class="wrap" style="max-width: 800px; margin: auto;">
     <h1 style="text-align: center;">Welcome to Adhyathmika Bhikshun</h1>
     <div style="text-align: center; margin-top: 20px;">
-        <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . '../assets/iamges/welcome-image.png'); ?>"
+        <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . '../assets/images/welcome-image.png'); ?>"
             alt="Spiritual Image"
             style="max-width: 100%; height: auto; border-radius: 10px;" />
     </div>

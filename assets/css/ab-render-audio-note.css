@@ -1,0 +1,17 @@
+/* Container for the audio and button */
+#ab-audio-note {
+    text-align: center;
+}
+
+/* Circular play/pause button styling */
+#ab-audio-btn {
+    color: #3661EE;
+    border-radius: 50%;
+    font-size: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}

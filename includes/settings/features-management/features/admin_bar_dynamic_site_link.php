@@ -30,7 +30,7 @@
  */
 
 // Check if the function is already declared to prevent conflicts
-if (!function_exists('ab_add_dynamic_site_link_to_admin_bar')) {
+if (!function_exists('ab_admin_bar_dynamic_site_link')) {
 
     /**
      * Adds a context-aware external site link to the WordPress admin bar.
@@ -38,7 +38,7 @@ if (!function_exists('ab_add_dynamic_site_link_to_admin_bar')) {
      *
      * @param WP_Admin_Bar $wp_admin_bar WordPress Admin Bar object.
      */
-    function ab_add_dynamic_site_link_to_admin_bar($wp_admin_bar) {
+    function ab_admin_bar_dynamic_site_link($wp_admin_bar) {
         // Only show the admin bar if it's visible to the user
         if (!is_admin_bar_showing()) {
             return;

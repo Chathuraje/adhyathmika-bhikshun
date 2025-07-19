@@ -4,15 +4,16 @@ if (!current_user_can('manage_options')) {
 }
 
 $settings = [
-    'ab_post_order_enabled'          => get_option('ab_post_order_enabled', true),
-    'ab_language_switch_enabled'     => get_option('ab_language_switch_enabled', true),
-    'ab_reading_time_enabled'        => get_option('ab_reading_time_enabled', true),
-    'ab_image_alt_enabled'           => get_option('ab_image_alt_enabled', true),
-    'ab_cross_site_link_enabled'     => get_option('ab_cross_site_link_enabled', true),
-    'ab_use_cdn_urls_enabled'        => get_option('ab_use_cdn_urls_enabled', false),
-    'ab_language_audio_note_enabled' => get_option('ab_language_audio_note_enabled', true),
-    'ab_rest_api_extras_enabled'     => get_option('ab_rest_api_extras_enabled', false),
-    'ab_cdn_url'                     => get_option('ab_cdn_url', ''),
+    'ab_global_post_position_enabled'         => get_option('ab_global_post_position_enabled', true),
+    'ab_language_switcher_enabled'            => get_option('ab_language_switcher_enabled', true),
+    'ab_reading_time_enabled'                 => get_option('ab_reading_time_enabled', true),
+    'ab_render_audio_note_enabled'            => get_option('ab_render_audio_note_enabled', true),
+
+    'ab_auto_generate_image_alt_enabled'      => get_option('ab_auto_generate_image_alt_enabled', true),
+    'ab_admin_bar_dynamic_site_link_enabled'  => get_option('ab_admin_bar_dynamic_site_link_enabled', false),
+    'ab_cdn_url_rewrite_enabled'              => get_option('ab_cdn_url_rewrite_enabled', true),
+    'ab_cdn_url_rewrite_enabled'              => get_option('ab_cdn_url_rewrite_enabled', false),
+    'ab_cdn_url'                              => get_option('ab_cdn_url', ''),
 ];
 ?>
 
@@ -25,10 +26,10 @@ $settings = [
     <table class="ab-shortcode-table">
       <?php
       $shortcodes = [
-          'ab_post_order_enabled'          => ['[post_order]', 'Displays the post\'s position in chronological order.'],
-          'ab_language_switch_enabled'     => ['[language_switch]', 'Shows a language toggle with English and Sinhala options.'],
-          'ab_reading_time_enabled'        => ['[reading_time]', 'Displays the estimated reading time for the current post.'],
-          'ab_language_audio_note_enabled' => ['[language_audio_note]', 'Plays background audio in Sinhala (.lk) or English (.org).'],
+          'ab_global_post_position_enabled'       => ['[post_order]', 'Displays the post\'s position in chronological order.'],
+          'ab_language_switcher_enabled'          => ['[language_switcher]', 'Shows a language toggle with English and Sinhala options.'],
+          'ab_reading_time_enabled'               => ['[reading_time]', 'Displays the estimated reading time for the current post.'],
+          'ab_render_audio_note_enabled'          => ['[language_audio_note]', 'Plays background audio in Sinhala (.lk) or English (.org).'],
       ];
 
       foreach ($shortcodes as $setting_key => [$tag, $desc]) {
@@ -68,7 +69,7 @@ $settings = [
     <section class="ab-section">
       <h3><?php _e('Enable / Disable Shortcodes', 'adhyathmika-bhikshun'); ?></h3>
       <?php
-      foreach (['ab_post_order_enabled', 'ab_language_switch_enabled', 'ab_language_audio_note_enabled', 'ab_reading_time_enabled'] as $key) {
+      foreach (['ab_global_post_position_enabled', 'ab_language_switcher_enabled', 'ab_reading_time_enabled', 'ab_render_audio_note_enabled'] as $key) {
           ?>
           <div class="ab-feature">
             <label class="ab-toggle">
@@ -89,15 +90,15 @@ $settings = [
       <h3><?php _e('Enable / Disable Features', 'adhyathmika-bhikshun'); ?></h3>
       <?php
       $features = [
-          'ab_image_alt_enabled' => [
+          'ab_auto_generate_image_alt_enabled' => [
               'label' => __('Enable Image Alt Text', 'adhyathmika-bhikshun'),
               'desc'  => __('Automatically adds alt text to images based on their filename.', 'adhyathmika-bhikshun')
           ],
-          'ab_cross_site_link_enabled' => [
+          'ab_admin_bar_dynamic_site_link_enabled' => [
               'label' => __('Enable Cross-Site Links', 'adhyathmika-bhikshun'),
               'desc'  => __('Allows linking to external sites with proper tracking.', 'adhyathmika-bhikshun')
           ],
-          'ab_rest_api_extras_enabled' => [
+          'ab_register_custom_rest_fields_enabled' => [
               'label' => __('Enable REST API Extras', 'adhyathmika-bhikshun'),
               'desc'  => __('Adds additional fields to the REST API responses. (raw_contents and rank_math_meta)', 'adhyathmika-bhikshun')
           ],
@@ -127,7 +128,7 @@ $settings = [
       <h3><?php _e('CDN URL Settings', 'adhyathmika-bhikshun'); ?></h3>
       <div class="ab-feature">
         <label class="ab-toggle">
-          <input type="checkbox" name="ab_use_cdn_urls_enabled" value="1" <?php checked($settings['ab_use_cdn_urls_enabled']); ?> />
+          <input type="checkbox" name="ab_cdn_url_rewrite_enabled" value="1" <?php checked($settings['ab_cdn_url_rewrite_enabled']); ?> />
           <span class="ab-slider"></span>
           <span class="ab-label"><?php _e('Enable CDN URL rewriting', 'adhyathmika-bhikshun'); ?></span>
         </label>

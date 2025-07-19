@@ -10,7 +10,7 @@
 if (!defined('ABSPATH')) exit;
 
 // Load CSS and JS files
-require_once __DIR__ . 'assets/admin.php';
+require_once __DIR__ . '/assets/admin.php';
 
 // Register main admin menu and submenus
 add_action('admin_menu', function () {
@@ -72,12 +72,12 @@ add_action('admin_menu', function () {
 require_once plugin_dir_path(__FILE__) . '/pages/main.php';
 
 // Include all functions
-require_once plugin_dir_path(__FILE__) . '/includes/admin.php';
+// require_once plugin_dir_path(__FILE__) . '/includes/admin.php';
 
 // Load Widgets
 // require_once plugin_dir_path(__FILE__) . '/includes/widgets.php';
 
 // Load Custom API Endpoints
-require_once plugin_dir_path(__FILE__) . '/apis/admin.php';
+// require_once plugin_dir_path(__FILE__) . '/apis/admin.php';
 
 

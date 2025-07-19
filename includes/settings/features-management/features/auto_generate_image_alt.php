@@ -17,27 +17,34 @@
  * @uses update_post_meta() Updates the ALT text for the attachment if none exists.
  */
 
-function ab_auto_generate_image_alt_from_the_name($metadata, $attachment_id) {
-    // Get the post object for the attachment
-    $attachment = get_post($attachment_id);
-    
-    // Bail early if attachment is not valid
-    if (!$attachment || $attachment->post_type !== 'attachment') {
+ // Prevent direct access to the file
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+if (!function_exists('ab_auto_generate_image_alt')) {
+    function ab_auto_generate_image_alt($metadata, $attachment_id) {
+        // Get the post object for the attachment
+        $attachment = get_post($attachment_id);
+        
+        // Bail early if attachment is not valid
+        if (!$attachment || $attachment->post_type !== 'attachment') {
+            return $metadata;
+        }
+
+        // Get the image title (usually filename or entered title)
+        $raw_title = get_the_title($attachment_id);
+
+        // Decode any HTML entities and clean up spacing/capitalization
+        $clean_title = html_entity_decode($raw_title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $clean_title = ucfirst(trim($clean_title));
+
+        // Check if an ALT text already exists; if not, set it
+        if (empty(get_post_meta($attachment_id, '_wp_attachment_image_alt', true))) {
+            update_post_meta($attachment_id, '_wp_attachment_image_alt', $clean_title);
+        }
+
+        // Return original metadata unchanged
         return $metadata;
     }
-
-    // Get the image title (usually filename or entered title)
-    $raw_title = get_the_title($attachment_id);
-
-    // Decode any HTML entities and clean up spacing/capitalization
-    $clean_title = html_entity_decode($raw_title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    $clean_title = ucfirst(trim($clean_title));
-
-    // Check if an ALT text already exists; if not, set it
-    if (empty(get_post_meta($attachment_id, '_wp_attachment_image_alt', true))) {
-        update_post_meta($attachment_id, '_wp_attachment_image_alt', $clean_title);
-    }
-
-    // Return original metadata unchanged
-    return $metadata;
 }

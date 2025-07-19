@@ -1,5 +1,5 @@
 <?php
-function render_language_switch_shortcode()
+function ab_language_switch_sc()
 {
     ob_start();
 ?>

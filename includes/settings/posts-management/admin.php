@@ -66,6 +66,7 @@ add_action('init', function () {
 
     if (get_option('ab_sync_all_posts_with_airtable_enabled', true)) {
          require_once __DIR__ . '/sync_all_posts_with_airtable.php';
+         require_once __DIR__ . '/apis/sync_all_posts_with_api.php';
     }
    
 //    if (get_option('ab_import_posts_to_site_enabled', true)) {

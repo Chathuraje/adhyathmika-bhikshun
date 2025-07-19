@@ -43,7 +43,7 @@ function handle_import_all_posts_with_api_endpoint(WP_REST_Request $request)
 
     try {
         
-        $results = import_all_posts_from_airtable($data);
+        $results = import_all_posts_with_api($data);
 
         // Save progress transient: key by a job ID or user session, here simple example
         $progress_key = sanitize_key($post_type . '_import_progress');
@@ -71,8 +71,8 @@ function handle_import_all_posts_with_api_endpoint(WP_REST_Request $request)
 require_once __DIR__ . '/lib/import_single_post_from_json.php';
 
 
-if (!function_exists('import_all_posts_from_airtable')) {
-    function import_all_posts_from_airtable(array $posts) {
+if (!function_exists('import_all_posts_with_api')) {
+    function import_all_posts_with_api(array $posts) {
         wp_suspend_cache_invalidation(true);
         $results = [];
 

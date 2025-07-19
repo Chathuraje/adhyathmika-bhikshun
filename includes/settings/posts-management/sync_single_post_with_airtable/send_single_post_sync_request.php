@@ -110,12 +110,13 @@ function send_single_post_sync_request($post_id, $post_uid) {
 
     // Make the POST request
     $response = wp_remote_post(AIRTABLE_WEBHOOK_URL, [
-        'headers' => [
+        'method'    => 'POST',
+        'blocking'  => true,
+        'headers'   => [
             'Authorization' => 'Bearer ' . $jwt_token,
             'Content-Type'  => 'application/json',
         ],
-        'body'    => $request_body,
-        'timeout' => 15,
+        'body'      => $request_body
     ]);
 
     // Handle request errors

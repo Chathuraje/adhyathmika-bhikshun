@@ -118,22 +118,22 @@ add_action('init', function () {
 
     if ($settings['post_order']) {
         require_once __DIR__ . '/shortcodes/global_post_position.php';
-        add_shortcode('post_order', 'ab_global_post_position_sc');
+        add_shortcode('ab_post_order', 'ab_global_post_position_sc');
     }
 
     if ($settings['language_switch']) {
         require_once __DIR__ . '/shortcodes/language_switcher.php';
-        add_shortcode('language_switcher', 'ab_language_switch_sc');
+        add_shortcode('ab_language_switcher', 'ab_language_switch_sc');
     }
 
     if ($settings['reading_time']) {
         require_once __DIR__ . '/shortcodes/reading_time.php';
-        add_shortcode('reading_time', 'ab_reading_time_sc');
+        add_shortcode('ab_reading_time', 'ab_reading_time_sc');
     }
 
     if ($settings['language_audio_note']) {
         require_once __DIR__ . '/shortcodes/render_audio_note.php';
-        add_shortcode('language_audio_note', 'ab_render_audio_note_sc');
+        add_shortcode('ab_language_audio_note', 'ab_render_audio_note_sc');
     }
 
     // Enable features conditionally based on settings
@@ -141,13 +141,13 @@ add_action('init', function () {
     // Auto-generate image ALT text on image upload
     if ($settings['auto_generate_alt']) {
         require_once __DIR__ . '/features/auto_generate_image_alt.php';
-        add_filter('wp_generate_attachment_metadata', 'auto_generate_clean_image_alt', 10, 2);
+        add_filter('wp_generate_attachment_metadata', 'ab_auto_generate_clean_image_alt', 10, 2);
     }
 
     // Add dynamic cross-site link in the WordPress admin bar
     if ($settings['admin_bar_link']) {
         require_once __DIR__ . '/features/admin_bar_dynamic_site_link.php';
-        add_action('admin_bar_menu', 'add_dynamic_site_link_to_admin_bar', 100);
+        add_action('admin_bar_menu', 'ab_admin_bar_dynamic_site_link', 100);
     }
 
     // Enable CDN URL rewriting for assets

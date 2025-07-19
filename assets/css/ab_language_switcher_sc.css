@@ -1,0 +1,48 @@
+/* Wrapper for the language toggle */
+.lang-toggle-wrap {
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Language toggle button container */
+.lang-toggle {
+    background: #fff;
+    border-radius: 30px;
+    padding: 5px;
+    display: inline-flex;
+    gap: 5px;
+    font-family: sans-serif;
+    font-size: 12px;
+    border: 1px solid #ddd;
+    align-items: center;
+    margin: auto;
+}
+
+/* Base styles for language links */
+.lang-option,
+.lang-option:visited {
+    padding: 5px 10px;
+    border-radius: 20px;
+    color: #999;
+    text-decoration: none;
+    transition: color 0.4s ease, background-color 0.4s ease, font-weight 0.3s ease, transform 0.3s ease;
+}
+
+/* Active language state */
+.lang-option.active {
+    color: #0061cb !important;
+    background-color: #e6f0ff;
+    font-weight: 500;
+    pointer-events: none; /* Prevent clicks */
+    cursor: default;
+}
+
+/* Inactive language hover/click behavior */
+.lang-option:not(.active) {
+    cursor: pointer;
+}
+
+.lang-option:not(.active):hover {
+    color: #0061cb !important;
+    background-color: #e6f0ff;
+}

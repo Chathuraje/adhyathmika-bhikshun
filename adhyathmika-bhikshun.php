@@ -72,7 +72,7 @@ add_action('admin_menu', function () {
 require_once plugin_dir_path(__FILE__) . '/pages/main.php';
 
 // Include all functions
-// require_once plugin_dir_path(__FILE__) . '/includes/admin.php';
+require_once plugin_dir_path(__FILE__) . '/includes/admin.php';
 
 // Load Widgets
 // require_once plugin_dir_path(__FILE__) . '/includes/widgets.php';

@@ -1,26 +1,35 @@
 <?php
-
+// Enqueue plugin CSS and JS for Admin Features Management Page
 add_action('admin_enqueue_scripts', 'ab_enqueue_admin_assets');
 function ab_enqueue_admin_assets($hook) {
-    $plugin_url = plugin_dir_url(__FILE__);
+    if ($hook === 'adhyathmika-bhikshun_page_abh-features-management') {
+        // Load custom admin CSS
+        wp_enqueue_style('ab-features-management-page-style', plugin_dir_url(__FILE__) . 'css/ab-features-management-page.css');
 
-    // Enqueue settings CSS/JS globally or for specific pages as needed
-    wp_enqueue_style(
-        'ab-settings-css',
-        $plugin_url . 'css/settings.css',
-        [],
-        '1.0.0'
-    );
+        // Load custom admin JS
+        wp_enqueue_script('ab-features-management-page-script', plugin_dir_url(__FILE__) . 'js/ab-features-management-page.js', [], null, true);
+    }
+}
 
-    wp_enqueue_script(
-        'ab-settings-js',
-        $plugin_url . 'js/settings.js',
-        [],
-        '1.0.0',
-        true
-    );
+// Enqueue plugin CSS and JS for Audio Note Shortcode
+add_action('wp_enqueue_scripts', 'ab_render_audio_note_sc_assets');
+function ab_render_audio_note_sc_assets() {
+    wp_enqueue_style('ab-render-audio-note-sc-style', plugin_dir_url(__FILE__) . 'css/ab-render-audio-note-cs.css');
+    wp_enqueue_script('ab-render-audio-note-sc-script', plugin_dir_url(__FILE__) . 'js/ab-render-audio-note-cs.js', [], false, true);
+}
 
-    // // Load progress bar script conditionally
+// Enqueue plugin CSS and JS for Language Switcher Shortcode
+add_action('wp_enqueue_scripts', 'ab_language_switcher_sc_assets');
+function ab_language_switcher_sc_assets() {
+    wp_enqueue_style('ab-language-switcher-sc-style', plugin_dir_url(__FILE__) . 'css/ab_language_switcher_sc.css');
+    wp_enqueue_script('ab-language-switcher-sc-script', plugin_dir_url(__FILE__) . 'js/ab_language_switcher_sc.js', [], false, true);
+}
+
+
+
+
+
+// // Load progress bar script conditionally
     // if (get_option('ab_import_posts_to_site_enabled', true)) {
     //     $screen = get_current_screen();
     //     if (in_array($screen->post_type, allowed_post_types_for_import_button(), true)) {
@@ -42,26 +51,4 @@ function ab_enqueue_admin_assets($hook) {
     //         ]);
     //     }
     // }
-
-    // Load audio note shortcode script conditionally
-    if (get_option('ab_render_audio_note_enabled', true)) {
-        // Enqueue audio note CSS
-        wp_enqueue_style(
-            'ab-render-audio-note-style',
-            plugin_dir_url(__FILE__) . 'css/ab-render-audio-note.css',
-            [], // Dependencies
-            '1.0' // Version
-        );
-
-        // Enqueue audio note JS
-        wp_enqueue_script(
-            'ab-render-audio-note-script',
-            plugin_dir_url(__FILE__) . 'js/ab-render-audio-note.js',
-            [], // Dependencies
-            '1.0', // Version
-            true // Load in footer
-        );
-    }
-}
-
 ?>

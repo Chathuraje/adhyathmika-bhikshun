@@ -1,79 +1,47 @@
 <?php
-function ab_language_switch_sc()
-{
-    ob_start();
-?>
-    <div class="lang-toggle-wrap" style="text-align: center; margin: 20px 0;">
-        <div class="lang-toggle" style="margin: auto;">
-            <a id="lang-en" class="lang-option" href="https://adhyathmikabhikshun.org">English</a>
-            <a id="lang-si" class="lang-option" href="https://adhyathmikabhikshun.lk">සිංහල</a>
-        </div>
-    </div>
+/**
+ * Registers a shortcode [ab_language_switcher] to display a language switcher.
+ *
+ * The shortcode outputs a language toggle HTML structure with links to 
+ * English and Sinhala versions of the website.
+ *
+ * Functions:
+ * - ab_language_switcher_sc(): Generates the HTML for the language switcher.
+ * - ab_language_switcher_sc_assets(): Enqueues the necessary CSS and JS files 
+ *   for the language switcher functionality.
+ *
+ * Shortcode:
+ * - [ab_language_switcher]: Use this shortcode to display the language switcher 
+ *   on any page or post.
+ *
+ * Enqueued Assets:
+ * - CSS: ab_language_switcher_sc.css (located in the 'css' directory relative to this file)
+ * - JS: ab_language_switcher_sc.js (located in the 'js' directory relative to this file)
+ *
+ * Hooks:
+ * - add_action('wp_enqueue_scripts', 'ab_language_switcher_sc_assets'): Ensures 
+ *   the CSS and JS files are loaded on the frontend.
+ */
 
-    <style>
-        .lang-toggle {
-            background: #fff;
-            border-radius: 30px;
-            padding: 5px;
-            display: inline-flex;
-            gap: 5px;
-            font-family: sans-serif;
-            font-size: 12px;
-            border: 1px solid #ddd;
-            align-items: center;
-        }
-
-        .lang-option,
-        .lang-option:visited {
-            padding: 5px 10px;
-            border-radius: 20px;
-            color: #999;
-            text-decoration: none;
-            transition: color 0.4s ease, background-color 0.4s ease, font-weight 0.3s ease, transform 0.3s ease;
-        }
-
-        .lang-option.active {
-            color: #0061cb !important;
-            background-color: #e6f0ff;
-            font-weight: 500;
-            pointer-events: none;
-            cursor: default;
-        }
-
-        .lang-option:not(.active) {
-            cursor: pointer;
-        }
-
-        .lang-option:not(.active):hover {
-            color: #0061cb !important;
-            background-color: #e6f0ff;
-        }
-    </style>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const hostname = window.location.hostname;
-            const currentPath = window.location.pathname + window.location.search + window.location.hash;
-
-            if (hostname.includes('adhyathmikabhikshun.lk')) {
-                const siLink = document.getElementById('lang-si');
-                siLink.classList.add('active');
-                siLink.removeAttribute('href');
-            } else if (hostname.includes('adhyathmikabhikshun.org') || hostname === 'localhost') {
-                const enLink = document.getElementById('lang-en');
-                enLink.classList.add('active');
-                enLink.removeAttribute('href');
-            }
-
-            if (!document.getElementById('lang-en').classList.contains('active')) {
-                document.getElementById('lang-en').href = 'https://adhyathmikabhikshun.org' + currentPath;
-            }
-
-            if (!document.getElementById('lang-si').classList.contains('active')) {
-                document.getElementById('lang-si').href = 'https://adhyathmikabhikshun.lk' + currentPath;
-            }
-        });
-    </script>
-<?php
-    return ob_get_clean();
+ // Prevent direct access to the file
+if (!defined('ABSPATH')) {
+    exit;
 }
+
+if ( ! function_exists( 'ab_language_switcher_sc' ) ) {
+    // Register shortcode [ab_language_switch]
+    function ab_language_switcher_sc() {
+        ob_start();
+        ?>
+        <!-- Language Switcher HTML -->
+        <div class="lang-toggle-wrap">
+            <div class="lang-toggle">
+                <a id="lang-en" class="lang-option" href="https://adhyathmikabhikshun.org">English</a>
+                <a id="lang-si" class="lang-option" href="https://adhyathmikabhikshun.lk">සිංහල</a>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+}
+?>

@@ -39,10 +39,10 @@ $settings = [
               'label' => __('Enable Testing Mode', 'adhyathmika-bhikshun'),
               'desc'  => __('When enabled, all post syncs will be sent to the testing webhook URL instead of the production one. Useful for testing without affecting live data.', 'adhyathmika-bhikshun')
           ],
-          // 'ab_create_a_new_post_enabled' => [
-          //       'label' => __('Enable New Post Creation', 'adhyathmika-bhikshun'),
-          //       'desc'  => __('Allows the creation of new posts through the plugin interface.', 'adhyathmika-bhikshun')
-          // ],
+          'ab_create_a_new_post_enabled' => [
+                'label' => __('Enable New Post Creation', 'adhyathmika-bhikshun'),
+                'desc'  => __('Allows the creation of new posts through the plugin interface.', 'adhyathmika-bhikshun')
+          ],
           // 'ab_single_airtable_sync_enabled' => [
           //     'label' => __('Enable Single Airtable Sync', 'adhyathmika-bhikshun'),
           //     'desc'  => __('Enables synchronization of individual posts with Airtable.', 'adhyathmika-bhikshun')

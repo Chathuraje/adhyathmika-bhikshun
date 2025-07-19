@@ -20,7 +20,7 @@ add_action('admin_init', function () {
         'ab_testing_enabled',
         'ab_create_a_new_post_enabled',
         'ab_sync_single_post_with_airtable_enabled',
-        // 'ab_sync_all_posts_with_airtable_enabled',
+        'ab_sync_all_posts_with_airtable_enabled',
         // 'ab_import_posts_to_site_enabled',
     ];
 
@@ -42,7 +42,7 @@ add_action('admin_init', function () {
             'ab_testing_enabled',
             'ab_create_a_new_post_enabled',
             'ab_sync_single_post_with_airtable_enabled',
-            // 'ab_sync_all_posts_with_airtable_enabled',
+            'ab_sync_all_posts_with_airtable_enabled',
             // 'ab_import_posts_to_site_enabled',
         ];
 

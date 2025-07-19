@@ -21,7 +21,7 @@ add_action('admin_init', function () {
         'ab_create_a_new_post_enabled',
         'ab_sync_single_post_with_airtable_enabled',
         'ab_sync_all_posts_with_airtable_enabled',
-        // 'ab_import_posts_to_site_enabled',
+        'ab_import_all_posts_from_airtable_enabled',
     ];
 
     foreach ($settings as $setting) {
@@ -43,7 +43,7 @@ add_action('admin_init', function () {
             'ab_create_a_new_post_enabled',
             'ab_sync_single_post_with_airtable_enabled',
             'ab_sync_all_posts_with_airtable_enabled',
-            // 'ab_import_posts_to_site_enabled',
+            'ab_import_all_posts_from_airtable_enabled',
         ];
 
         foreach ($checkboxes as $key) {
@@ -69,8 +69,9 @@ add_action('init', function () {
          require_once __DIR__ . '/apis/sync_all_posts_with_api.php';
     }
    
-//    if (get_option('ab_import_posts_to_site_enabled', true)) {
-//        require_once __DIR__ . '/import_posts_to_site.php';
-//    }
+   if (get_option('ab_import_all_posts_from_airtable_enabled', true)) {
+       require_once __DIR__ . '/import_all_posts_from_airtable.php';
+    //    require_once __DIR__ . '/apis/import_all_posts_from_api.php';
+   }
 
 });

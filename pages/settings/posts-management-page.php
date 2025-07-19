@@ -8,7 +8,7 @@ $settings = [
     'ab_create_a_new_post_enabled'     => get_option('ab_create_a_new_post_enabled', true),
     'ab_sync_single_post_with_airtable_enabled'  => get_option('ab_sync_single_post_with_airtable_enabled', true),
     'ab_sync_all_posts_with_airtable_enabled'    => get_option('ab_sync_all_posts_with_airtable_enabled', true),
-    // 'ab_import_posts_to_site_enabled' => get_option('ab_import_posts_to_site_enabled', true),
+    'ab_import_all_posts_from_airtable_enabled' => get_option('ab_import_all_posts_from_airtable_enabled', true),
 ];
 ?>
 
@@ -52,14 +52,14 @@ $settings = [
               'label' => __('Enable Sync All Posts with Airtable', 'adhyathmika-bhikshun'),
               'desc'  => __('Enables the synchronization of all posts with Airtable. This is useful for bulk syncing your posts to Airtable.', 'adhyathmika-bhikshun')
           ],
-          // 'ab_import_posts_to_site_enabled' => [
-          //     'label' => __('Enable Import Posts to Site API', 'adhyathmika-bhikshun'),
-          //     'desc'  => __('
-          //                   Enables the API endpoint for importing posts to the site. This is useful for bulk importing posts from external sources. Ensure you have the necessary permissions to access this endpoint.<br/> <br/> 
-          //                   API Endpoint: <code>/wp-json/ab-custom-apis/v2/import-post</code><br/> 
-          //                   Method: <code>POST</code> <br/>
-          //                   Payload: <code>[{"post_title": "Title", "post_content": "Content", ...}]</code><br/> ', 'adhyathmika-bhikshun')
-          // ],
+          'ab_import_all_posts_from_airtable_enabled' => [
+              'label' => __('Enable Import Posts to Site API', 'adhyathmika-bhikshun'),
+              'desc'  => __('
+                            Enables the API endpoint for importing posts to the site. This is useful for bulk importing posts from external sources. Ensure you have the necessary permissions to access this endpoint.<br/> <br/> 
+                            API Endpoint: <code>/wp-json/ab-custom-apis/v2/import-post</code><br/> 
+                            Method: <code>POST</code> <br/>
+                            Payload: <code>[{"post_title": "Title", "post_content": "Content", ...}]</code><br/> ', 'adhyathmika-bhikshun')
+          ],
       ];
 
       foreach ($features as $key => $label) {

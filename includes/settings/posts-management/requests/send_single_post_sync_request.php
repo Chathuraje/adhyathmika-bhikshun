@@ -41,7 +41,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/../../../../tools/encode.php';
-require_once __DIR__ . '/export_single_post_to_json.php'; // Ensure this is the correct path
+require_once __DIR__ . '/../lib/export_single_post_to_json.php';
 
 // Define constants
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');

@@ -41,22 +41,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-// Include external file for JWT encoding function.
-require_once __DIR__ . '/../../../tools/encode.php';
-
-// Define JWT secret key constant if not already defined.
-if (!defined('JWT_SECRET_KEY')) {
-    define('JWT_SECRET_KEY', '');
-}
-
-// Retrieve the A/B testing enabled option from WordPress settings (default true).
-$is_testing_enabled = get_option('ab_testing_enabled', true);
-
-// Define constant for the N8N webhook URL.
-const N8N_WEBHOOK_URL = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/create_a_new_post';
-
-// Define constant for the JWT secret key.
-const SECRET_KEY = JWT_SECRET_KEY;
+require_once __DIR__ . '/requests/send_create_post_request.php';
 
 /**
  * Add "Create a New Post" button to the WordPress admin posts list page.
@@ -72,8 +57,8 @@ add_action('admin_head-edit.php', function () {
 
     // Create a URL for the AJAX action with a nonce for security.
     $url = wp_nonce_url(
-        admin_url('admin-ajax.php?action=create_a_new_post'),
-        'create_a_new_post_action'
+        admin_url('admin-ajax.php?action=ab_create_a_new_post'),
+        'ab_create_a_new_post_action'
     );
 
     // Output JavaScript to insert the button next to the existing page title action buttons.
@@ -88,9 +73,9 @@ add_action('admin_head-edit.php', function () {
 /**
  * AJAX handler for creating a new post via an external N8N webhook.
  */
-add_action('wp_ajax_create_a_new_post', function () use ($is_testing_enabled) {
+add_action('wp_ajax_ab_create_a_new_post_action', function () use ($is_testing_enabled) {
     // Verify the nonce for security to prevent CSRF attacks.
-    check_admin_referer('create_a_new_post_action');
+    check_admin_referer('ab_create_a_new_post_action');
 
     // Check if the current user has permission to edit posts.
     if (!current_user_can('edit_posts')) {
@@ -101,76 +86,8 @@ add_action('wp_ajax_create_a_new_post', function () use ($is_testing_enabled) {
         exit;
     }
 
-    // Get current WordPress user object.
-    $current_user = wp_get_current_user();
-    // Sanitize the user login name for safety.
-    $requested_by = sanitize_user($current_user->user_login);
-
-    // Prepare JWT payload data with issued-at and expiration times.
-    $payload = [
-        'iat'     => time(),
-        'exp'     => time() + 300, // Token valid for 5 minutes.
-        'user'    => $requested_by,
-        'testing' => $is_testing_enabled ? 'true' : 'false',
-    ];
-
-    // Generate JWT token using secret key.
-    $jwt_token = jwt_encode($payload, SECRET_KEY);
-
-    // Handle token generation failure.
-    if (!$jwt_token) {
-        Admin_Notices::add_persistent_notice('❌ JWT token generation failed.', 'error');
-        wp_safe_redirect(add_query_arg(['post_type' => 'post', 'create_status' => 'token_error'], admin_url('edit.php')));
-        exit;
-    }
-
-    // Build the webhook URL with query parameters for requested user and testing flag.
-    $webhook_url = add_query_arg([
-        'requested_by' => $requested_by,
-        'testing'      => $is_testing_enabled ? 'true' : 'false',
-    ], N8N_WEBHOOK_URL);
-
-    // Send an HTTP GET request to the webhook with Authorization header containing the JWT.
-    $response = wp_remote_get($webhook_url, [
-        'headers' => [
-            'Authorization' => 'Bearer ' . $jwt_token,
-        ],
-        'timeout' => 15,
-    ]);
-
-    // Check if the request failed (network or HTTP errors).
-    if (is_wp_error($response)) {
-        Admin_Notices::add_persistent_notice('❌ Request failed: ' . $response->get_error_message(), 'error');
-        wp_safe_redirect(admin_url('edit.php?post_type=post'));
-        exit;
-    }
-
-    // Get HTTP response status code.
-    $status_code = wp_remote_retrieve_response_code($response);
-    // Get response body content.
-    $response_body = wp_remote_retrieve_body($response);
-    // Decode JSON response into an array.
-    $response_data = json_decode($response_body, true);
-
-    // Handle successful HTTP responses (status 2xx).
-    if ($status_code >= 200 && $status_code < 300) {
-        // Check if webhook responded with a 404 code indicating no data.
-        if (!empty($response_data['code']) && $response_data['code'] === '404') {
-            Admin_Notices::add_persistent_notice('❌ No data in database.', 'error');
-        } else {
-            // Display success message from webhook response or default.
-            $message = $response_data['message'] ?? 'New post successfully triggered via N8N!';
-            // Append testing mode note if enabled.
-            if ($is_testing_enabled) {
-                $message .= ' (Testing Mode)';
-            }
-            Admin_Notices::add_persistent_notice('✅ ' . $message, 'success');
-        }
-    } else {
-        // Handle HTTP errors by showing status code and response body.
-        Admin_Notices::add_persistent_notice("❌ HTTP Error ({$status_code}): {$response_body}", 'error');
-    }
-
+    send_create_a_new_post_request($is_testing_enabled);
+    
     // Redirect back to the posts list page.
     wp_safe_redirect(admin_url('edit.php?post_type=post'));
     exit;

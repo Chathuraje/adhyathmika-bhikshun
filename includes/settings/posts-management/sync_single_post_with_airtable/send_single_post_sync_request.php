@@ -128,7 +128,8 @@ function send_single_post_sync_request($post_id, $post_uid) {
     // Check response status code
     $status_code = wp_remote_retrieve_response_code($response);
     if ($status_code < 200 || $status_code >= 300) {
-        Admin_Notices::add_persistent_notice("❌ Airtable returned unexpected status code: $status_code", 'error');
+        $body = wp_remote_retrieve_body($response);
+        Admin_Notices::add_persistent_notice("❌ Airtable returned unexpected status code: {$status_code}. Response: {$body}", 'error');
         return new WP_Error('airtable_response_error', 'Unexpected response code from Airtable: ' . $status_code);
     }
 

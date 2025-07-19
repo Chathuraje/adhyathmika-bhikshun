@@ -77,7 +77,4 @@ require_once plugin_dir_path(__FILE__) . '/includes/admin.php';
 // Load Widgets
 // require_once plugin_dir_path(__FILE__) . '/includes/widgets.php';
 
-// Load Custom API Endpoints
-// require_once plugin_dir_path(__FILE__) . '/apis/admin.php';
-
 

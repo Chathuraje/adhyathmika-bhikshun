@@ -89,49 +89,5 @@ if (!function_exists('import_all_posts_with_api')) {
         return $results;
     }
 }
-
-
-
-
-
-
-/**
- * Register a REST API endpoint to check import progress.
- * This will return the current batch ID and total count.
- */
-// add_action('rest_api_init', function () {
-//     register_rest_route('ab-custom-apis/v2', '/import-progress', [
-//         'methods' => 'GET',
-//         'callback' => function (WP_REST_Request $request) {
-//             $post_type = sanitize_key($request['post_type']);
-//             $progress_key = $post_type . '_import_progress';
-
-//             $progress = get_transient($progress_key);
-
-//             if (!$progress) {
-//                 return new WP_REST_Response([
-//                     'status' => 'no_import',
-//                     'percent' => 0,
-//                 ], 200);
-//             }
-
-//             $percent = 0;
-//             if ($progress['batch_total'] > 0) {
-//                 $percent = ($progress['batch_id'] / $progress['batch_total']) * 100;
-//             }
-
-//             return new WP_REST_Response([
-//                 'status' => 'in_progress',
-//                 'batch_id' => $progress['batch_id'],
-//                 'batch_total' => $progress['batch_total'],
-//                 'percent' => round($percent, 2),
-//                 'last_updated' => $progress['timestamp'],
-//             ], 200);
-//         },
-//         'permission_callback' => function () {
-//             return is_user_logged_in(); // adjust permissions as needed
-//         }
-//     ]);
-// });
 ?>
 

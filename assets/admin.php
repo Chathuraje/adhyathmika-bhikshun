@@ -24,31 +24,4 @@ function ab_language_switcher_sc_assets() {
     wp_enqueue_style('ab-language-switcher-sc-style', plugin_dir_url(__FILE__) . 'css/ab-language-switcher-sc.css');
     wp_enqueue_script('ab-language-switcher-sc-script', plugin_dir_url(__FILE__) . 'js/ab-language-switcher-sc.js', [], false, true);
 }
-
-
-
-
-
-// // Load progress bar script conditionally
-    // if (get_option('ab_import_posts_to_site_enabled', true)) {
-    //     $screen = get_current_screen();
-    //     if (in_array($screen->post_type, allowed_post_types_for_import_button(), true)) {
-    //         wp_enqueue_script(
-    //             'ab-import-progress-bar',
-    //             $plugin_url . 'js/import-progress.js',
-    //             ['jquery'],
-    //             '1.0.0',
-    //             true
-    //         );
-
-    //         wp_localize_script('ab-import-progress-bar', 'abImport', [
-    //             'postType' => $screen->post_type,
-    //             'postTypeCapitalized' => ucfirst($screen->post_type),
-    //             'importUrl' => esc_url(wp_nonce_url(
-    //                 admin_url('admin-ajax.php?action=import_all_custom_posts&type=' . $screen->post_type),
-    //                 'import_all_custom_posts'
-    //             )),
-    //         ]);
-    //     }
-    // }
 ?>

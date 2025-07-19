@@ -1,13 +1,13 @@
 <?php
-// Enqueue plugin CSS and JS for Admin Features Management Page
+// Enqueue plugin CSS and JS for Admin Management Pages
 add_action('admin_enqueue_scripts', 'ab_enqueue_admin_assets');
 function ab_enqueue_admin_assets($hook) {
-    if ($hook === 'adhyathmika-bhikshun_page_abh-features-management') {
+    if (($hook === 'adhyathmika-bhikshun_page_abh-features-management') || ($hook === 'adhyathmika-bhikshun_page_abh-post-management')) {
         // Load custom admin CSS
-        wp_enqueue_style('ab-features-management-page-style', plugin_dir_url(__FILE__) . 'css/ab-features-management-page.css');
+        wp_enqueue_style('ab-features-management-page-style', plugin_dir_url(__FILE__) . 'css/ab-management-pages.css');
 
         // Load custom admin JS
-        wp_enqueue_script('ab-features-management-page-script', plugin_dir_url(__FILE__) . 'js/ab-features-management-page.js', [], null, true);
+        wp_enqueue_script('ab-features-management-page-script', plugin_dir_url(__FILE__) . 'js/ab-management-pages.js', [], null, true);
     }
 }
 

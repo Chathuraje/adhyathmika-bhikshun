@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit; // Prevent direct access.
 }
 
-require_once __DIR__ . '/../../../tools/encode.php';
+require_once __DIR__ . '../../../../../tools/encode.php';
 
 // Define JWT secret and webhook URL constants if not already defined.
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
@@ -11,7 +11,11 @@ if (!defined('N8N_WEBHOOK_URL')) {
     define('N8N_WEBHOOK_URL', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_all_post_with_airtable');
 }
 
-function send_all_posts_sync_request($post_type = 'post', $is_testing_enabled = false) {
+// Get A/B testing flag (usage depends on your logic)
+$is_testing_enabled = get_option('ab_testing_enabled', true);
+
+function send_all_posts_sync_request($post_type = 'post') {
+    global $is_testing_enabled;
 
     $testing_flag = $is_testing_enabled ? 'true' : 'false';
 

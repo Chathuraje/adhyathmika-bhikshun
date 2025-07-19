@@ -64,9 +64,9 @@ add_action('init', function () {
        require_once __DIR__ . '/sync_single_post_with_airtable.php';
    }
 
-    // if (get_option('ab_sync_all_posts_with_airtable_enabled', true)) {
-    //      require_once __DIR__ . '/sync_all_posts_with_airtable.php';
-    // }
+    if (get_option('ab_sync_all_posts_with_airtable_enabled', true)) {
+         require_once __DIR__ . '/sync_all_posts_with_airtable.php';
+    }
    
 //    if (get_option('ab_import_posts_to_site_enabled', true)) {
 //        require_once __DIR__ . '/import_posts_to_site.php';

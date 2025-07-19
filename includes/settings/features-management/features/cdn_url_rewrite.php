@@ -43,8 +43,8 @@ if (!defined('ABSPATH')) {
 if (!function_exists('ab_cdn_url_rewrite')) {
     function ab_cdn_url_rewrite() {
         // Get CDN and Site URLs
-        $cdn_url  = trailingslashit(get_option('ab_cdn_url', ''));
-        $site_url = trailingslashit(get_site_url());
+        $cdn_url  = rtrim(get_option('ab_cdn_url', ''), '/') . '/';
+        $site_url = rtrim(get_site_url(), '/') . '/';
 
         // Hardcoded S3 base URL (used by WP Offload Media or similar)
         $s3_url = 'https://s3.eu-west-2.amazonaws.com/cdn.adhyathmikabhikshun.org';

@@ -45,7 +45,7 @@ require_once __DIR__ . '/../lib/export_single_post_to_json.php';
 
 // Define constants
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
-const AIRTABLE_WEBHOOK_URL = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_single_post_with_airtable';
+const N8N_WEBHOOK_URL_SYNC_SINGLE_POST = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_single_post_with_airtable';
 
 function send_single_post_sync_request($post_id, $post_uid) {
     // Make sure the post ID is valid
@@ -109,7 +109,7 @@ function send_single_post_sync_request($post_id, $post_uid) {
     }
 
     // Make the POST request
-    $response = wp_remote_post(AIRTABLE_WEBHOOK_URL, [
+    $response = wp_remote_post(N8N_WEBHOOK_URL_SYNC_SINGLE_POST, [
         'method'    => 'POST',
         'blocking'  => true,
         'headers'   => [

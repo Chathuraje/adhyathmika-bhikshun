@@ -31,7 +31,7 @@ require_once __DIR__ . '../../../../../tools/encode.php';
 // Define JWT secret and webhook URL constants if not already defined.
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
 if (!defined('N8N_WEBHOOK_URL')) {
-    define('N8N_WEBHOOK_URL', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/create_a_new_post');
+    define('N8N_WEBHOOK_URL_CREATE_A_NEW_POST', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/create_a_new_post');
 }
 
 function send_create_a_new_post_request($is_testing_enabled = true) {
@@ -55,7 +55,7 @@ function send_create_a_new_post_request($is_testing_enabled = true) {
     // Build webhook URL with query parameters
     $webhook_url = add_query_arg([
         'testing'      => $testing_flag,
-    ], N8N_WEBHOOK_URL);
+    ], N8N_WEBHOOK_URL_CREATE_A_NEW_POST);
 
     // Send GET request
     $response = wp_remote_get($webhook_url, [

@@ -8,7 +8,7 @@ require_once __DIR__ . '../../../../../tools/encode.php';
 // Define JWT secret and webhook URL constants if not already defined.
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
 if (!defined('N8N_WEBHOOK_URL')) {
-    define('N8N_WEBHOOK_URL', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_all_post_with_airtable');
+    define('N8N_WEBHOOK_URL_SYNC_ALL_POSTS', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_all_post_with_airtable');
 }
 
 // Get A/B testing flag (usage depends on your logic)
@@ -37,7 +37,7 @@ function send_all_posts_sync_request($post_type = 'post') {
     // Build webhook URL with query parameters
     $webhook_url = add_query_arg([
         'testing'      => $testing_flag,
-    ], N8N_WEBHOOK_URL);
+    ], N8N_WEBHOOK_URL_SYNC_ALL_POSTS);
 
     // Send GET request
     $response = wp_remote_get($webhook_url, [

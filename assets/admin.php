@@ -14,15 +14,15 @@ function ab_enqueue_admin_assets($hook) {
 // Enqueue plugin CSS and JS for Audio Note Shortcode
 add_action('wp_enqueue_scripts', 'ab_render_audio_note_sc_assets');
 function ab_render_audio_note_sc_assets() {
-    wp_enqueue_style('ab-render-audio-note-sc-style', plugin_dir_url(__FILE__) . 'css/ab-render-audio-note-cs.css');
-    wp_enqueue_script('ab-render-audio-note-sc-script', plugin_dir_url(__FILE__) . 'js/ab-render-audio-note-cs.js', [], false, true);
+    wp_enqueue_style('ab-render-audio-note-sc-style', plugin_dir_url(__FILE__) . 'css/ab-render-audio-note-sc.css');
+    wp_enqueue_script('ab-render-audio-note-sc-script', plugin_dir_url(__FILE__) . 'js/ab-render-audio-note-sc.js', [], false, true);
 }
 
 // Enqueue plugin CSS and JS for Language Switcher Shortcode
 add_action('wp_enqueue_scripts', 'ab_language_switcher_sc_assets');
 function ab_language_switcher_sc_assets() {
-    wp_enqueue_style('ab-language-switcher-sc-style', plugin_dir_url(__FILE__) . 'css/ab_language_switcher_sc.css');
-    wp_enqueue_script('ab-language-switcher-sc-script', plugin_dir_url(__FILE__) . 'js/ab_language_switcher_sc.js', [], false, true);
+    wp_enqueue_style('ab-language-switcher-sc-style', plugin_dir_url(__FILE__) . 'css/ab-language-switcher-sc.css');
+    wp_enqueue_script('ab-language-switcher-sc-script', plugin_dir_url(__FILE__) . 'js/ab-language-switcher-sc.js', [], false, true);
 }
 
 

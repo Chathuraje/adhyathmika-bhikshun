@@ -118,7 +118,7 @@ add_action('init', function () {
 
     if ($settings['post_order']) {
         require_once __DIR__ . '/shortcodes/global_post_position.php';
-        add_shortcode('ab_post_order', 'ab_global_post_position_sc');
+        add_shortcode('ab_get_global_post_position', 'ab_global_post_position_sc');
     }
 
     if ($settings['language_switch']) {

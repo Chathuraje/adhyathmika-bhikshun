@@ -9,9 +9,6 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 } 
 
-// Include necessary files
-require_once __DIR__ . '/../includes/settings/posts-management/sync_all_posts_with_airtable.php';
-
 add_action('rest_api_init', function () {
     register_rest_route('ab-custom-apis/v2', '/sync_all_posts_with_api', [
         'methods'  => 'POST',

@@ -27,7 +27,7 @@ $is_testing_enabled = get_option('ab_testing_enabled', true);
 /**
  * Sync all posts with Airtable
  */
- add_action('wp_ajax_ab_sync_all_posts_with_airtable', function () use ($SECRET_KEY) {
+ add_action('wp_ajax_ab_sync_all_posts_with_airtable', function () {
     check_admin_referer('ab_sync_all_posts_with_airtable_action');
 
     // Check if the current user has permission to edit posts.
@@ -40,7 +40,6 @@ $is_testing_enabled = get_option('ab_testing_enabled', true);
     }
 
     $screen = get_current_screen();
-
     send_all_posts_sync_request($screen->post_type);
 
     // Redirect back to the posts list page.

@@ -34,15 +34,18 @@ if (!defined('N8N_WEBHOOK_URL')) {
     define('N8N_WEBHOOK_URL_CREATE_A_NEW_POST', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/create_a_new_post');
 }
 
-function send_create_a_new_post_request($is_testing_enabled = true) {
+if (!defined('AB_TESTING_ENABLED')) {
+    define('AB_TESTING_ENABLED', get_option('ab_testing_enabled', false)) ? true : false;
+}
 
-    $testing_flag = $is_testing_enabled ? 'true' : 'false';
+function send_create_a_new_post_request($post_type) {
 
     // Prepare JWT payload
     $payload = [
         'iat'     => time(),
         'exp'     => time() + 300, // 5 minutes
-        'testing' => $testing_flag,
+        'post_type' => $post_type,
+        'testing' => AB_TESTING_ENABLED,
     ];
 
     $jwt_token = jwt_encode($payload, JWT_SECRET_KEY);
@@ -52,18 +55,23 @@ function send_create_a_new_post_request($is_testing_enabled = true) {
         return new WP_Error('jwt_error', 'JWT token generation failed.');
     }
 
-    // Build webhook URL with query parameters
-    $webhook_url = add_query_arg([
-        'testing'      => $testing_flag,
-    ], N8N_WEBHOOK_URL_CREATE_A_NEW_POST);
-
-    // Send GET request
-    $response = wp_remote_get($webhook_url, [
-        'headers' => [
-            'Authorization' => 'Bearer ' . $jwt_token,
-        ],
-        'timeout' => 15,
+    $request_body = json_encode([
+        'post_type'   => $post_type,
+        'testing'     => AB_TESTING_ENABLED
     ]);
+
+    // Send POST request
+    $response = wp_remote_post(N8N_WEBHOOK_URL_CREATE_A_NEW_POST, [
+        'method'    => 'POST',
+        'blocking'  => true,
+        'headers'   => [
+            'Authorization' => 'Bearer ' . $jwt_token,
+            'Content-Type'  => 'application/json',
+        ],
+        'timeout'   => 15,
+        'body'      => $request_body,
+    ]);
+
 
     if (is_wp_error($response)) {
         Admin_Notices::add_persistent_notice('❌ Request failed: ' . $response->get_error_message(), 'error');
@@ -81,7 +89,7 @@ function send_create_a_new_post_request($is_testing_enabled = true) {
         }
 
         $message = $data['message'] ?? '✅ New post successfully triggered via N8N!';
-        if ($is_testing_enabled) {
+        if (AB_TESTING_ENABLED) {
             $message .= ' (Testing Mode)';
         }
 

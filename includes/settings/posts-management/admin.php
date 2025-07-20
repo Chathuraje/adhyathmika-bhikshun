@@ -8,7 +8,7 @@
 
 // Filter for allowed post types (currently not in use)
 function allowed_post_types_for_import_button() {
-    return apply_filters('custom_allowed_post_types_for_import_all', ['post']);
+    return apply_filters('custom_allowed_post_types_for_import_all', ['post', 'small-quote', 'daily-spiritual-offe', 'testimonial']);
 }
 
 /**
@@ -56,6 +56,8 @@ add_action('admin_init', function () {
  * Conditionally load features
  */
 add_action('init', function () {
+    define('AB_TESTING_ENABLED', get_option('ab_testing_enabled', false));
+
     if (get_option('ab_create_a_new_post_enabled', true)) {
        require_once __DIR__ . '/create_a_new_post.php';
    }

@@ -49,22 +49,15 @@ require_once __DIR__ . '/requests/send_create_a_new_post_request.php';
 add_action('admin_head-edit.php', function () {
     // Get the current admin screen object.
     $screen = get_current_screen();
-
-    // Only add the button if viewing the 'post' post type list.
-    if ($screen->post_type !== 'post') {
-        return;
-    }
+    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
 
     // Create a URL for the AJAX action with a nonce for security.
-    $url = wp_nonce_url(
-        admin_url('admin-ajax.php?action=ab_create_a_new_post'),
-        'ab_create_a_new_post_action'
-    );
+    $url = wp_nonce_url(admin_url('admin-ajax.php?action=ab_create_a_new_post&type=' . $screen->post_type), 'ab_create_a_new_post_action');
 
     // Output JavaScript to insert the button next to the existing page title action buttons.
     echo '<script type="text/javascript">
         jQuery(document).ready(function($) {
-            const buttonHtml = \'<a href="' . esc_url($url) . '" class="page-title-action">Create a New Post</a>\';
+            const buttonHtml = \'<a href="' . esc_url($url) . '" class="page-title-action">Create a New ' . ucfirst($screen->post_type) . '</a>\';
             $(".wrap .page-title-action").after(buttonHtml);
         });
     </script>';
@@ -74,23 +67,28 @@ add_action('admin_head-edit.php', function () {
  * AJAX handler for creating a new post via an external N8N webhook.
  */
 add_action('wp_ajax_ab_create_a_new_post', function () {
-    $is_testing_enabled = get_option('ab_testing_enabled', false);
-
     // Verify the nonce for security to prevent CSRF attacks.
     check_admin_referer('ab_create_a_new_post_action');
 
     // Check if the current user has permission to edit posts.
-    if (!current_user_can('edit_posts')) {
+    if (!current_user_can('manage_options')) {
         // Add an admin notice if unauthorized.
-        Admin_Notices::add_persistent_notice('❌ You are not authorized to create posts.', 'error');
-        // Redirect back to the posts list with an error status.
-        wp_safe_redirect(add_query_arg(['post_type' => 'post', 'create_status' => 'unauthorized'], admin_url('edit.php')));
+        Admin_Notices::redirect_with_notice(
+            '❌ You are not authorized to create a new post.',
+            'error',
+            add_query_arg(['post_type' => 'post', 'create_status' => 'unauthorized'], admin_url('edit.php'))
+        );
         exit;
     }
-
-    send_create_a_new_post_request($is_testing_enabled);
+    
+    $screen = get_current_screen();
+    send_create_a_new_post_request($screen->post_type);
     
     // Redirect back to the posts list page.
-    wp_safe_redirect(admin_url('edit.php?post_type=post'));
+    Admin_Notices::redirect_with_notice(
+        '✅ New post creation request sent successfully.',
+        'success',
+        admin_url('edit.php?post_type=' . $screen->post_type)
+    );
     exit;
 });

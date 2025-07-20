@@ -139,9 +139,6 @@ add_action('save_post_post', function ($post_id) {
         return;
     }
 
-    // Sanitize and get post ID from GET params.
-    $post_id = isset($_GET['post_id']) ? intval($_GET['post_id']) : 0;
-
     // Only sync for these statuses.
     $status = get_post_status($post_id);
     if (!in_array($status, ['publish', 'future', 'private'], true)) {

@@ -11,6 +11,23 @@ function allowed_post_types_for_import_button() {
     return apply_filters('custom_allowed_post_types_for_import_all', ['post', 'small-quote', 'daily-spiritual-offe', 'testimonial']);
 }
 
+function get_post_uid_or_redirect($post_type, $post_id) {
+    $post_uid_fields = [
+        'post'                => 'post_uid',
+        'daily-spiritual-offe' => 'dso_uid',
+        'small-quote'         => 'sq_uid',
+        'testimonial'         => 'testimonial_uid',
+    ];
+
+    if (!isset($post_uid_fields[$post_type])) {
+        Admin_Notices::redirect_with_notice('❌ Unsupported post type for sync.', 'error', admin_url('edit.php'));
+        exit;
+    }
+
+    $post_uid = get_field($post_uid_fields[$post_type], $post_id);
+    return $post_uid;
+}
+
 /**
  * Register settings and handle form submissions
  */

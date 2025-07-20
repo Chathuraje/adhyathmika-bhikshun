@@ -90,16 +90,22 @@ add_action('admin_post_ab_sync_single_post_with_airtable', function () {
         exit;
     }
 
-    // Get post_uid from custom field.
-    $post_uid = get_field('post_uid', $post_id);
+    // Get the post type
+    $post_type = get_post_type($post_id);
+    if (!$post_type || !in_array($post_type, allowed_post_types_for_import_button(), true)) {
+        Admin_Notices::redirect_with_notice('❌ Invalid post type for sync.', 'error', admin_url('edit.php'));
+        exit;
+    }
+
+    $post_uid = get_post_uid_or_redirect($post_type, $post_id);
     if (!$post_uid) {
         Admin_Notices::redirect_with_notice('❌ Post UID not found.', 'error', admin_url('edit.php'));
         exit;
     }
+    
 
     // Send the sync request.
     $response = send_single_post_sync_request($post_id, $post_uid);
-
     if (is_wp_error($response)) {
         Admin_Notices::redirect_with_notice('❌ ' . $response->get_error_message(), 'error', admin_url('edit.php'));
         exit;

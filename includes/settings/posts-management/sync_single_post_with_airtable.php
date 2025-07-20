@@ -75,38 +75,38 @@ add_action('admin_post_ab_sync_single_post_with_airtable', function () {
     // Verify nonce for security.
     check_admin_referer('ab_sync_single_post_with_airtable_action');
 
-    // Check user permission.
-    if (!current_user_can('edit_posts')) {
-        Admin_Notices::redirect_with_notice('❌ You are not authorized to sync posts.', 'error', admin_url('edit.php'));
-        exit;
-    }
-
     // Sanitize and get post ID from GET params.
     $post_id = isset($_GET['post_id']) ? intval($_GET['post_id']) : 0;
-
-    // Check if user can edit this specific post.
-    if (!$post_id || !current_user_can('edit_post', $post_id)) {
-        Admin_Notices::redirect_with_notice('❌ You are not authorized to sync this post.', 'error', admin_url('edit.php'));
-        exit;
-    }
 
     // Get the post type
     $post_type = get_post_type($post_id);
     if (!$post_type || !in_array($post_type, allowed_post_types_for_import_button(), true)) {
-        Admin_Notices::redirect_with_notice('❌ Invalid post type for sync.', 'error', admin_url('edit.php'));
+        Admin_Notices::redirect_with_notice('❌ Invalid post type for sync.', 'error', admin_url('edit.php?post_type=' . $post_type));
+        exit;
+    }
+    
+    // Check user permission.
+    if (!current_user_can('edit_posts')) {
+        Admin_Notices::redirect_with_notice('❌ You are not authorized to sync posts.', 'error', admin_url('edit.php?post_type=' . $post_type));
+        exit;
+    }
+
+    // Check if user can edit this specific post.
+    if (!$post_id || !current_user_can('edit_post', $post_id)) {
+        Admin_Notices::redirect_with_notice('❌ You are not authorized to sync this post.', 'error', admin_url('edit.php?post_type=' . $post_type));
         exit;
     }
 
     $post_uid = get_post_uid_or_redirect($post_type, $post_id);
     if (!$post_uid) {
-        Admin_Notices::redirect_with_notice('❌ Post UID not found.', 'error', admin_url('edit.php'));
+        Admin_Notices::redirect_with_notice('❌ Post UID not found.', 'error', admin_url('edit.php?post_type=' . $post_type));
         exit;
     }
 
     // Send the sync request.
     $response = send_single_post_sync_request($post_id, $post_uid);
     if (is_wp_error($response)) {
-        Admin_Notices::redirect_with_notice('❌ ' . $response->get_error_message(), 'error', admin_url('edit.php'));
+        Admin_Notices::redirect_with_notice('❌ ' . $response->get_error_message(), 'error', admin_url('edit.php?post_type=' . $post_type));
         exit;
     }
 
@@ -115,9 +115,9 @@ add_action('admin_post_ab_sync_single_post_with_airtable', function () {
     $body = wp_remote_retrieve_body($response);
 
     if ($code >= 200 && $code < 300) {
-        Admin_Notices::redirect_with_notice('✅ Post synced successfully with Airtable!', 'success', admin_url('edit.php'));
+        Admin_Notices::redirect_with_notice('✅ Post synced successfully with Airtable!', 'success', admin_url('edit.php?post_type=' . $post_type));
     } else {
-        Admin_Notices::redirect_with_notice("❌ HTTP Error ({$code}): {$body}", 'error', admin_url('edit.php'));
+        Admin_Notices::redirect_with_notice("❌ HTTP Error ({$code}): {$body}", 'error', admin_url('edit.php?post_type=' . $post_type));
     }
 
     exit;

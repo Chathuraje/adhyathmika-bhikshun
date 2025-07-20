@@ -39,35 +39,29 @@ $is_testing_enabled = get_option('ab_testing_enabled', true);
  * Add "Sync with Airtable" link in post row actions on the Posts list page.
  */
 add_action('admin_head-edit.php', function () {
+    // Get the current admin screen object.
     $screen = get_current_screen();
-    if ($screen->post_type !== 'post') {
-        return; // Only add link for 'post' post type.
-    }
+    if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
 
-    // Create nonce for security.
-    $nonce = wp_create_nonce('ab_sync_single_post_with_airtable_action');
-    // URL for the admin-post.php handler (we use admin-post.php, so hook to admin_post_).
-    $admin_post_url = esc_url(admin_url('admin-post.php'));
-
-    // Output inline JavaScript to append the "Sync with Airtable" link to each post row action.
-    echo <<<JS
-<script>
-jQuery(document).ready(function($) {
-    $(".row-actions .edit a").each(function() {
-        // Extract post ID from the edit link URL.
-        const postId = new URL($(this).attr("href")).searchParams.get("post");
-        if (postId) {
-            // Construct sync URL pointing to admin-post.php with nonce and action.
-            const syncUrl = "{$admin_post_url}?action=ab_sync_single_post_with_airtable&post_id=" + postId + "&_wpnonce={$nonce}";
-            // Append the "Sync with Airtable" link after the Edit link.
-            $(this).closest(".row-actions").append(' | <a href="' + syncUrl + '">Sync with Airtable</a>');
-        }
-    });
+    // Create a URL for the AJAX action with a nonce for security.
+    $url = wp_nonce_url(admin_url('admin-post.php?action=ab_sync_single_post_with_airtable&type=' . $screen->post_type), 'ab_sync_single_post_with_airtable_action');
+    
+    // Append the "Sync with Airtable" link to each post row action.
+    echo '<script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $(".row-actions .edit a").each(function() {
+                // Extract post ID from the edit link URL.
+                const postId = new URL($(this).attr("href")).searchParams.get("post");
+                if (postId) {
+                    // Construct sync URL pointing to admin-post.php with nonce and action.
+                    const syncUrl = "' . esc_url($url) . '&post_id=" + postId;
+                    // Append the "Sync with Airtable" link after the Edit link.
+                    $(this).closest(".row-actions").append(\' | <a href="\' + syncUrl + \'">Sync with Airtable</a>\');
+                }
+            });
+        });
+    </script>';
 });
-</script>
-JS;
-});
-
 
 /**
  * Handle the sync request triggered via admin-post.php (GET request).

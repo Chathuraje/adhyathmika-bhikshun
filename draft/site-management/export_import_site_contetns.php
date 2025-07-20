@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/export.php';
-require_once __DIR__ . '/import.php';
 
 add_action('admin_init', function () {
     // Handle export
@@ -65,3 +63,44 @@ add_action('admin_init', function () {
         }
     }
 });
+
+// Imports Site Contents values into 'acf-options'
+
+if (!function_exists('import_site_contents')) {
+    function import_site_contents(array $data)
+    {
+        foreach ($data as $field_name => $value) {
+            // Log field being updated for debugging (remove in production)
+            error_log("Importing field: $field_name");
+
+            // Update field, return success or failure for better error handling
+            $updated = update_field($field_name, $value, 'option');
+            if (!$updated) {
+                error_log("Failed to update field: $field_name");
+            }
+        }
+    }
+}
+
+if (!function_exists('export_site_contents')) {
+    function export_site_contents()
+    {
+        $export_data = [];
+
+        if (function_exists('acf_get_field_groups')) {
+            $groups = acf_get_field_groups(['options_page' => 'website-contents']);
+            foreach ($groups as $group) {
+                $fields = acf_get_fields($group['key']);
+                if (!$fields) continue;
+                foreach ($fields as $field) {
+                    $value = get_field($field['name'], 'option');
+                    $export_data[$field['name']] = $value;
+                }
+            }
+        }
+
+        return $export_data;
+    }
+}
+
+

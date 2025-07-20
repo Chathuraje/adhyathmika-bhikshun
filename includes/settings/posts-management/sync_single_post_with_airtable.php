@@ -152,7 +152,7 @@ add_action('save_post_post', function ($post_id) {
     }
 
     // Fire the sync request. We don't handle the response here.
-    $response = send_single_post_sync_request($post_id, $post_uid);
+    send_single_post_sync_request($post_id, $post_uid);
     exit;
 
 }, 10, 3);

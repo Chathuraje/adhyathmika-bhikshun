@@ -81,14 +81,14 @@ add_action('wp_ajax_ab_create_a_new_post', function () {
         exit;
     }
     
-    $screen = get_current_screen();
-    send_create_a_new_post_request($screen->post_type);
+    $post_type = sanitize_key($_GET['type'] ?? 'post');
+    send_create_a_new_post_request($post_type);
     
     // Redirect back to the posts list page.
     Admin_Notices::redirect_with_notice(
         '✅ New post creation request sent successfully.',
         'success',
-        admin_url('edit.php?post_type=' . $screen->post_type)
+        admin_url('edit.php?post_type=' . $post_type)
     );
     exit;
 });

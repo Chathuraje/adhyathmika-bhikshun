@@ -45,7 +45,13 @@ require_once __DIR__ . '/../lib/export_single_post_to_json.php';
 
 // Define constants
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
-const N8N_WEBHOOK_URL_SYNC_SINGLE_POST = 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_single_post_with_airtable';
+if (!defined('N8N_WEBHOOK_URL_SYNC_SINGLE_POST')) {
+    define('N8N_WEBHOOK_URL_SYNC_SINGLE_POST', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_single_post_with_airtable');
+}
+
+if (!defined('AB_TESTING_ENABLED')) {
+    define('AB_TESTING_ENABLED', get_option('ab_testing_enabled', false)) ? true : false;
+}
 
 function send_single_post_sync_request($post_id, $post_uid) {
     // Make sure the post ID is valid
@@ -60,18 +66,14 @@ function send_single_post_sync_request($post_id, $post_uid) {
         return new WP_Error('invalid_post_uid', 'Invalid post UID.');
     }
 
-    // Use global if exists; else fallback to false
-    global $is_testing_enabled;
-    $is_testing_enabled = isset($is_testing_enabled) && $is_testing_enabled ? true : false;
-    $testing_flag = $is_testing_enabled ? 'true' : 'false';
-
     // Prepare JWT payload
     $payload = [
         'iat'      => time(),
         'exp'      => time() + 300,  // 5 minutes expiration
         'post_id'  => $post_id,
         'post_uid' => $post_uid,
-        'testing'  => $testing_flag,
+        'post_type' => get_post_type($post_id),
+        'testing'  => AB_TESTING_ENABLED,
     ];
 
     // Generate JWT token
@@ -99,7 +101,8 @@ function send_single_post_sync_request($post_id, $post_uid) {
     $request_body = json_encode([
         'post_id'   => $post_id,
         'post_uid'  => $post_uid,
-        'testing'   => $testing_flag,
+        'post_type' => $post_type,
+        'testing'   => AB_TESTING_ENABLED,
         'post_data' => $export['json_data'],
     ]);
 
@@ -116,6 +119,7 @@ function send_single_post_sync_request($post_id, $post_uid) {
             'Authorization' => 'Bearer ' . $jwt_token,
             'Content-Type'  => 'application/json',
         ],
+        'timeout'   => 15,
         'body'      => $request_body
     ]);
 

@@ -129,7 +129,7 @@ add_action('admin_post_ab_sync_single_post_with_airtable', function () {
  *
  * This runs during post save and skips autosave, ajax, and revisions.
  */
-add_action('save_post', function ($post_id) {
+add_action('save_post_post', function ($post_id) {
     // Bail early if autosave, ajax, or revision.
     if (
         (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) ||

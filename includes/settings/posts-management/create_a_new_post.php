@@ -70,23 +70,23 @@ add_action('wp_ajax_ab_create_a_new_post', function () {
     // Verify the nonce for security to prevent CSRF attacks.
     check_admin_referer('ab_create_a_new_post_action');
 
+    $post_type = sanitize_key($_GET['type'] ?? 'post');
+    if (!$post_type || !in_array($post_type, allowed_post_types_for_import_button(), true)) {
+        Admin_Notices::redirect_with_notice(
+            '❌ Invalid post type for creation.',
+            'error',
+            add_query_arg(['post_type' => 'post', 'create_status' => 'invalid_type'], admin_url('edit.php?post_type=' . $post_type))
+        );
+        exit;
+    }
+
     // Check if the current user has permission to edit posts.
     if (!current_user_can('manage_options')) {
         // Add an admin notice if unauthorized.
         Admin_Notices::redirect_with_notice(
             '❌ You are not authorized to create a new post.',
             'error',
-            add_query_arg(['post_type' => 'post', 'create_status' => 'unauthorized'], admin_url('edit.php'))
-        );
-        exit;
-    }
-    
-    $post_type = sanitize_key($_GET['type'] ?? 'post');
-    if (!$post_type || !in_array($post_type, allowed_post_types_for_import_button(), true)) {
-        Admin_Notices::redirect_with_notice(
-            '❌ Invalid post type for creation.',
-            'error',
-            add_query_arg(['post_type' => 'post', 'create_status' => 'invalid_type'], admin_url('edit.php'))
+            add_query_arg(['post_type' => 'post', 'create_status' => 'unauthorized'], admin_url('edit.php?post_type=' . $post_type))
         );
         exit;
     }

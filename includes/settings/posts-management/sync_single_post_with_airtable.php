@@ -102,7 +102,6 @@ add_action('admin_post_ab_sync_single_post_with_airtable', function () {
         Admin_Notices::redirect_with_notice('❌ Post UID not found.', 'error', admin_url('edit.php'));
         exit;
     }
-    
 
     // Send the sync request.
     $response = send_single_post_sync_request($post_id, $post_uid);

@@ -142,13 +142,6 @@ add_action('save_post', function ($post_id) {
     // Sanitize and get post ID from GET params.
     $post_id = isset($_GET['post_id']) ? intval($_GET['post_id']) : 0;
 
-    // Get the post type
-    $post_type = get_post_type($post_id);
-    if (!$post_type || !in_array($post_type, allowed_post_types_for_import_button(), true)) {
-        Admin_Notices::redirect_with_notice('❌ Invalid post type for sync.', 'error', admin_url('edit.php?post_type=' . $post_type));
-        exit;
-    }
-
     // Only sync for these statuses.
     $status = get_post_status($post_id);
     if (!in_array($status, ['publish', 'future', 'private'], true)) {
@@ -163,21 +156,6 @@ add_action('save_post', function ($post_id) {
 
     // Fire the sync request. We don't handle the response here.
     $response = send_single_post_sync_request($post_id, $post_uid);
-    if (is_wp_error($response)) {
-        Admin_Notices::redirect_with_notice('❌ ' . $response->get_error_message(), 'error', admin_url('edit.php?post_type=' . $post_type));
-        exit;
-    }
-
-    // Check HTTP response code from Airtable.
-    $code = wp_remote_retrieve_response_code($response);
-    $body = wp_remote_retrieve_body($response);
-
-    if ($code >= 200 && $code < 300) {
-        Admin_Notices::redirect_with_notice('✅ Post synced successfully with Airtable!', 'success', admin_url('edit.php?post_type=' . $post_type));
-    } else {
-        Admin_Notices::redirect_with_notice("❌ HTTP Error ({$code}): {$body}", 'error', admin_url('edit.php?post_type=' . $post_type));
-    }
-
     exit;
 
 }, 10, 3);

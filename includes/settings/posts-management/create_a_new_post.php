@@ -82,6 +82,15 @@ add_action('wp_ajax_ab_create_a_new_post', function () {
     }
     
     $post_type = sanitize_key($_GET['type'] ?? 'post');
+    if (!$post_type || !in_array($post_type, allowed_post_types_for_import_button(), true)) {
+        Admin_Notices::redirect_with_notice(
+            '❌ Invalid post type for creation.',
+            'error',
+            add_query_arg(['post_type' => 'post', 'create_status' => 'invalid_type'], admin_url('edit.php'))
+        );
+        exit;
+    }
+
     send_create_a_new_post_request($post_type);
     
     // Redirect back to the posts list page.

@@ -8,22 +8,20 @@ require_once __DIR__ . '../../../../../tools/encode.php';
 // Define JWT secret and webhook URL constants if not already defined.
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
 if (!defined('N8N_WEBHOOK_URL')) {
-    define('N8N_WEBHOOK_URL_IMPORT_ALL_POSTS', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/import_all_posts_to_site');
+    define('N8N_WEBHOOK_URL_IMPORT_ALL_POSTS', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/import_all_posts_froma_airtable');
 }
 
 // Get A/B testing flag (usage depends on your logic)
-$is_testing_enabled = get_option('ab_testing_enabled', true);
+if (!defined('AB_TESTING_ENABLED')) {
+    define('AB_TESTING_ENABLED', get_option('ab_testing_enabled', false)) ? true : false;
+}
 
-function send_import_all_posts_request($post_type = 'post') {
-    global $is_testing_enabled;
-
-    $testing_flag = $is_testing_enabled ? 'true' : 'false';
-
+function send_import_all_posts_request($post_type) {
     // Prepare JWT payload
     $payload = [
         'iat'     => time(),
         'exp'     => time() + 300, // 5 minutes
-        'testing' => $testing_flag,
+        'testing' => AB_TESTING_ENABLED,
         'post_type' => $post_type,
     ];
 
@@ -35,16 +33,22 @@ function send_import_all_posts_request($post_type = 'post') {
     }
 
     // Build webhook URL with query parameters
-    $webhook_url = add_query_arg([
-        'testing'      => $testing_flag,
-    ], N8N_WEBHOOK_URL_IMPORT_ALL_POSTS);
+    $request_body = json_encode([
+        'post_type' => $post_type,
+        'testing'   => AB_TESTING_ENABLED,
+    ]);
 
     // Send GET request
-    $response = wp_remote_get($webhook_url, [
-        'headers' => [
+     // Send GET request
+     $response = wp_remote_post(N8N_WEBHOOK_URL_SYNC_ALL_POSTS, [
+        'method'    => 'POST',
+        'blocking'  => true,
+        'headers'   => [
             'Authorization' => 'Bearer ' . $jwt_token,
+            'Content-Type'  => 'application/json',
         ],
-        'timeout' => 15,
+        'timeout'   => 15,
+        'body'      => $request_body
     ]);
 
     if (is_wp_error($response)) {
@@ -62,8 +66,8 @@ function send_import_all_posts_request($post_type = 'post') {
             return new WP_Error('no_data', 'No data found.');
         }
 
-        $message = $data['message'] ?? '✅ All posts synchronized successfully.';
-        if ($is_testing_enabled) {
+        $message = $data['message'] ?? '✅ All posts import successfully.';
+        if (AB_TESTING_ENABLED) {
             $message .= ' (Testing Mode)';
         }
 

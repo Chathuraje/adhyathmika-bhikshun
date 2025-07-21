@@ -26,18 +26,19 @@ add_action('wp_ajax_ab_import_all_posts_from_airtable', function () {
     // Verify the nonce for security to prevent CSRF attacks.
     check_admin_referer('ab_import_all_posts_from_airtable_action');
 
+    // Get post type from $_GET (passed via AJAX URL)
+    $post_type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : '';
+
     // Check if the current user has permission to edit posts.
     if (!current_user_can('manage_options')) {
         // Add an admin notice if unauthorized.
-        Admin_Notices::add_persistent_notice('❌ You are not authorized to import posts.', 'error');
-        // Redirect back to the posts list with an error status.
-        wp_safe_redirect(add_query_arg(['post_type' => 'post', 'import_status' => 'unauthorized'], admin_url('edit.php')));
+        Admin_Notices::redirect_with_notice('❌ You do not have permission to sync posts.', 'error', admin_url('edit.php?post_type=' . $post_type));
         exit;
     }
 
-    send_import_all_posts_request();
+    send_import_all_posts_request($post_type);
 
     // Redirect back to the posts list page.
-    wp_safe_redirect(admin_url('edit.php'));
+    Admin_Notices::redirect_with_notice('✅ All posts synced successfully!', 'success', admin_url('edit.php?post_type=' . $post_type));
     exit;
 });

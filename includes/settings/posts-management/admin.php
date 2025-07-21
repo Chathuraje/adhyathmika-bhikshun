@@ -12,13 +12,21 @@ function allowed_post_types_for_import_button() {
     return apply_filters('custom_allowed_post_types_for_import_all', ['post', 'small-quote', 'daily-spiritual-offe', 'testimonial']);
 }
 
+$post_uid_fields = [
+    'post'                => 'post_uid',
+    'daily-spiritual-offe' => 'dso_uid',
+    'small-quote'         => 'sq_uid',
+    'testimonial'         => 'testimonial_uid',
+];
+
+function get_post_uid_meta_key($post_type) {
+    global $post_uid_fields;
+
+    return isset($post_uid_fields[$post_type]) ? $post_uid_fields[$post_type] : '';
+}
+
 function get_post_uid($post_type, $post_id) {
-    $post_uid_fields = [
-        'post'                => 'post_uid',
-        'daily-spiritual-offe' => 'dso_uid',
-        'small-quote'         => 'sq_uid',
-        'testimonial'         => 'testimonial_uid',
-    ];
+    global $post_uid_fields;
 
     $post_uid = get_field($post_uid_fields[$post_type], $post_id);
     return $post_uid;

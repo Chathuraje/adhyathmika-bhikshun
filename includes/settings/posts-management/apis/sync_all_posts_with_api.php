@@ -53,11 +53,13 @@ add_action('rest_api_init', function () {
 /**
  * Utility: Get post ID by UID
  */
-function get_post_id_by_uid($post_uid) {
+function get_post_id_by_uid($uid, $meta_key) {
     global $wpdb;
+
     $post_id = $wpdb->get_var($wpdb->prepare(
-        "SELECT ID FROM {$wpdb->posts} WHERE post_name = %s LIMIT 1",
-        $post_uid
+        "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
+        $meta_key,
+        $uid
     ));
 
     return $post_id ? (int) $post_id : null;
@@ -83,8 +85,21 @@ function sync_all_posts_with_api(array $posts) {
             continue;
         }
 
+        // Get the meta key for post UID
+        $post_uid_meta_key = get_post_uid_meta_key($post_data['post_type'] ?? 'post');
+        if (!$post_uid_meta_key) {
+            $results[] = [
+                'airtable_id' => $post_data['airtable_id'] ?? null,
+                'post_uid' => $post_uid,
+                'post_title' => $post_data['title'] ?? '',
+                'status' => 'error',
+                'message' => 'Invalid post type or UID meta key not found for post type: ' . ($post_data['post_type'] ?? 'unknown'),
+            ];
+            continue;
+        }
+
         // Get post ID from post UID
-        $post_id = get_post_id_by_uid($post_uid);
+        $post_id = get_post_id_by_uid($post_uid, $post_uid_meta_key);
         if (!$post_id) {
             $results[] = [
                 'airtable_id' => $post_data['airtable_id'] ?? null,

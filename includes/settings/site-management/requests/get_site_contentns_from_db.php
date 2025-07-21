@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/../../../../tools/encode.php';
 require_once __DIR__ . '/../lib/export_site_contents_to_json.php';
+require_once __DIR__ . '/../lib/import_site_contents_to_json.php';
 
 // Define constants
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
@@ -75,6 +76,27 @@ function get_site_contents_from_db() {
         return new WP_Error('airtable_response_error', 'Unexpected response code from Airtable: ' . $status_code);
     }
 
-    return $response;
+    // import site contents from JSON
+    $response_body = wp_remote_retrieve_body($response);
+    if (empty($response_body)) {
+        Admin_Notices::add_persistent_notice('❌ No response body received from Airtable.', 'error');
+        return new WP_Error('empty_response', 'No response body received from Airtable.');
+    }
+
+    $response_data = json_decode($response_body, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        Admin_Notices::add_persistent_notice('❌ JSON decoding error: ' . json_last_error_msg(), 'error');
+        return new WP_Error('json_decode_error', 'JSON decoding error: ' . json_last_error_msg());
+    }
+
+    // Check if the response contains the expected data
+    if (!isset($response_data['site_json']) || !is_array($response_data['site_json'])) {
+        Admin_Notices::add_persistent_notice('❌ Invalid response format from Airtable.', 'error');
+        return new WP_Error('invalid_response_format', 'Invalid response format from Airtable.');
+    }
+
+    // Import site contents from JSON
+    import_site_contents_from_json($response_data['site_json']);
+    Admin_Notices::add_persistent_notice('✅ Site contents imported successfully!', 'success');
 }
 ?>

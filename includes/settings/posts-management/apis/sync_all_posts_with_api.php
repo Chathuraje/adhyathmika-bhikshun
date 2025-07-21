@@ -22,21 +22,19 @@ add_action('rest_api_init', function () {
                 ], 400);
             }
 
-            // Validate that each entry has post_id and post_uid
+            // Validate that each entry has post_uid
             $valid_posts = array_filter($payload, function ($post) {
-                return isset($post['post_id'], $post['post_uid']);
+                return isset($post['post_uid']);
             });
 
             if (empty($valid_posts)) {
                 return new WP_REST_Response([
-                    'error'    => 'No valid post_id/post_uid pairs in payload',
+                    'error'    => 'No valid post_uid pairs in payload',
                     'received' => $payload,
                 ], 422);
             }
 
-            // Call batch sync
-
-            
+            // Call batch sync function
             $results = sync_all_posts_with_api(array_values($valid_posts));
 
             return new WP_REST_Response([
@@ -53,23 +51,47 @@ add_action('rest_api_init', function () {
 });
 
 /**
+ * Utility: Get post ID by UID
+ */
+function get_post_id_by_uid($post_uid) {
+    global $wpdb;
+    $post_id = $wpdb->get_var($wpdb->prepare(
+        "SELECT ID FROM {$wpdb->posts} WHERE post_name = %s LIMIT 1",
+        $post_uid
+    ));
+
+    return $post_id ? (int) $post_id : null;
+}
+
+/**
  * Utility: Sync all posts with API [WordPress REST API]
  */
 function sync_all_posts_with_api(array $posts) {
     $results = [];
 
     foreach ($posts as $index => $post_data) {
-        $post_id = isset($post_data['post_id']) ? intval($post_data['post_id']) : 0;
         $post_uid = isset($post_data['post_uid']) ? sanitize_text_field($post_data['post_uid']) : '';
 
-        if (!$post_id || empty($post_uid)) {
+        if (!$post_uid) {
             $results[] = [
                 'airtable_id' => $post_data['airtable_id'] ?? null,
                 'post_uid' => $post_uid,
                 'post_title' => $post_data['title'] ?? '',
-                'post_id' => $post_id,
                 'status' => 'error',
-                'message' => 'Missing or invalid post ID or UID at index ' . $index,
+                'message' => 'Missing or invalid post UID at index ' . $index,
+            ];
+            continue;
+        }
+
+        // Get post ID from post UID
+        $post_id = get_post_id_by_uid($post_uid);
+        if (!$post_id) {
+            $results[] = [
+                'airtable_id' => $post_data['airtable_id'] ?? null,
+                'post_uid' => $post_uid,
+                'post_title' => $post_data['title'] ?? '',
+                'status' => 'error',
+                'message' => 'Post not found for UID: ' . $post_uid,
             ];
             continue;
         }

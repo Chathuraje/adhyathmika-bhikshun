@@ -24,12 +24,12 @@ add_action('rest_api_init', function () {
 
             // Validate that each entry has post_uid
             $valid_posts = array_filter($payload, function ($post) {
-                return isset($post['post_uid']);
+                return isset($post['post_uid'], $post['post_type']) && !empty($post['post_uid']) && !empty($post['post_type']);
             });
 
             if (empty($valid_posts)) {
                 return new WP_REST_Response([
-                    'error'    => 'No valid post_uid pairs in payload',
+                    'error'    => 'No valid posts found in the payload. Each post must have a post_uid and post_type.',
                     'received' => $payload,
                 ], 422);
             }
@@ -79,14 +79,28 @@ function sync_all_posts_with_api(array $posts) {
                 'airtable_id' => $post_data['airtable_id'] ?? null,
                 'post_uid' => $post_uid,
                 'post_title' => $post_data['title'] ?? '',
+
                 'status' => 'error',
                 'message' => 'Missing or invalid post UID at index ' . $index,
             ];
             continue;
         }
 
+        // Get the post type from the post data
+        $post_type = isset($post_data['post_type']) ? sanitize_text_field($post_data['post_type']) : 'post';
+        if (empty($post_type)) {
+            $results[] = [
+                'airtable_id' => $post_data['airtable_id'] ?? null,
+                'post_uid' => $post_uid,
+                'post_title' => $post_data['title'] ?? '',
+                'status' => 'error',
+                'message' => 'Post type is required for syncing.',
+            ];
+            continue;
+        }
+
         // Get the meta key for post UID
-        $post_uid_meta_key = get_post_uid_meta_key($post_data['post_type'] ?? 'post');
+        $post_uid_meta_key = get_post_uid_meta_key($post_type);
         if (!$post_uid_meta_key) {
             $results[] = [
                 'airtable_id' => $post_data['airtable_id'] ?? null,

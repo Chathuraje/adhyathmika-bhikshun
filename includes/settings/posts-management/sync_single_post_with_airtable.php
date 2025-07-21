@@ -139,6 +139,20 @@ add_action('save_post', function ($post_id) {
         return;
     }
 
+    // Detect if Quick Edit is being used.
+     $is_quick_edit = (
+        isset($_POST['_inline_edit']) &&
+        wp_verify_nonce($_POST['_inline_edit'], 'inlineeditnonce')
+    );
+
+    // Allow AJAX only if it's Quick Edit.
+    if (
+        defined('DOING_AJAX') && DOING_AJAX &&
+        !$is_quick_edit
+    ) {
+        return;
+    }
+
     //Check if the post is of a type that we want to sync.
     $post_type = get_post_type($post_id);
     if (!$post_type || !in_array($post_type, allowed_post_types_for_import_button(), true)) {

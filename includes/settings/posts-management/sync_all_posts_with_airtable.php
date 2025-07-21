@@ -35,7 +35,7 @@ require_once __DIR__ . '/requests/send_all_posts_sync_request.php';
         exit;
     }
 
-    send_all_posts_sync_request(get_post_type());
+    send_all_posts_sync_request($post_type);
 
     // Redirect back to the posts list page.
     Admin_Notices::redirect_with_notice('✅ All posts synced successfully!', 'success', admin_url('edit.php?post_type=' . $post_type));

@@ -3,3 +3,4 @@
 
 require_once __DIR__ . '/features-management/admin.php';
 require_once __DIR__ . '/posts-management/admin.php';
+require_once __DIR__ . '/site-management/admin.php';

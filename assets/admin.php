@@ -2,7 +2,7 @@
 // Enqueue plugin CSS and JS for Admin Management Pages
 add_action('admin_enqueue_scripts', 'ab_enqueue_admin_assets');
 function ab_enqueue_admin_assets($hook) {
-    if (($hook === 'adhyathmika-bhikshun_page_abh-features-management') || ($hook === 'adhyathmika-bhikshun_page_abh-post-management')) {
+    if (($hook === 'adhyathmika-bhikshun_page_abh-features-management') || ($hook === 'adhyathmika-bhikshun_page_abh-post-management') || ($hook === 'adhyathmika-bhikshun_page_abh-site-management')) {
         // Load custom admin CSS
         wp_enqueue_style('ab-features-management-page-style', plugin_dir_url(__FILE__) . 'css/ab-management-pages.css');
 

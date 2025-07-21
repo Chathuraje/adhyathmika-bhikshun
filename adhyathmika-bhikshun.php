@@ -65,6 +65,16 @@ add_action('admin_menu', function () {
         'abh_posts_management_page'
     );
 
+    // Site Management submenu
+    add_submenu_page(
+        'adhyathmika-bhikshun',
+        'Site Management',
+        'Site Management',
+        'manage_options',
+        'abh-site-management',
+        'abh_site_management_page'
+    );
+
 
 });
 

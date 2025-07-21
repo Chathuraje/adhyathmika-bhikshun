@@ -98,6 +98,9 @@ function sync_all_posts_with_api(array $posts) {
             continue;
         }
 
+        error_log("Syncing post with UID: $post_uid");
+        error_log("Using meta key: $post_uid_meta_key");
+
         // Get post ID from post UID
         $post_id = get_post_id_by_uid($post_uid, $post_uid_meta_key);
         if (!$post_id) {

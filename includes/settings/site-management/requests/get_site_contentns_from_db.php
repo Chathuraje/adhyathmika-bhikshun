@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/../../../../tools/encode.php';
 require_once __DIR__ . '/../lib/export_site_contents_to_json.php';
-require_once __DIR__ . '/../lib/import_site_contents_to_json.php';
+require_once __DIR__ . '/../lib/import_site_contents_from_json.php';
 
 // Define constants
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');

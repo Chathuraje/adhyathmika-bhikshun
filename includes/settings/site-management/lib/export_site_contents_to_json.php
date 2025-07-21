@@ -17,7 +17,7 @@ if (!function_exists('export_site_contents_to_json')) {
         }
 
         return [
-            'json_data' => json_encode($export_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+            'json_data' => json_encode($export_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             'exported_at' => current_time('mysql')
         ];
     }

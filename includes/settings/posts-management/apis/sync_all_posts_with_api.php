@@ -74,9 +74,6 @@ function sync_all_posts_with_api(array $posts) {
             continue;
         }
 
-        $headers = getallheaders();
-        $post_type = $headers['X-Post-Type'] ?? null;
-
         // Attempt sync
         $response = send_single_post_sync_request($post_id, $post_uid);
 

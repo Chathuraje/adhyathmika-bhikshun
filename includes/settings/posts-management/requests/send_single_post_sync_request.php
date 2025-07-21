@@ -75,13 +75,21 @@ function send_single_post_sync_request($post_id, $post_uid) {
         return new WP_Error('invalid_post_uid', 'Invalid post UID.');
     }
 
+    // Get post type safely
+    $post_type = get_post_type($post_id);
+    if (!$post_type) {
+        Admin_Notices::add_persistent_notice('❌ Could not determine post type.', 'error');
+        set_airtable_sync_status($post_id, 'failed');
+        return new WP_Error('post_type_error', 'Could not determine post type.');
+    }
+
     // Prepare JWT payload
     $payload = [
         'iat'      => time(),
         'exp'      => time() + 300,  // 5 minutes expiration
         'post_id'  => $post_id,
         'post_uid' => $post_uid,
-        'post_type' => get_post_type($post_id),
+        'post_type' => $post_type,
         'testing'  => AB_TESTING_ENABLED,
     ];
 
@@ -91,14 +99,6 @@ function send_single_post_sync_request($post_id, $post_uid) {
         Admin_Notices::add_persistent_notice('❌ JWT token generation failed.', 'error');
         set_airtable_sync_status($post_id, 'failed');
         return new WP_Error('jwt_error', 'JWT token generation failed.');
-    }
-
-    // Get post type safely
-    $post_type = get_post_type($post_id);
-    if (!$post_type) {
-        Admin_Notices::add_persistent_notice('❌ Could not determine post type.', 'error');
-        set_airtable_sync_status($post_id, 'failed');
-        return new WP_Error('post_type_error', 'Could not determine post type.');
     }
 
     // Export post to JSON

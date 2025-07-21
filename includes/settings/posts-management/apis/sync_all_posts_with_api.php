@@ -62,7 +62,18 @@ function get_post_id_by_uid($uid, $meta_key) {
         $uid
     ));
 
-    return $post_id ? (int) $post_id : null;
+    if (!$post_id) {
+        return null;
+    }
+
+    // Verify that the post actually exists and is not in the trash
+    $post = get_post((int)$post_id);
+
+    if (!$post || $post->post_status === 'trash') {
+        return null;
+    }
+
+    return (int)$post_id;
 }
 
 /**
@@ -111,9 +122,6 @@ function sync_all_posts_with_api(array $posts) {
             ];
             continue;
         }
-
-        error_log("Syncing post with UID: $post_uid");
-        error_log("Using meta key: $post_uid_meta_key");
 
         // Get post ID from post UID
         $post_id = get_post_id_by_uid($post_uid, $post_uid_meta_key);

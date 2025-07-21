@@ -89,14 +89,15 @@ function get_site_contents_from_db() {
         return new WP_Error('json_decode_error', 'JSON decoding error: ' . json_last_error_msg());
     }
 
-    // Check if the response contains the expected data
-    if (!isset($response_data['site_json']) || !is_array($response_data['site_json'])) {
-        Admin_Notices::add_persistent_notice('❌ Invalid response format from Airtable.', 'error');
-        return new WP_Error('invalid_response_format', 'Invalid response format from Airtable.');
+    // Import site contents from JSON
+    $site_json_raw = $response_data['site_json'];
+    $site_data = json_decode($site_json_raw, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        Admin_Notices::add_persistent_notice('❌ JSON decoding error: ' . json_last_error_msg(), 'error');
+        return new WP_Error('json_decode_error', 'JSON decoding error: ' . json_last_error_msg());
     }
 
-    // Import site contents from JSON
-    import_site_contents_from_json($response_data['site_json']);
+    import_site_contents_from_json($site_data);
     Admin_Notices::add_persistent_notice('✅ Site contents imported successfully!', 'success');
 }
 ?>

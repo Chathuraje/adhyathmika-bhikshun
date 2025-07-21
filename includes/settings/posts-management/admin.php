@@ -6,6 +6,7 @@
  * @package Adhyathmika_Bhikshun
  */
 
+
 // Filter for allowed post types (currently not in use)
 function allowed_post_types_for_import_button() {
     return apply_filters('custom_allowed_post_types_for_import_all', ['post', 'small-quote', 'daily-spiritual-offe', 'testimonial']);
@@ -71,21 +72,30 @@ add_action('init', function () {
     define('AB_TESTING_ENABLED', get_option('ab_testing_enabled', false));
 
     if (get_option('ab_create_a_new_post_enabled', true)) {
-       require_once __DIR__ . '/create_a_new_post.php';
-   }
+        require_once __DIR__ . '/create_a_new_post.php';
+    }
 
    if (get_option('ab_sync_single_post_with_airtable_enabled', true)) {
-       require_once __DIR__ . '/sync_single_post_with_airtable.php';
+        require_once __DIR__ . '/sync_single_post_with_airtable.php';
    }
 
     if (get_option('ab_sync_all_posts_with_airtable_enabled', true)) {
-         require_once __DIR__ . '/sync_all_posts_with_airtable.php';
-         require_once __DIR__ . '/apis/sync_all_posts_with_api.php';
+        require_once __DIR__ . '/sync_all_posts_with_airtable.php';
+        require_once __DIR__ . '/apis/sync_all_posts_with_api.php';
     }
    
    if (get_option('ab_import_all_posts_from_airtable_enabled', true)) {
-       require_once __DIR__ . '/import_all_posts_from_airtable.php';
-       require_once __DIR__ . '/apis/import_all_posts_with_api.php';
+        require_once __DIR__ . '/import_all_posts_from_airtable.php';
+        require_once __DIR__ . '/apis/import_all_posts_with_api.php';
    }
+
+   if (
+        get_option('ab_sync_single_post_with_airtable_enabled', true) || 
+        get_option('ab_sync_all_posts_with_airtable_enabled', true)
+    ) {
+        require_once __DIR__ . '/lib/add_airtable_sync_columns.php';
+    }
+
+
 
 });

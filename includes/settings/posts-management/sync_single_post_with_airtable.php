@@ -185,8 +185,6 @@ function ab_do_background_post_sync($post_id, $post_uid) {
     send_single_post_sync_request($post_id, $post_uid);
 }
 
-
-
 // /**
 //  * 5. Sync comments on various actions
 //  */

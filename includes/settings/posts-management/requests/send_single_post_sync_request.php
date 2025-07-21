@@ -53,16 +53,25 @@ if (!defined('AB_TESTING_ENABLED')) {
     define('AB_TESTING_ENABLED', get_option('ab_testing_enabled', false)) ? true : false;
 }
 
+function set_airtable_sync_status($post_id, $status) {
+    update_post_meta($post_id, '_ab_airtable_last_sync', current_time('mysql'));
+    update_post_meta($post_id, '_ab_airtable_last_sync_status', $status);
+}
+
+
 function send_single_post_sync_request($post_id, $post_uid) {
+    set_airtable_sync_status($post_id, 'in_progress');
     // Make sure the post ID is valid
     if (empty($post_id) || !get_post($post_id)) {
         Admin_Notices::add_persistent_notice('❌ Invalid post ID.', 'error');
+        set_airtable_sync_status($post_id, 'failed');
         return new WP_Error('invalid_post', 'Invalid post ID.');
     }
 
     // Check post UID validity (optional, assuming string and not empty)
     if (empty($post_uid) || !is_string($post_uid)) {
         Admin_Notices::add_persistent_notice('❌ Invalid post UID.', 'error');
+        set_airtable_sync_status($post_id, 'failed');
         return new WP_Error('invalid_post_uid', 'Invalid post UID.');
     }
 
@@ -80,6 +89,7 @@ function send_single_post_sync_request($post_id, $post_uid) {
     $jwt_token = jwt_encode($payload, JWT_SECRET_KEY);
     if (!$jwt_token) {
         Admin_Notices::add_persistent_notice('❌ JWT token generation failed.', 'error');
+        set_airtable_sync_status($post_id, 'failed');
         return new WP_Error('jwt_error', 'JWT token generation failed.');
     }
 
@@ -87,6 +97,7 @@ function send_single_post_sync_request($post_id, $post_uid) {
     $post_type = get_post_type($post_id);
     if (!$post_type) {
         Admin_Notices::add_persistent_notice('❌ Could not determine post type.', 'error');
+        set_airtable_sync_status($post_id, 'failed');
         return new WP_Error('post_type_error', 'Could not determine post type.');
     }
 
@@ -94,6 +105,7 @@ function send_single_post_sync_request($post_id, $post_uid) {
     $export = export_single_post_to_json($post_id, $post_type);
     if (empty($export['json_data'])) {
         Admin_Notices::add_persistent_notice('❌ Post export failed or returned empty data.', 'error');
+        set_airtable_sync_status($post_id, 'failed');
         return new WP_Error('export_error', 'Post export failed or returned empty data.');
     }
 
@@ -108,6 +120,7 @@ function send_single_post_sync_request($post_id, $post_uid) {
 
     if (json_last_error() !== JSON_ERROR_NONE) {
         Admin_Notices::add_persistent_notice('❌ JSON encoding error: ' . json_last_error_msg(), 'error');
+        set_airtable_sync_status($post_id, 'failed');
         return new WP_Error('json_encode_error', 'JSON encoding error: ' . json_last_error_msg());
     }
 
@@ -126,6 +139,7 @@ function send_single_post_sync_request($post_id, $post_uid) {
     // Handle request errors
     if (is_wp_error($response)) {
         Admin_Notices::add_persistent_notice('❌ Airtable request failed: ' . $response->get_error_message(), 'error');
+        set_airtable_sync_status($post_id, 'failed');
         return $response;
     }
 
@@ -134,9 +148,12 @@ function send_single_post_sync_request($post_id, $post_uid) {
     if ($status_code < 200 || $status_code >= 300) {
         $body = wp_remote_retrieve_body($response);
         Admin_Notices::add_persistent_notice("❌ Airtable returned unexpected status code: {$status_code}. Response: {$body}", 'error');
+        set_airtable_sync_status($post_id, 'failed');
         return new WP_Error('airtable_response_error', 'Unexpected response code from Airtable: ' . $status_code);
     }
 
+    // If everything is successful, update the sync status
+    set_airtable_sync_status($post_id, 'success');
     return $response;
 }
 ?>

@@ -89,11 +89,12 @@ function get_airtable_sync_data() {
             elseif ($status === 'failed') $failed++;
 
             if ($timestamp) {
-                $sync_dates[] = $timestamp;
+                $hourly_timestamp = strtotime(date('Y-m-d H:00:00', $timestamp));
+                $sync_dates[] = $hourly_timestamp;
                 $post_details[] = [
                     'title' => get_the_title($post_id),
                     'status' => $status,
-                    'date' => date('Y-m-d H:i', $timestamp),
+                    'date' => date('Y-m-d H:i', $hourly_timestamp),
                 ];
             }
 

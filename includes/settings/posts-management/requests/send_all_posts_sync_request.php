@@ -12,23 +12,20 @@ if (!defined('N8N_WEBHOOK_URL')) {
 }
 
 // Get A/B testing flag (usage depends on your logic)
-$is_testing_enabled = get_option('ab_testing_enabled', true);
+if (!defined('AB_TESTING_ENABLED')) {
+    define('AB_TESTING_ENABLED', get_option('ab_testing_enabled', false)) ? true : false;
+}
 
-function send_all_posts_sync_request($post_type = 'post') {
-    global $is_testing_enabled;
-
-    $testing_flag = $is_testing_enabled ? 'true' : 'false';
-
+function send_all_posts_sync_request($post_type) {
     // Prepare JWT payload
     $payload = [
         'iat'     => time(),
         'exp'     => time() + 300, // 5 minutes
-        'testing' => $testing_flag,
+        'testing' => AB_TESTING_ENABLED,
         'post_type' => $post_type,
     ];
 
     $jwt_token = jwt_encode($payload, JWT_SECRET_KEY);
-
     if (!$jwt_token) {
         Admin_Notices::add_persistent_notice('❌ JWT token generation failed.', 'error');
         return new WP_Error('jwt_error', 'JWT token generation failed.');
@@ -36,7 +33,8 @@ function send_all_posts_sync_request($post_type = 'post') {
 
     // Build webhook URL with query parameters
     $webhook_url = add_query_arg([
-        'testing'      => $testing_flag,
+        'testing'      => AB_TESTING_ENABLED,
+        'post_type'    => $post_type,
     ], N8N_WEBHOOK_URL_SYNC_ALL_POSTS);
 
     // Send GET request
@@ -63,7 +61,7 @@ function send_all_posts_sync_request($post_type = 'post') {
         }
 
         $message = $data['message'] ?? '✅ All posts synchronized successfully.';
-        if ($is_testing_enabled) {
+        if (AB_TESTING_ENABLED) {
             $message .= ' (Testing Mode)';
         }
 

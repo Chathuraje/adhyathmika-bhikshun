@@ -32,9 +32,6 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/requests/send_single_post_sync_request.php';
 
-// Get A/B testing flag (usage depends on your logic)
-$is_testing_enabled = get_option('ab_testing_enabled', true);
-
 /**
  * Add "Sync with Airtable" link in post row actions on the Posts list page.
  */

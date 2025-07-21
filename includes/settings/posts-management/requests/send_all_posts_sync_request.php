@@ -31,18 +31,21 @@ function send_all_posts_sync_request($post_type) {
         return new WP_Error('jwt_error', 'JWT token generation failed.');
     }
 
-    // Build webhook URL with query parameters
-    $webhook_url = add_query_arg([
-        'testing'      => AB_TESTING_ENABLED,
-        'post_type'    => $post_type,
-    ], N8N_WEBHOOK_URL_SYNC_ALL_POSTS);
-
+    $request_body = json_encode([
+        'post_type' => $post_type,
+        'testing'   => AB_TESTING_ENABLED,
+    ]);
+    
     // Send GET request
-    $response = wp_remote_get($webhook_url, [
-        'headers' => [
+    $response = wp_remote_post(N8N_WEBHOOK_URL_SYNC_ALL_POSTS, [
+        'method'    => 'POST',
+        'blocking'  => true,
+        'headers'   => [
             'Authorization' => 'Bearer ' . $jwt_token,
+            'Content-Type'  => 'application/json',
         ],
-        'timeout' => 15,
+        'timeout'   => 15,
+        'body'      => $request_body
     ]);
 
     if (is_wp_error($response)) {

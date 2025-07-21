@@ -172,9 +172,19 @@ add_action('save_post', function ($post_id) {
    	}
 
     // Fire the sync request. We don't handle the response here.
-    send_single_post_sync_request($post_id, $post_uid);
+    wp_schedule_single_event(time(), 'ab_background_sync_post', [$post_id, $post_uid]);
     
-}, 10, 3);
+    // Return immediately - actual sync will happen in background
+    return true;
+    
+}, 10, 1);
+
+// Background sync for post saves
+add_action('ab_background_sync_post', 'ab_do_background_post_sync');
+function ab_do_background_post_sync($post_id, $post_uid) {
+    send_single_post_sync_request($post_id, $post_uid);
+}
+
 
 
 // /**

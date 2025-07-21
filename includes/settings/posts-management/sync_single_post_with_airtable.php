@@ -97,9 +97,9 @@ add_action('admin_post_ab_sync_single_post_with_airtable', function () {
         exit;
     }
 
-    $post_uid = get_post_uid_or_redirect($post_type, $post_id);
+    $post_uid = get_post_uid($post_type, $post_id);
     if (!$post_uid) {
-        Admin_Notices::redirect_with_notice('❌ Post UID not found.', 'error', admin_url('edit.php?post_type=' . $post_type));
+        Admin_Notices::redirect_with_notice('❌ Post UID not found. or Unsupported!!', 'error', admin_url('edit.php?post_type=' . $post_type));
         exit;
     }
 
@@ -129,7 +129,7 @@ add_action('admin_post_ab_sync_single_post_with_airtable', function () {
  *
  * This runs during post save and skips autosave, ajax, and revisions.
  */
-add_action('save_post_post ', function ($post_id) {
+add_action('save_post', function ($post_id) {
     // Bail early if autosave, ajax, or revision.
     if (
         (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) ||
@@ -139,7 +139,7 @@ add_action('save_post_post ', function ($post_id) {
         return;
     }
 
-    // Check if the post is of a type that we want to sync.
+    //Check if the post is of a type that we want to sync.
     $post_type = get_post_type($post_id);
     if (!$post_type || !in_array($post_type, allowed_post_types_for_import_button(), true)) {
         return;
@@ -150,12 +150,13 @@ add_action('save_post_post ', function ($post_id) {
     if (!in_array($status, ['publish', 'future', 'private'], true)) {
         return;
     }
-
+	
+	
     // Get post_uid custom field.
-    $post_uid = get_field('post_uid', $post_id);
-    if (!$post_uid) {
-        return;
-    }
+   	$post_uid = get_post_uid($post_type, $post_id);
+   	if (!$post_uid) {
+       return;
+   	}
 
     // Fire the sync request. We don't handle the response here.
     send_single_post_sync_request($post_id, $post_uid);

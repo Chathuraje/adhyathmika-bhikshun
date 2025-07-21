@@ -14,7 +14,7 @@ require_once __DIR__ . '/requests/send_all_posts_sync_request.php';
 
     echo '<script type="text/javascript">
         jQuery(document).ready(function($) {
-            var syncButton = \'<a href="' . esc_url($sync_url) . '" class="page-title-action">Sync All Posts with Airtable</a>\';
+            var syncButton = \'<a href="' . esc_url($sync_url) . '" class="page-title-action">Sync All ' . ucfirst($screen->post_type) . ' with Airtable</a>\';
             $(".wrap .page-title-action").first().after(syncButton).after(importButton);
             });
     </script>';

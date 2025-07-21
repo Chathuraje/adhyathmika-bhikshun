@@ -11,11 +11,11 @@ add_action('admin_head', function () {
     $screen = get_current_screen();
     if (!in_array($screen->post_type, allowed_post_types_for_import_button(), true)) return;
 
-    $url = wp_nonce_url(admin_url('admin-ajax.php?action=ab_import_all_posts_from_airtable&type=' . $screen->post_type), 'ab_import_all_posts_from_airtable_action');
+    $sync_url = wp_nonce_url(admin_url('admin-ajax.php?action=ab_import_all_posts_from_airtable&type=' . $screen->post_type), 'ab_import_all_posts_from_airtable_action');
 
     echo '<script type="text/javascript">
         jQuery(document).ready(function($) {
-            var button = \'<a href="' . esc_url($url) . '" class="page-title-action">Import All ' . ucfirst($screen->post_type) . ' From Airtable</a>\';
+            var button = \'<a href="' . esc_url($sync_url) . '" class="page-title-action">Import All ' . ucfirst($screen->post_type) . ' From Airtable</a>\';
             $(".wrap .page-title-action").first().after(button);
         });
     </script>';

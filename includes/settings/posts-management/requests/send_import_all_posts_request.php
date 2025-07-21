@@ -39,7 +39,6 @@ function send_import_all_posts_request($post_type) {
     ]);
 
     // Send GET request
-     // Send GET request
      $response = wp_remote_post(N8N_WEBHOOK_URL_SYNC_ALL_POSTS, [
         'method'    => 'POST',
         'blocking'  => true,

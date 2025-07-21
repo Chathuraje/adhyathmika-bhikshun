@@ -53,16 +53,21 @@ add_action('rest_api_init', function () {
 /**
  * Utility: Get post ID by UID
  */
-function get_post_id_by_uid($uid, $meta_key) {
-    global $wpdb;
+function get_post_id_by_uid($uid, $meta_key, $post_type) {
+    $posts = get_posts([
+        'post_type'      => $post_type, // or specify post type, e.g., 'post', 'page'
+        'post_status'    => 'publish', // Only published posts
+        'posts_per_page' => 1, // Limit to 1 result
+        'meta_query'     => [
+            [
+                'key'   => $meta_key,
+                'value' => $uid,
+            ]
+        ],
+        'fields'         => 'ids', // Return only post IDs
+    ]);
 
-    $post_id = $wpdb->get_var($wpdb->prepare(
-        "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s LIMIT 1",
-        $meta_key,
-        $uid
-    ));
-
-    return (int)$post_id;
+    return !empty($posts) ? $posts[0] : 0;
 }
 
 /**
@@ -113,7 +118,7 @@ function sync_all_posts_with_api(array $posts) {
         }
 
         // Get post ID from post UID
-        $post_id = get_post_id_by_uid($post_uid, $post_uid_meta_key);
+        $post_id = get_post_id_by_uid($post_uid, $post_uid_meta_key, $post_type);
         if (!$post_id) {
             $results[] = [
                 'airtable_id' => $post_data['airtable_id'] ?? null,

@@ -176,11 +176,11 @@ add_action('save_post', function ($post_id) {
     
     // Return immediately - actual sync will happen in background
     return true;
-    
+
 }, 10, 1);
 
 // Background sync for post saves
-add_action('ab_background_sync_post', 'ab_do_background_post_sync');
+add_action('ab_background_sync_post', 'ab_do_background_post_sync', 10, 2);
 function ab_do_background_post_sync($post_id, $post_uid) {
     send_single_post_sync_request($post_id, $post_uid);
 }

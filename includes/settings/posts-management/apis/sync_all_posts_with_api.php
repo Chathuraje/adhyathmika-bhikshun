@@ -62,17 +62,6 @@ function get_post_id_by_uid($uid, $meta_key) {
         $uid
     ));
 
-    if (!$post_id) {
-        return null;
-    }
-
-    // Verify that the post actually exists and is not in the trash
-    $post = get_post((int)$post_id);
-
-    if (!$post || $post->post_status === 'trash') {
-        return null;
-    }
-
     return (int)$post_id;
 }
 
@@ -84,7 +73,7 @@ function sync_all_posts_with_api(array $posts) {
 
     foreach ($posts as $index => $post_data) {
         $post_uid = isset($post_data['post_uid']) ? sanitize_text_field($post_data['post_uid']) : '';
-
+        
         if (!$post_uid) {
             $results[] = [
                 'airtable_id' => $post_data['airtable_id'] ?? null,

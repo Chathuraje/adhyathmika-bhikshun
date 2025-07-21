@@ -129,13 +129,19 @@ add_action('admin_post_ab_sync_single_post_with_airtable', function () {
  *
  * This runs during post save and skips autosave, ajax, and revisions.
  */
-add_action('save_post_post', function ($post_id) {
+add_action('save_post ', function ($post_id) {
     // Bail early if autosave, ajax, or revision.
     if (
         (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) ||
         (defined('DOING_AJAX') && DOING_AJAX) ||
         wp_is_post_revision($post_id)
     ) {
+        return;
+    }
+
+    // Check if the post is of a type that we want to sync.
+    $post_type = get_post_type($post_id);
+    if (!$post_type || !in_array($post_type, allowed_post_types_for_import_button(), true)) {
         return;
     }
 
@@ -153,8 +159,7 @@ add_action('save_post_post', function ($post_id) {
 
     // Fire the sync request. We don't handle the response here.
     send_single_post_sync_request($post_id, $post_uid);
-    exit;
-
+    
 }, 10, 3);
 
 

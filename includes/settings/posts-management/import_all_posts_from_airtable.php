@@ -22,9 +22,7 @@ add_action('admin_head', function () {
 });
 
 // 2. Handle AJAX to trigger import
-add_action('wp_ajax_ab_import_all_posts_from_airtable', function () use ($IMPORT_ALL_WEBHOOK, $SECRET_KEY) {
-    $is_testing_enabled = get_option('ab_testing_enabled', false);
-
+add_action('wp_ajax_ab_import_all_posts_from_airtable', function () {
     // Verify the nonce for security to prevent CSRF attacks.
     check_admin_referer('ab_import_all_posts_from_airtable_action');
 

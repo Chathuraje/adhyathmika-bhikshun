@@ -70,13 +70,41 @@ if (!function_exists('ab_cdn_url_rewrite')) {
             });
 
             // 3a. Rewrite Elementor content URLs
-            add_filter('elementor/frontend/the_content', function ($content) use ($cdn_url, $site_url) {
+            add_filter('elementor/frontend/the_content', function ($content) use ($cdn_url) {
                 if (is_string($content)) {
-                    return str_replace($site_url, $cdn_url, $content);
+                    return preg_replace_callback(
+                        '#https?://[^"]+/wp-content/uploads/[^"]+#',
+                        function ($matches) use ($cdn_url) {
+                            return str_replace(
+                                home_url('/wp-content/uploads/'),
+                                $cdn_url . 'wp-content/uploads/',
+                                $matches[0]
+                            );
+                        },
+                        $content
+                    );
                 }
                 return $content;
             });
 
+            add_filter('the_content', function ($content) use ($cdn_url) {
+                if (is_string($content)) {
+                    return preg_replace_callback(
+                        '#https?://[^"]+/wp-content/uploads/[^"]+#',
+                        function ($matches) use ($cdn_url) {
+                            return str_replace(
+                                home_url('/wp-content/uploads/'),
+                                $cdn_url . 'wp-content/uploads/',
+                                $matches[0]
+                            );
+                        },
+                        $content
+                    );
+                }
+                return $content;
+            });
+            
+            
 
             // 4. Override the "View" link in the Media Library list view
             add_filter('attachment_link', function ($link, $post_id) use ($cdn_url) {

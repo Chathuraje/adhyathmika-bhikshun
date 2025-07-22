@@ -9,7 +9,7 @@
 
 // Filter for allowed post types (currently not in use)
 function allowed_post_types_for_import_button() {
-    return apply_filters('custom_allowed_post_types_for_import_all', ['post', 'small-quote', 'daily-spiritual-offe', 'testimonial']);
+    return apply_filters('custom_allowed_post_types_for_import_all', ['post', 'small-quote', 'daily-spiritual-offe', 'testimonial', 'category-card']);
 }
 
 $post_uid_fields = [
@@ -17,6 +17,7 @@ $post_uid_fields = [
     'daily-spiritual-offe' => 'dso_uid',
     'small-quote'         => 'sq_uid',
     'testimonial'         => 'testimonial_uid',
+    'category-card'       => 'category_uid',
 ];
 
 function get_post_uid_meta_key($post_type) {

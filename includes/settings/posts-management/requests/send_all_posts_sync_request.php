@@ -7,7 +7,7 @@ require_once __DIR__ . '../../../../../tools/encode.php';
 
 // Define JWT secret and webhook URL constants if not already defined.
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
-if (!defined('N8N_WEBHOOK_URL')) {
+if (!defined('N8N_WEBHOOK_URL_SYNC_ALL_POSTS')) {
     define('N8N_WEBHOOK_URL_SYNC_ALL_POSTS', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_all_post_with_airtable');
 }
 

@@ -44,6 +44,7 @@ add_action('admin_init', function () {
         'ab_sync_single_post_with_airtable_enabled',
         'ab_sync_all_posts_with_airtable_enabled',
         'ab_import_all_posts_from_airtable_enabled',
+        'ab_auto_sync_media_files_enabled',
     ];
 
     foreach ($settings as $setting) {
@@ -66,6 +67,7 @@ add_action('admin_init', function () {
             'ab_sync_single_post_with_airtable_enabled',
             'ab_sync_all_posts_with_airtable_enabled',
             'ab_import_all_posts_from_airtable_enabled',
+            'ab_auto_sync_media_files_enabled',
         ];
 
         foreach ($checkboxes as $key) {
@@ -103,6 +105,10 @@ add_action('init', function () {
         get_option('ab_sync_all_posts_with_airtable_enabled', true)
     ) {
         require_once __DIR__ . '/lib/add_airtable_sync_columns.php';
+    }
+
+    if (get_option('ab_auto_sync_media_files_enabled', true)) {
+        require_once __DIR__ . '/auto_sync_media_files.php';
     }
 
 

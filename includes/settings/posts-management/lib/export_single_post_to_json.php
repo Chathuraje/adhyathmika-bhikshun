@@ -169,27 +169,52 @@ function export_single_post_to_json($post_id, $post_type) {
             $term_data = [];
 
             foreach ($terms as $term) {
-                // Get term meta for each term
                 $meta = [];
                 $meta_raw = get_term_meta($term->term_id);
+            
                 foreach ($meta_raw as $key => $values) {
                     if (count($values) === 1) {
-                        $meta[$key] = safe_maybe_unserialize($values[0]);
+                        $unserialized = safe_maybe_unserialize($values[0]);
+                        $meta[$key] = $unserialized;
+            
+                        // Add _url if it's an attachment ID
+                        if (is_numeric($unserialized) && get_post_type($unserialized) === 'attachment') {
+                            $url = wp_get_attachment_url($unserialized);
+                            if ($url) {
+                                $meta["{$key}_url"] = $url;
+                            }
+                        }
                     } else {
-                        $meta[$key] = array_map('safe_maybe_unserialize', $values);
+                        $unserialized = array_map('safe_maybe_unserialize', $values);
+                        $meta[$key] = $unserialized;
+            
+                        // If it's an array of media IDs
+                        $image_urls = [];
+                        foreach ($unserialized as $v) {
+                            if (is_numeric($v) && get_post_type($v) === 'attachment') {
+                                $url = wp_get_attachment_url($v);
+                                if ($url) {
+                                    $image_urls[] = $url;
+                                }
+                            }
+                        }
+            
+                        if (!empty($image_urls)) {
+                            $meta["{$key}_urls"] = $image_urls;
+                        }
                     }
                 }
-
-                // Store relevant term data and meta
+            
                 $term_data[] = [
-                    'term_id' => $term->term_id,
-                    'name' => $term->name,
-                    'slug' => $term->slug,
-                    'description' => $term->description,
-                    'parent' => $term->parent,
-                    'meta' => $meta,
+                    'term_id'    => $term->term_id,
+                    'name'       => $term->name,
+                    'slug'       => $term->slug,
+                    'description'=> $term->description,
+                    'parent'     => $term->parent,
+                    'meta'       => $meta,
                 ];
             }
+            
             // Assign all terms data for this taxonomy
             $post_data['taxonomies'][$taxonomy] = $term_data;
         }

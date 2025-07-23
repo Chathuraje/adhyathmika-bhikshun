@@ -9,6 +9,7 @@ $settings = [
     'ab_sync_single_post_with_airtable_enabled'  => get_option('ab_sync_single_post_with_airtable_enabled', true),
     'ab_sync_all_posts_with_airtable_enabled'    => get_option('ab_sync_all_posts_with_airtable_enabled', true),
     'ab_import_all_posts_from_airtable_enabled' => get_option('ab_import_all_posts_from_airtable_enabled', true),
+    'ab_auto_sync_media_files_enabled' => get_option('ab_auto_sync_media_files_enabled', true),
 ];
 ?>
 
@@ -59,6 +60,10 @@ $settings = [
                             API Endpoint: <code>/wp-json/ab-custom-apis/v2/import-post</code><br/> 
                             Method: <code>POST</code> <br/>
                             Payload: <code>[{"post_title": "Title", "post_content": "Content", ...}]</code><br/> ', 'adhyathmika-bhikshun')
+          ],
+          'ab_auto_sync_media_files_enabled' => [
+              'label' => __('Enable Auto Sync Media Files', 'adhyathmika-bhikshun'),
+              'desc'  => __('Automatically syncs media files to the external service when they are uploaded. This is useful for keeping your media files in sync with .lk Website.', 'adhyathmika-bhikshun')
           ],
       ];
 

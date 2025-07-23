@@ -46,11 +46,11 @@ if (!function_exists('add_airtable_sync_columns')) {
  * @return string Summary of Airtable sync status
  */
 function get_airtable_sync_data() {
-    $cache_key = 'airtable_sync_summary_data_cache';
-    $cached = get_transient($cache_key);
-    if ($cached !== false) {
-        return $cached;
-    }
+    // $cache_key = 'airtable_sync_summary_data_cache';
+    // $cached = get_transient($cache_key);
+    // if ($cached !== false) {
+    //     return $cached;
+    // }
 
     $post_types = allowed_post_types_for_import_button();
     if (empty($post_types)) {
@@ -115,7 +115,7 @@ function get_airtable_sync_data() {
         ];
     }
 
-    set_transient($cache_key, $data, 5 * MINUTE_IN_SECONDS);
+    // set_transient($cache_key, $data, 5 * MINUTE_IN_SECONDS);
     return $data;
 }
 

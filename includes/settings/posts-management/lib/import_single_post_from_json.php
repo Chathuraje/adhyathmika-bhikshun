@@ -1,23 +1,58 @@
 <?php
 
-function get_attachment_id_by_url_slug($url)
-{
+function get_attachment_id_by_url_slug($url) {
+    global $wpdb;
+
     $filename = basename(parse_url($url, PHP_URL_PATH));
 
-    $query = new WP_Query([
-        'post_type'  => 'attachment',
-        'post_status'=> 'inherit',
-        'meta_query' => [[
-            'key'     => '_wp_attached_file',
-            'value'   => $filename,
-            'compare' => 'LIKE'
-        ]],
-        'fields'     => 'ids',
-        'posts_per_page' => 1
-    ]);
+    // Step 1: Try direct match via _wp_attached_file meta
+    $attachment_id = $wpdb->get_var($wpdb->prepare(
+        "SELECT post_id FROM $wpdb->postmeta 
+         WHERE meta_key = '_wp_attached_file' 
+         AND meta_value LIKE %s 
+         LIMIT 1",
+        '%' . $wpdb->esc_like($filename) . '%'
+    ));
 
-    return $query->have_posts() ? $query->posts[0] : 0;
+    if ($attachment_id) {
+        return (int) $attachment_id;
+    }
+
+    // Step 2: Try match via guid (for old attachments)
+    $attachment_id = $wpdb->get_var($wpdb->prepare(
+        "SELECT ID FROM $wpdb->posts 
+         WHERE post_type = 'attachment' 
+         AND guid LIKE %s 
+         LIMIT 1",
+        '%' . $wpdb->esc_like($filename) . '%'
+    ));
+
+    if ($attachment_id) {
+        return (int) $attachment_id;
+    }
+
+    // Step 3: Optionally – match via hashed URL as a custom meta key you track
+    // e.g. use sha1($url) stored as 'import_source_hash'
+
+    return 0; // Not found
 }
+
+function attach_or_import_media($url, $post_id = 0) {
+    $att_id = get_attachment_id_by_url_slug($url);
+
+    if (!$att_id) {
+        // Media not found – download and sideload it
+        $att_id = media_sideload_image($url, $post_id, null, 'id');
+
+        // Optional: Store a reference for future match
+        if (!is_wp_error($att_id)) {
+            update_post_meta($att_id, 'import_source_url', esc_url_raw($url));
+        }
+    }
+
+    return (!is_wp_error($att_id)) ? $att_id : 0;
+}
+
 
 function import_single_post_from_data(array $post) {
 
@@ -120,22 +155,15 @@ function import_single_post_from_data(array $post) {
     
     // --- FEATURED IMAGE ---
     if (!empty($post['featured_image'])) {
-        $att_id = get_attachment_id_by_url_slug($post['featured_image']);
-        if (!$att_id) {
-            $att_id = media_sideload_image($post['featured_image'], $post_id, null, 'id');
-        }
-        if (!is_wp_error($att_id)) {
-            set_post_thumbnail($post_id, $att_id);
-        }
+        $att_id = attach_or_import_media($post['featured_image'], $post_id);
+        if ($att_id) set_post_thumbnail($post_id, $att_id);
     }
 
-    // --- ATTACHED FILES ---
+    // ATTACHED FILES
     foreach ($post['attached_files'] ?? [] as $file_url) {
-        $att_id = get_attachment_id_by_url_slug($file_url);
-        if (!$att_id) {
-            $att_id = media_sideload_image($file_url, $post_id, null, 'id');
-        }
+        attach_or_import_media($file_url, $post_id);
     }
+
 
     // --- TAXONOMIES ---
     foreach ($post['taxonomies'] ?? [] as $taxonomy => $terms) {

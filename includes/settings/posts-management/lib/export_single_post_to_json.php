@@ -82,12 +82,37 @@ function export_single_post_to_json($post_id, $post_type) {
     $filtered_meta = [];
     foreach ($meta as $key => $values) {
         if (strpos($key, '_elementor') === 0) continue;
-
-        // If only one value, unserialize safely, else map unserialize to each value
-        if (count($values) === 1) {
-            $filtered_meta[$key] = safe_maybe_unserialize($values[0]);
-        } else {
-            $filtered_meta[$key] = array_map('safe_maybe_unserialize', $values);
+    
+        $unserialized = (count($values) === 1)
+            ? safe_maybe_unserialize($values[0])
+            : array_map('safe_maybe_unserialize', $values);
+    
+        $filtered_meta[$key] = $unserialized;
+    
+        // --- Add image URL version if value is a media ID ---
+        if (
+            is_numeric($unserialized) && get_post_type($unserialized) === 'attachment'
+        ) {
+            $url = wp_get_attachment_url($unserialized);
+            if ($url) {
+                $filtered_meta["{$key}_url"] = $url;
+            }
+        }
+    
+        // --- Handle array of media IDs (e.g. galleries) ---
+        if (is_array($unserialized)) {
+            $image_urls = [];
+            foreach ($unserialized as $v) {
+                if (is_numeric($v) && get_post_type($v) === 'attachment') {
+                    $url = wp_get_attachment_url($v);
+                    if ($url) {
+                        $image_urls[] = $url;
+                    }
+                }
+            }
+            if (!empty($image_urls)) {
+                $filtered_meta["{$key}_urls"] = $image_urls;
+            }
         }
     }
 

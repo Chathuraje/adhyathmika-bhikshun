@@ -22,10 +22,4 @@ function abh_site_management_page()
 {
     require_once plugin_dir_path(__FILE__) . 'settings/site-management-page.php';
 }   
-
-// Load auto-generate media files settings page
-function abh_image_generation_page()
-{
-    require_once plugin_dir_path(__FILE__) . 'settings/image_generation-page.php';
-}
 ?>

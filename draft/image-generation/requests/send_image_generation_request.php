@@ -7,15 +7,15 @@ require_once __DIR__ . '../../../../../tools/encode.php';
 
 // Define JWT secret and webhook URL constants if not already defined.
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
-if (!defined('N8N_WEBHOOK_URL_AUTO_GENERATE_MEDIA')) {
-    define('N8N_WEBHOOK_URL_AUTO_GENERATE_MEDIA', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/auto-generate-media');
+if (!defined('N8N_WEBHOOK_URL_IMAGE_GENERATION')) {
+    define('N8N_WEBHOOK_URL_IMAGE_GENERATION', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/generate_image');
 }
 
 if (!defined('AB_TESTING_ENABLED')) {
     define('AB_TESTING_ENABLED', get_option('ab_testing_enabled', false)) ? true : false;
 }
 
-function send_auto_generate_media_request($prompt) {
+function send_image_generation_request($prompt) {
     // Prepare JWT payload
     $payload = [
         'iat'     => time(),
@@ -36,14 +36,14 @@ function send_auto_generate_media_request($prompt) {
     ]);
 
     // Send POST request
-    $response = wp_remote_post(N8N_WEBHOOK_URL_AUTO_GENERATE_MEDIA, [
+    $response = wp_remote_post(N8N_WEBHOOK_URL_IMAGE_GENERATION, [
         'method'    => 'POST',
         'blocking'  => true,
         'headers'   => [
             'Authorization' => 'Bearer ' . $jwt_token,
             'Content-Type'  => 'application/json',
         ],
-        'timeout'   => 15,
+        'timeout'   => 30,
         'body'      => $request_body,
     ]);
 
@@ -63,13 +63,14 @@ function send_auto_generate_media_request($prompt) {
             return new WP_Error('no_data', 'No data returned from webhook.');
         }
 
-        $message = !empty($data['message']) ? $data['message'] : 'Media file generated successfully.';
-        if (AB_TESTING_ENABLED) {
-            $message .= ' (AB Testing Enabled)';
+        if (isset($data['error'])) {
+            Admin_Notices::add_persistent_notice("❌ Error from webhook: {$data['error']}", 'error');
+            return new WP_Error('webhook_error', $data['error']);
         }
-        Admin_Notices::add_persistent_notice("✅ {$message}", 'success');
-        return true;
+        
+        return $data;
     }
+    
 
     Admin_Notices::add_persistent_notice("❌ HTTP Error ({$status_code}): {$body}", 'error');
     return new WP_Error('webhook_error', "Webhook returned status code {$status_code}");

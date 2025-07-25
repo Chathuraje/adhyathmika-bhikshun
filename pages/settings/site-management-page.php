@@ -6,6 +6,7 @@ if (!current_user_can('manage_options')) {
 $settings = [
     'ab_testing_enabled'               => get_option('ab_testing_enabled', true),
     'ab_sync_site_contetns_enabled'     => get_option('ab_sync_site_contetns_enabled', true),
+    'ab_auto_generate_media_files_enabled'    => get_option('ab_auto_generate_media_files_enabled', true),
 ];
 ?>
 
@@ -40,7 +41,12 @@ $settings = [
           'ab_sync_site_contetns_enabled' => [
                 'label' => __('Enable Site Content Sync', 'adhyathmika-bhikshun'),
                 'desc'  => __('Allows the export and import of site contents through the plugin interface. This is useful for backing up or migrating site data.', 'adhyathmika-bhikshun')
-          ]
+          ],
+          'ab_auto_generate_media_files_enabled' => [
+              'label' => __('Enable Auto Generate Media Files', 'adhyathmika-bhikshun'),
+              'desc'  => __('Enables the automatic generation of media files for posts. This feature will automatically create media files when a new post is created or updated.', 'adhyathmika-bhikshun')
+          ],
+
       ];
 
       foreach ($features as $key => $label) {

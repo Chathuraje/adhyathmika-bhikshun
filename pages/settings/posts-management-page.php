@@ -8,8 +8,7 @@ $settings = [
     'ab_create_a_new_post_enabled'     => get_option('ab_create_a_new_post_enabled', true),
     'ab_sync_single_post_with_airtable_enabled'  => get_option('ab_sync_single_post_with_airtable_enabled', true),
     'ab_sync_all_posts_with_airtable_enabled'    => get_option('ab_sync_all_posts_with_airtable_enabled', true),
-    'ab_import_all_posts_from_airtable_enabled' => get_option('ab_import_all_posts_from_airtable_enabled', true),
-    'ab_auto_generate_media_files_enabled' => get_option('ab_auto_generate_media_files_enabled', true),
+    'ab_import_all_posts_from_airtable_enabled' => get_option('ab_import_all_posts_from_airtable_enabled', true)
 ];
 ?>
 
@@ -60,11 +59,7 @@ $settings = [
                             API Endpoint: <code>/wp-json/ab-custom-apis/v2/import-post</code><br/> 
                             Method: <code>POST</code> <br/>
                             Payload: <code>[{"post_title": "Title", "post_content": "Content", ...}]</code><br/> ', 'adhyathmika-bhikshun')
-          ],
-          'ab_auto_generate_media_files_enabled' => [
-              'label' => __('Enable Auto Generate Media Files', 'adhyathmika-bhikshun'),
-              'desc'  => __('Enables the automatic generation of media files for posts. This feature will automatically create media files when a new post is created or updated.', 'adhyathmika-bhikshun')
-            ],
+          ]
       ];
 
       foreach ($features as $key => $label) {

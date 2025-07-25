@@ -24,19 +24,4 @@ function ab_language_switcher_sc_assets() {
     wp_enqueue_style('ab-language-switcher-sc-style', plugin_dir_url(__FILE__) . 'css/ab-language-switcher-sc.css');
     wp_enqueue_script('ab-language-switcher-sc-script', plugin_dir_url(__FILE__) . 'js/ab-language-switcher-sc.js', [], false, true);
 }
-
-// Enqueue plugin CSS and JS for Auto Generate Media Files
-add_action('admin_enqueue_scripts', 'ab_auto_generate_media_files_assets');
-function ab_auto_generate_media_files_assets($hook) {
-    if ($hook === 'adhyathmika-bhikshun_page_abh-post-management') {
-        // Load custom admin JS
-        wp_enqueue_script('ab-auto-generate-media-files-script', plugin_dir_url(__FILE__) . 'js/ab-auto-generate-media-files.js', ['jquery'], null, true);
-
-        // Localize script for AJAX URL and nonce
-        wp_localize_script('ab-auto-generate-media-files-script', 'abAutoGenerateMediaFiles', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce'   => wp_create_nonce('send_image_prompt_nonce'),
-        ]);
-    }
-}
 ?>

@@ -7,21 +7,20 @@ require_once __DIR__ . '../../../../../tools/encode.php';
 
 // Define JWT secret and webhook URL constants if not already defined.
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
-if (!defined('N8N_WEBHOOK_URL_AUTO_SYNC_MEDIA')) {
-    define('N8N_WEBHOOK_URL_AUTO_SYNC_MEDIA', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/auto-sync-media');
+if (!defined('N8N_WEBHOOK_URL_AUTO_GENERATE_MEDIA')) {
+    define('N8N_WEBHOOK_URL_AUTO_GENERATE_MEDIA', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/auto-generate-media');
 }
 
 if (!defined('AB_TESTING_ENABLED')) {
     define('AB_TESTING_ENABLED', get_option('ab_testing_enabled', false)) ? true : false;
 }
 
-function send_auto_sync_media_request($file_url, $file_name) {
+function send_auto_generate_media_request($prompt) {
     // Prepare JWT payload
     $payload = [
         'iat'     => time(),
         'exp'     => time() + 300, // 5 minutes
         'testing' => AB_TESTING_ENABLED,
-
     ];
 
     $jwt_token = jwt_encode($payload, JWT_SECRET_KEY);
@@ -32,13 +31,12 @@ function send_auto_sync_media_request($file_url, $file_name) {
     }
 
     $request_body = json_encode([
-        'file_url'  => $file_url,
-        'file_name' => $file_name,
+        'prompt'  => $prompt,
         'testing'   => AB_TESTING_ENABLED
     ]);
 
     // Send POST request
-    $response = wp_remote_post(N8N_WEBHOOK_URL_AUTO_SYNC_MEDIA, [
+    $response = wp_remote_post(N8N_WEBHOOK_URL_AUTO_GENERATE_MEDIA, [
         'method'    => 'POST',
         'blocking'  => true,
         'headers'   => [
@@ -60,18 +58,17 @@ function send_auto_sync_media_request($file_url, $file_name) {
     $data        = json_decode($body, true);
 
     if ($status_code >= 200 && $status_code < 300) {
-        if (!empty($data['code']) && $data['code'] === '404') {
-            Admin_Notices::add_persistent_notice('❌ No data found in the database.', 'error');
-            return new WP_Error('no_data', 'No data found.');
+        if (empty($data)) {
+            Admin_Notices::add_persistent_notice('❌ No data returned from webhook.', 'error');
+            return new WP_Error('no_data', 'No data returned from webhook.');
         }
 
-        $message = $data['message'] ?? '✅ New post successfully triggered via N8N!';
+        $message = !empty($data['message']) ? $data['message'] : 'Media file generated successfully.';
         if (AB_TESTING_ENABLED) {
-            $message .= ' (Testing Mode)';
+            $message .= ' (AB Testing Enabled)';
         }
-
-        Admin_Notices::add_persistent_notice('✅ ' . $message, 'success');
-        return $response;
+        Admin_Notices::add_persistent_notice("✅ {$message}", 'success');
+        return true;
     }
 
     Admin_Notices::add_persistent_notice("❌ HTTP Error ({$status_code}): {$body}", 'error');

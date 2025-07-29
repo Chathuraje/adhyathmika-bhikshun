@@ -11,7 +11,7 @@ require_once __DIR__ . '/../lib/import_site_contents_from_json.php';
 // Define constants
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
 if (!defined('N8N_WEBHOOK_URL_GET_SITE_CONTENTS_FROM_DB')) {
-    define('N8N_WEBHOOK_URL_GET_SITE_CONTENTS_FROM_DB', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/get_site_contents_from_db');
+    define('N8N_WEBHOOK_URL_GET_SITE_CONTENTS_FROM_DB', 'https://n8n.digitix365.com/webhook/get_site_contents_from_db');
 }
 
 if (!defined('AB_TESTING_ENABLED')) {

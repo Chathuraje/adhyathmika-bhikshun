@@ -46,7 +46,7 @@ require_once __DIR__ . '/../lib/export_single_post_to_json.php';
 // Define constants
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
 if (!defined('N8N_WEBHOOK_URL_SYNC_SINGLE_POST')) {
-    define('N8N_WEBHOOK_URL_SYNC_SINGLE_POST', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/sync_single_post_with_airtable');
+    define('N8N_WEBHOOK_URL_SYNC_SINGLE_POST', 'https://n8n.digitix365.com/webhook/sync_single_post_with_airtable');
 }
 
 if (!defined('AB_TESTING_ENABLED')) {

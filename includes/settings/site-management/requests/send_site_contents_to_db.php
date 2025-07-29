@@ -10,7 +10,7 @@ require_once __DIR__ . '/../lib/export_site_contents_to_json.php';
 // Define constants
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
 if (!defined('N8N_WEBHOOK_URL_SEND_SITE_CONTENTS_TO_DB')) {
-    define('N8N_WEBHOOK_URL_SEND_SITE_CONTENTS_TO_DB', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/send_site_contents_to_db');
+    define('N8N_WEBHOOK_URL_SEND_SITE_CONTENTS_TO_DB', 'https://n8n.digitix365.com/webhook/send_site_contents_to_db');
 }
 
 if (!defined('AB_TESTING_ENABLED')) {

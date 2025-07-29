@@ -31,7 +31,7 @@ require_once __DIR__ . '../../../../../tools/encode.php';
 // Define JWT secret and webhook URL constants if not already defined.
 if (!defined('JWT_SECRET_KEY')) define('JWT_SECRET_KEY', '');
 if (!defined('N8N_WEBHOOK_URL_CREATE_A_NEW_POST')) {
-    define('N8N_WEBHOOK_URL_CREATE_A_NEW_POST', 'https://digibot365-n8n.kdlyj3.easypanel.host/webhook/create_a_new_post');
+    define('N8N_WEBHOOK_URL_CREATE_A_NEW_POST', 'https://n8n.digitix365.com/webhook/create_a_new_post');
 }
 
 if (!defined('AB_TESTING_ENABLED')) {

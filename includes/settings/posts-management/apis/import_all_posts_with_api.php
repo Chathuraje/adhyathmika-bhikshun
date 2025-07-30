@@ -59,7 +59,6 @@ function handle_import_all_posts_with_api_endpoint(WP_REST_Request $request)
 
 if (!function_exists('import_all_posts_with_api')) {
     function import_all_posts_with_api(array $posts) {
-        wp_suspend_cache_invalidation(true);
         $results = [];
 
         foreach ($posts as $index => $post) {
@@ -75,10 +74,8 @@ if (!function_exists('import_all_posts_with_api')) {
                 ];
             }
         }
-        wp_suspend_cache_invalidation(false);
 
         return $results;
     }
 }
-?>
 

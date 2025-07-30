@@ -13,7 +13,6 @@ add_action('admin_init', function () {
     $settings = [
         'ab_testing_enabled',
         'ab_sync_site_contetns_enabled',
-        'ab_auto_generate_media_files_enabled',
     ];
 
     foreach ($settings as $setting) {
@@ -33,7 +32,6 @@ add_action('admin_init', function () {
         $checkboxes = [
             'ab_testing_enabled',
             'ab_sync_site_contetns_enabled',
-            'ab_auto_generate_media_files_enabled',
         ];
 
         foreach ($checkboxes as $key) {
@@ -50,9 +48,5 @@ add_action('init', function () {
 
     if (get_option('ab_sync_site_contetns_enabled', true)) {
         require_once __DIR__ . '/sync_site_contetns.php';
-    }
-
-    if (get_option('ab_auto_generate_media_files_enabled', true)) {
-        // require_once __DIR__ . '/auto_generate_media_files.php';
     }
 });

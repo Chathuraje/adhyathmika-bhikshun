@@ -43,15 +43,6 @@ function handle_import_all_posts_with_api_endpoint(WP_REST_Request $request)
     try {
         
         $results = import_all_posts_with_api($data);
-
-        // Save progress transient: key by a job ID or user session, here simple example
-        $progress_key = sanitize_key($post_type . '_import_progress');
-        set_transient($progress_key, [
-            'batch_id' => (int)$batch_id + 1,
-            'batch_total' => (int)$batch_total,
-            'completed' => true,
-            'timestamp' => time(),
-        ], 60 * 30); // 30 minutes expiration
         
         return new WP_REST_Response([
             'message' => 'Import complete',
